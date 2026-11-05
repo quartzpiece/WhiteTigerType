@@ -62,6 +62,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .daily-text{font-size:1.25rem;line-height:1.6;margin:0;word-break:keep-all;border-left:5px solid var(--accent);padding-left:14px}
 .rank-list li .ac{color:var(--muted);font-size:.85rem}
 .rank-list.daily-l li{grid-template-columns:2.5em 1fr auto auto}
+.rtabs{display:flex;gap:6px}
+.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
 .home{color:inherit;text-decoration:none;cursor:pointer}
@@ -158,7 +160,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.5</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.6</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -209,7 +211,9 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   </section>
 
   <section class="card rank" id="rank" hidden>
-    <div class="row" style="justify-content:space-between"><b class="rank-h">포인트 랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
+    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button></div>
+    <p class="hint" id="rank-dtext" hidden></p>
     <ol class="rank-list" id="rank-list"></ol>
     <p class="hint" id="rank-msg" aria-live="polite"></p>
   </section>
@@ -918,14 +922,19 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function pushRank(){if(!uid)return;const pt=Math.floor(Number(store.get("tt-pt",0))||0),nm=nick||"",key=nm+"|"+pt;if(key===lastRank)return;
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()});lastRank=key}catch(e){}}
   const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
-  async function loadRank(){const list=$("rank-list"),m=$("rank-msg");m.textContent="불러오는 중";
+  let rTab="pt";
+  function setRTab(t){rTab=t;$("rtab-pt").setAttribute("aria-pressed",String(t==="pt"));$("rtab-daily").setAttribute("aria-pressed",String(t==="daily"));loadRank()}
+  async function loadRank(){if(rTab==="daily")return loadRankDaily();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";b.textContent=String(v.nick||"이름 없음");
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
-  $("rank-re").onclick=loadRank;
+  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>setRTab("daily");
+  async function loadRankDaily(){await cfgReady;const day=todayKey(),list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l";
+    t.hidden=false;t.textContent=day+" · "+dailyText(day);m.textContent="불러오는 중";const n=await fillDaily(list,day);
+    m.textContent=n<0?"랭킹을 불러올 수 없음":(n&&!uid?"로그인하면 도전 가능":"")}
   // 오늘의 문장: daily/{날짜}/runs/{uid}. 첫 글자에서 만들고(nick, st, at), 끝나면 ms·acc를 한 번만 더해요
   const dCard=$("daily"),dBtn=$("dailybtn");dBtn.hidden=false;
   const ADMIN="admin",cfgRef=FS.doc(fdb,"config","daily");
@@ -950,12 +959,13 @@ async function initCloud(){if(!FB_CONFIG)return;
     else{try{const sn=await FS.getDoc(runRef(day));
       if(!sn.exists()){go.disabled=false;m.textContent="남은 도전 횟수: 1회"}
       else{const v=sn.data()||{};m.textContent="남은 도전 횟수: 0회"}}catch(e){m.textContent="불러올 수 없음"}}
-    const list=$("daily-list");
+    await fillDaily($("daily-list"),day)}
+  async function fillDaily(list,day){
     try{const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
       snap.forEach(d=>{const v=d.data()||{};if(!v.ms)return;n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
         li.append(mk("no",n),mk("nm",String(v.nick||"이름 없음")),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",(Number(v.ms)/1000).toFixed(2)+"초"));list.appendChild(li)});
-      if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}}catch(e){list.innerHTML=""}}
+      if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
   function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
   dBtn.onclick=openDaily;
