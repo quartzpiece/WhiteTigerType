@@ -75,6 +75,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 #admin-list{min-height:220px;font-size:.95rem}
 .home{color:inherit;text-decoration:none;cursor:pointer}
 .home:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.fx-key{position:absolute;width:18px;height:18px;pointer-events:none;z-index:3;border:2px solid currentColor;box-shadow:0 0 8px currentColor}
 .fx-ring{position:absolute;inset:-2px;pointer-events:none;border:4px solid currentColor;box-shadow:0 0 14px currentColor,inset 0 0 10px currentColor;z-index:3}
 .pts{font-family:var(--display);font-size:1.15rem;color:var(--accent);white-space:nowrap;display:inline-block}
 .pts.up{animation:ptup .6s ease-out}
@@ -166,7 +167,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.14</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.15</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -199,7 +200,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
-    <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button></div>
+    <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
       <span class="set-l">오늘의 문장 목록 (관리자)</span>
       <p class="hint">한 줄에 한 문장 · 첫 줄이 오늘, 다음 줄이 내일 순서 · 끝까지 가면 처음부터 다시 · 오늘 이미 도전한 사람이 있으면 첫 줄은 그대로 두기</p>
@@ -896,6 +897,16 @@ function closePanels(except){["login","rank","settings","daily"].forEach(id=>{if
 function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
 $("fxbtn").onclick=()=>{store.set("tt-fx",!store.get("tt-fx",true));showFx()};showFx();
+function showFxk(){const on=store.get("tt-fxk",false),b=$("fxkbtn");b.textContent="무지개 테마 한 타 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
+$("fxkbtn").onclick=()=>{store.set("tt-fxk",!store.get("tt-fxk",false));showFxk()};showFxk();
+// 한 타 효과: 글자를 칠 때마다 커서 자리에서 작은 네모 고리가 퍼져요 (무지개 테마, 설정에서 켜기)
+let fxkN=0;
+inp.addEventListener("input",e=>{if(document.documentElement.dataset.skin!=="rainbow"||!store.get("tt-fxk",false)||fxkN>24)return;
+  if(e.inputType&&e.inputType.startsWith("delete"))return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(x){}
+  requestAnimationFrame(()=>{const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
+    const B=box.getBoundingClientRect(),C=c.getBoundingClientRect();let hue=45;try{hue=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"))||45}catch(x){}
+    const k=document.createElement("i");k.className="fx-key";k.style.left=(C.left-B.left-9)+"px";k.style.top=(C.top-B.top+C.height/2-9)+"px";k.style.color="hsl("+hue+" 95% 63%)";
+    box.appendChild(k);fxkN++;k.animate([{transform:"scale(.4)",opacity:1},{transform:"scale(1.6)",opacity:0}],{duration:380,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>{k.remove();fxkN--}})});
 $("setbtn").onclick=()=>{const c=$("settings"),open=c.hidden;closePanels(open?"settings":null);c.hidden=!open};setSkin(store.get("tt-skin","basic"));
 // 랜덤 문단: 기본 지문 전체에서 본문 문단 하나를 골라요. 소제목(■) 아래 문단이면 소제목부터 쳐요
 function randomPara(){const pool=[];PRESETS.forEach(p=>{let head="";p.text.split("\n").map(s=>s.trim()).forEach(s=>{if(s.startsWith("■")){head=s;return}if(prep(s).typ.length>=40)pool.push({title:p.title,text:(head?head+"\n":"")+s})})});
