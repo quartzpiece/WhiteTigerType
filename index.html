@@ -55,6 +55,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rank-list li .no{font-family:var(--display);color:var(--muted)}
 .rank-list li:nth-child(-n+3) .no{color:var(--accent)}
 .rank-list li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-list li .nm.egg,.btn.acct.egg{color:var(--accent);font-weight:700}
+.btn.acct.egg{border-color:var(--accent)}
 .rank-list li .pt{font-family:var(--display);color:var(--accent)}
 .rank-list li.me{border-color:var(--accent);background:var(--accent-soft)}
 .set-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
@@ -164,7 +166,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.11</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.12</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -262,8 +264,11 @@ const SAMPLE="가는 말이 고와야 오는 말이 곱다.\n천 리 길도 한 
 const $=id=>document.getElementById(id);
 // 깃허브 버전에서만 채워요: 파이어베이스 설정값이 있으면 아이디 로그인과 클라우드 저장이 켜져요
 const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomain": "whitetigertype.firebaseapp.com", "projectId": "whitetigertype", "storageBucket": "whitetigertype.firebasestorage.app", "messagingSenderId": "371671407725", "appId": "1:371671407725:web:2fa520d22485503517f364"};
-let cloudHook=null;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&(k==="tt-lib"||k==="tt-pt"))cloudHook()}};
+let cloudHook=null,eggHook=null;
+// 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
+const EGG="무지개를바라보는이의눈동자엔무지개빛세상이비치기마련";
+const isEgg=t=>t.normalize("NFC").replace(/무지갯빛/g,"무지개빛").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&(k==="tt-lib"||k==="tt-pt"||k==="tt-egg"))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -838,14 +843,15 @@ function finish(){$("bar").style.width="100%";
   const total=S.doneStrokes,gain=Math.floor(total/10);addPts(gain);
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain;
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
+  else if(!S.src&&isEgg(S.lines.join(""))&&!store.get("tt-egg",false)){store.set("tt-egg",true);if(eggHook)eggHook();$("result-sub").textContent+="  ·  ✦"}
   else if(S.pid&&dailyHooks.preset)dailyHooks.preset(S.pid,avg,acc,Math.max(1,Math.round(S.activeDone)));
   show("done")}
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:mine}}
+  return {v:1,pt:store.get("tt-pt",0),lib:mine,egg:!!store.get("tt-egg",false)}}
 function applyData(d){
-  const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();
+  const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);if(eggHook)eggHook();
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
   const first=d.lib.find(q=>q&&typeof q.id==="string"&&!q.id.startsWith("preset-"));if(first&&lib.some(p=>p.id===first.id))curId=first.id;
@@ -853,7 +859,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   if(!lib.length)lib=PRESETS.map(p=>({...p}));Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>saved[p.id]={title:p.title,text:p.text});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 function addPts(n){store.set("tt-pt",store.get("tt-pt",0)+n);showPts();const e=$("pts");e.classList.remove("up");void e.offsetWidth;if(n>0)e.classList.add("up")}
 showPts();
@@ -915,17 +921,20 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(/too-many-requests/.test(c))return "잠시 후 다시";if(/network/.test(c))return "연결 오류";return "오류: "+c};
   let uid=null,applying=false,pushT=0,pushing=false,again=false,nick="",pendNick="";
   const cleanNick=v=>[...String(v||"").replace(/\s+/g," ").trim()].slice(0,12).join("");
-  const showNick=id=>{const n=nick||id;acct.textContent=n;$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
+  const showNick=id=>{const n=nick||id;acct.textContent=n;acct.classList.toggle("egg",!!store.get("tt-egg",false));$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
     try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
     pushRank();pushing=false;if(again){again=false;push()}}
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
-  async function pushRank(){if(!uid)return;const pt=Math.floor(Number(store.get("tt-pt",0))||0),nm=nick||"",key=nm+"|"+pt;if(key===lastRank)return;
-    try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()});lastRank=key}catch(e){}}
+  async function pushRank(){if(!uid)return;const pt=Math.floor(Number(store.get("tt-pt",0))||0),nm=nick||"",egg=!!store.get("tt-egg",false),key=nm+"|"+pt+"|"+egg;if(key===lastRank)return;
+    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;
+    try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){if(egg){try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()})}catch(e2){}}}}
+  eggHook=()=>{if(auth.currentUser)showNick(auth.currentUser.email.split("@")[0])};
   // 닉네임은 rank/{uid}에 있는 지금 닉네임으로 보여 줘요 (바꾸면 모든 랭킹에 바로 적용)
-  async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]=nick;return}
-    try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]=String(v.nick)}}catch(e){}}));return m}
+  async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]={n:nick,egg:!!store.get("tt-egg",false)};return}
+    try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]={n:String(v.nick),egg:v.egg===true}}}catch(e){}}));return m}
+  const nmEl=(mk,o,v)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");return e};
   const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
   let rTab="pt";
   function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
@@ -933,7 +942,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function loadRank(){psel.hidden=rTab!=="ps";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
-        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";b.textContent=(d.id===uid&&nick)?nick:String(v.nick||"이름 없음");
+        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
@@ -948,7 +957,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
       const rows=[];snap.forEach(d=>{const v=d.data()||{};if(v.spd)rows.push({id:d.id,v})});const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
-        li.append(mk("no",n),mk("nm",nm[id]||String(v.nick||"이름 없음")),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",Math.round(Number(v.spd)||0)),mk("ts",fmtT(Number(v.ms)||0)));list.appendChild(li)});
+        li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",Math.round(Number(v.spd)||0)),mk("ts",fmtT(Number(v.ms)||0)));list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   dailyHooks.preset=async(pid,spd,acc,ms)=>{if(!uid||!spd)return;const sub=$("result-sub");
     if(acc<80){sub.textContent+="  ·  정확도 80% 미만, 지문 랭킹 기록 안 함";return}
@@ -994,7 +1003,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       const rows=[];snap.forEach(d=>{const v=d.data()||{};if(v.ms)rows.push({id:d.id,v})});const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
         const ms=Number(v.ms),ac=Math.round(Number(v.acc)||0),ts=Math.round(sk*ac/100/(ms/60000));
-        li.append(mk("no",n),mk("nm",nm[id]||String(v.nick||"이름 없음")),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
+        li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
   function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
@@ -1012,7 +1021,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
   AU.onAuthStateChanged(auth,async user=>{
-    if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";return}
+    if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
