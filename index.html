@@ -66,6 +66,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 #admin-list{min-height:220px;font-size:.95rem}
 .home{color:inherit;text-decoration:none;cursor:pointer}
 .home:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.fx-ring{position:absolute;inset:-2px;pointer-events:none;border:4px solid;filter:drop-shadow(0 0 6px rgba(255,255,255,.35));border-image:linear-gradient(90deg,#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A) 1;z-index:3}
+.fx-bit{position:absolute;width:9px;height:9px;pointer-events:none;z-index:3;box-shadow:0 0 8px currentColor}
 .pts{font-family:var(--display);font-size:1.15rem;color:var(--accent);white-space:nowrap;display:inline-block}
 .pts.up{animation:ptup .6s ease-out}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
@@ -156,7 +158,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -189,6 +191,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
+    <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
       <span class="set-l">오늘의 문장 목록 (관리자)</span>
       <p class="hint">한 줄에 한 문장 · 첫 줄이 오늘, 다음 줄이 내일 순서 · 끝까지 가면 처음부터 다시 · 오늘 이미 도전한 사람이 있으면 첫 줄은 그대로 두기</p>
@@ -806,7 +809,21 @@ function submit(){const now=performance.now();if(now-S.last<120)return;S.last=no
   const lineAcc=ok/Math.max(t.length,v.length);
   if(lineAcc>=0.8&&Math.round(sp)>S.best){S.best=Math.round(sp);S.newBest=true}
   S.doneStrokes+=okS;S.okS=0;if(S.start)S.activeDone+=now-S.start;S.start=0;logStroke(now);stats();S.i++;
-  if(S.i>=S.lines.length)finish();else showLine()}
+  burst();if(S.i>=S.lines.length)finish();else showLine()}
+// 무지개 테마: 한 줄을 끝낼 때마다 입력칸 테두리에서 무지갯빛이 터져요 (설정에서 끌 수 있어요)
+const FX_COLORS=["#FF5A5A","#FFB13D","#FFE53D","#4BE08A","#4FC3F7","#7A8CFF","#C77DFF"];
+function fxOn(){return store.get("tt-fx",true)}
+function burst(){if(document.documentElement.dataset.skin!=="rainbow"||!fxOn()||S.i>=S.lines.length)return;
+  try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+  const box=document.querySelector(".typewrap");if(!box||!box.animate)return;const W=box.clientWidth,H=box.clientHeight;
+  const ring=document.createElement("div");ring.className="fx-ring";box.appendChild(ring);
+  ring.animate([{transform:"scale(1)",opacity:1},{transform:"scale(1.025,1.15)",opacity:1,offset:.35},{transform:"scale(1.06,1.4)",opacity:0}],{duration:750,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>ring.remove();
+  const N=40,per=2*(W+H);
+  for(let k=0;k<N;k++){const d=(k+Math.random()*.6)/N*per;let x,y,nx,ny;
+    if(d<W){x=d;y=0;nx=0;ny=-1}else if(d<W+H){x=W;y=d-W;nx=1;ny=0}else if(d<2*W+H){x=W-(d-W-H);y=H;nx=0;ny=1}else{x=0;y=H-(d-2*W-H);nx=-1;ny=0}
+    const b=document.createElement("i");b.className="fx-bit";b.style.left=(x-4.5)+"px";b.style.top=(y-4.5)+"px";b.style.background=b.style.color=FX_COLORS[k%FX_COLORS.length];box.appendChild(b);
+    const dist=26+Math.random()*46,sx=(Math.random()-.5)*16,dx=nx*dist+(ny?sx:0),dy=ny*dist+(nx?sx:0);
+    b.animate([{transform:"translate(0,0) rotate(0) scale(1.2)",opacity:1},{transform:"translate("+dx*.7+"px,"+dy*.7+"px) rotate(90deg) scale(1)",opacity:1,offset:.5},{transform:"translate("+dx+"px,"+dy+"px) rotate("+(90+Math.random()*180)+"deg) scale(.4)",opacity:0}],{duration:700+Math.random()*300,easing:"cubic-bezier(.15,.8,.3,1)"}).onfinish=()=>b.remove()}}
 function finish(){$("bar").style.width="100%";
   S.frozen=speeds(performance.now());const avg=S.frozen[1],acc=S.typed?Math.round(S.correct/S.typed*100):100;
   stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";
@@ -862,7 +879,9 @@ function dailyText(day){const n=dayNum(day);
 const dailyHooks={start:null,finish:null};
 function closePanels(except){["login","rank","settings","daily"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
   if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
+function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
+$("fxbtn").onclick=()=>{store.set("tt-fx",!store.get("tt-fx",true));showFx()};showFx();
 $("setbtn").onclick=()=>{const c=$("settings"),open=c.hidden;closePanels(open?"settings":null);c.hidden=!open};setSkin(store.get("tt-skin","basic"));
 // 랜덤 문단: 기본 지문 전체에서 본문 문단 하나를 골라요. 소제목(■) 아래 문단이면 소제목부터 쳐요
 function randomPara(){const pool=[];PRESETS.forEach(p=>{let head="";p.text.split("\n").map(s=>s.trim()).forEach(s=>{if(s.startsWith("■")){head=s;return}if(prep(s).typ.length>=40)pool.push({title:p.title,text:(head?head+"\n":"")+s})})});
