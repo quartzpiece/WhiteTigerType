@@ -61,7 +61,11 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .set-l{color:var(--muted);min-width:3em}
 .daily-text{font-size:1.25rem;line-height:1.6;margin:0;word-break:keep-all;border-left:5px solid var(--accent);padding-left:14px}
 .rank-list li .ac{color:var(--muted);font-size:.85rem}
-.rank-list.daily-l li{grid-template-columns:2.5em 1fr auto auto}
+.rank-list.daily-l li{grid-template-columns:2.5rem 1fr 3.8rem 3.8rem 5rem}
+.rank-list.daily-l li>span:nth-child(n+3){text-align:right}
+.rank-list.daily-l li.hd{border:0;background:none;padding:0 11px;color:var(--muted);font-size:.8rem}
+.rank-list.daily-l li:nth-child(4) .no{color:var(--accent)}
+.rank-list li .ts{font-family:var(--display)}
 .rtabs{display:flex;gap:6px}
 .rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
@@ -159,7 +163,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.8</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.9</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -955,9 +959,13 @@ async function initCloud(){if(!FB_CONFIG)return;
     await fillDaily($("daily-list"),day)}
   async function fillDaily(list,day){
     try{const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
-      snap.forEach(d=>{const v=d.data()||{};if(!v.ms)return;n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
-        const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
-        li.append(mk("no",n),mk("nm",String(v.nick||"이름 없음")),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",(Number(v.ms)/1000).toFixed(2)+"초"));list.appendChild(li)});
+      // 타수: 오늘의 문장 타수 × 정확도 ÷ 걸린 시간(분)
+      const sk=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0);
+      const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
+      const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
+      snap.forEach(d=>{const v=d.data()||{};if(!v.ms)return;if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
+        const ms=Number(v.ms),ac=Math.round(Number(v.acc)||0),ts=Math.round(sk*ac/100/(ms/60000));
+        li.append(mk("no",n),mk("nm",String(v.nick||"이름 없음")),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
   function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
