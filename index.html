@@ -69,6 +69,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rank-list.daily-l li:nth-child(4) .no{color:var(--accent)}
 .rank-list li .ts{font-family:var(--display)}
 .rtabs{display:flex;gap:6px;flex-wrap:wrap}
+.btn:disabled{opacity:.35;cursor:default}
+.dnav{gap:10px}.dnav .btn{padding:6px 12px}.dnav-d{font-family:var(--display);min-width:6.5em;text-align:center}
 .rsel{font:inherit;color:var(--fg);background:var(--bg);border:2px solid var(--line);padding:8px 10px;border-radius:0;width:100%;min-width:0}
 .rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
@@ -176,7 +178,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.4.1</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.4.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -239,6 +241,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="row" style="justify-content:space-between"><b class="rank-h">랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
     <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button></div>
     <select class="rsel" id="rank-psel" aria-label="지문" hidden></select>
+    <div class="row dnav" id="rank-dnav" hidden><button class="btn acct" id="rd-prev" type="button" aria-label="이전 날">◀</button><b class="dnav-d" id="rd-day"></b><button class="btn acct" id="rd-next" type="button" aria-label="다음 날">▶</button></div>
     <p class="hint" id="rank-dtext" hidden></p>
     <ol class="rank-list" id="rank-list"></ol>
     <p class="hint" id="rank-msg" aria-live="polite"></p>
@@ -907,7 +910,7 @@ function todayKey(){try{return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/S
 let DAILY_CUSTOM=null; // 관리자가 정한 목록 {list, start}
 const dayNum=day=>Math.floor(Date.parse(day+"T00:00:00Z")/86400000);
 function dailyText(day){const n=dayNum(day);
-  if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
+  if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length&&day>=DAILY_CUSTOM.start){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
 const dailyHooks={start:null,finish:null,preset:null};
 function closePanels(except){["login","rank","settings","daily"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
@@ -969,14 +972,14 @@ async function initCloud(){if(!FB_CONFIG)return;
   let rTab="pt";
   function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
     if(t==="ps"){const o=PRESETS.find(x=>x.id===curId);if(o)psel.value=o.id}loadRank()}
-  async function loadRank(){psel.hidden=rTab!=="ps";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
+  async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
-  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>setRTab("daily");$("rtab-ps").onclick=()=>setRTab("ps");
+  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");
   // 지문 랭킹: prank/{지문 id}/runs/{uid} = {nick, spd(평균 타수), acc, ms, at}. 기본 지문 그대로 끝까지, 정확도 80% 이상일 때 내 최고 기록만 남겨요
   const psel=$("rank-psel");PRESETS.forEach(o=>{const op=document.createElement("option");op.value=o.id;op.textContent=o.title;psel.appendChild(op)});
   psel.onchange=loadRank;
@@ -996,9 +999,13 @@ async function initCloud(){if(!FB_CONFIG)return;
       if(old>=spd){sub.textContent+="  ·  지문 랭킹 최고 기록: "+old;return}
       await FS.setDoc(ref,{nick:nick||"",spd:Math.round(spd),acc:Math.round(acc),ms:Math.round(ms),at:Date.now()});sub.textContent+="  ·  지문 랭킹 새 기록"}
     catch(e){sub.textContent+="  ·  지문 랭킹 저장 실패"}};
-  async function loadRankDaily(){await cfgReady;const day=todayKey(),list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l";
-    t.hidden=false;t.textContent=day+" · "+dailyText(day);m.textContent="불러오는 중";const n=await fillDaily(list,day);
-    m.textContent=n<0?"랭킹을 불러올 수 없음":(n&&!uid?"로그인하면 도전 가능":"")}
+  // 이전 날짜 랭킹: ◀ ▶ 로 넘겨 봐요 (오늘의 문장을 시작한 2026-11-05부터 오늘까지)
+  const D_FROM="2026-11-05",dShift=(day,k)=>new Date((dayNum(day)+k)*86400000).toISOString().slice(0,10);let rDay="";
+  $("rd-prev").onclick=()=>{rDay=dShift(rDay||todayKey(),-1);loadRank()};$("rd-next").onclick=()=>{rDay=dShift(rDay||todayKey(),1);loadRank()};
+  async function loadRankDaily(){await cfgReady;const today=todayKey();if(!rDay||rDay>today)rDay=today;if(rDay<D_FROM)rDay=D_FROM;const day=rDay,list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l";
+    $("rd-day").textContent=day===today?"오늘":day;$("rd-prev").disabled=day<=D_FROM;$("rd-next").disabled=day>=today;
+    t.hidden=false;t.textContent=dailyText(day);m.textContent="불러오는 중";const n=await fillDaily(list,day);if(day!==rDay)return;
+    m.textContent=n<0?"랭킹을 불러올 수 없음":(n&&!uid&&day===today?"로그인하면 도전 가능":"")}
   // 오늘의 문장: daily/{날짜}/runs/{uid}. 첫 글자에서 만들고(nick, st, at), 끝나면 ms·acc를 한 번만 더해요
   const dCard=$("daily"),dBtn=$("dailybtn");dBtn.hidden=false;
   const ADMIN="admin",cfgRef=FS.doc(fdb,"config","daily");
