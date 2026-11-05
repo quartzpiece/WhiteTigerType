@@ -73,6 +73,13 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
+#fb-text{min-height:90px}
+.fb-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.fb-list li{border:1px solid var(--line);background:var(--bg);padding:10px 12px;display:grid;gap:6px}
+.fb-list .fb-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;color:var(--muted);font-size:.85rem}
+.fb-list .fb-h b{color:var(--accent);font-weight:700}
+.fb-list .fb-t{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.fb-list .fb-x{margin-left:auto;padding:4px 10px;font-size:.8rem}
 .home{color:inherit;text-decoration:none;cursor:pointer}
 .home:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .fx-key{position:absolute;width:18px;height:18px;pointer-events:none;z-index:3;border:2px solid currentColor;box-shadow:0 0 8px currentColor}
@@ -167,7 +174,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.16</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.4.0</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -207,6 +214,15 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <textarea id="admin-list" aria-label="오늘의 문장 목록" spellcheck="false"></textarea>
       <div class="row"><button class="btn primary" id="admin-save" type="button">목록 저장</button><span class="hint" id="admin-msg" aria-live="polite"></span></div>
       <p class="hint" id="admin-prev"></p>
+    </div>
+    <div class="admin-box" id="fb-box" hidden>
+      <span class="set-l">제작자에게 건의하기</span>
+      <textarea id="fb-text" aria-label="건의 내용" maxlength="500" placeholder="건의 내용"></textarea>
+      <div class="row"><button class="btn primary" id="fb-send" type="button">보내기</button><span class="hint" id="fb-msg" aria-live="polite"></span></div>
+    </div>
+    <div class="admin-box" id="fb-admin" hidden>
+      <div class="row" style="justify-content:space-between"><span class="set-l">건의함 (관리자)</span><button class="btn acct" id="fb-re" type="button">새로고침</button></div>
+      <ol class="fb-list" id="fb-list"></ol>
     </div>
   </section>
 
@@ -997,7 +1013,27 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("admin-save").onclick=async()=>{const L=adminPrev(),m=$("admin-msg");if(!L.length){m.textContent="한 문장 이상 필요";return}
     if(L.some(x=>[...x].length>150)){m.textContent="150자 넘는 문장이 있음";return}
     m.textContent="저장 중";try{const v={list:L,start:todayKey(),at:Date.now()};await FS.setDoc(cfgRef,v);DAILY_CUSTOM={list:L,start:v.start};m.textContent="저장 완료"}catch(e){m.textContent="저장 실패 (규칙 확인)"}};
-  $("setbtn").addEventListener("click",()=>{if(!$("settings").hidden)adminShow()});
+  $("setbtn").addEventListener("click",()=>{if(!$("settings").hidden){adminShow();fbShow()}});
+  // 건의하기: fb/{uid_시각} = {uid, id, nick, text, at}. 로그인한 사람이 보내고, 관리자(admin)만 읽고 지울 수 있어요
+  $("fb-box").hidden=false;
+  const fbMsg=t=>{$("fb-msg").textContent=t};
+  function fbShow(){const u=auth.currentUser;$("fb-send").disabled=!u;fbMsg(u?"":"로그인하면 건의 가능");
+    const isA=!!u&&u.email.split("@")[0]===ADMIN;$("fb-admin").hidden=!isA;if(isA)loadFb()}
+  $("fb-send").onclick=async()=>{const u=auth.currentUser;if(!u){fbShow();return}const t=$("fb-text").value.trim();
+    if(!t){fbMsg("내용 없음");return}if([...t].length>500){fbMsg("500자까지");return}
+    const id=u.email.split("@")[0];$("fb-send").disabled=true;fbMsg("보내는 중");
+    try{await FS.setDoc(FS.doc(fdb,"fb",u.uid+"_"+Date.now()),{uid:u.uid,id:id,nick:nick||id,text:t,at:Date.now()});$("fb-text").value="";fbMsg("보냄");if(id===ADMIN)loadFb()}
+    catch(e){fbMsg("보내기 실패")}$("fb-send").disabled=false};
+  async function loadFb(){const list=$("fb-list");list.innerHTML="";const wait=document.createElement("li");wait.textContent="불러오는 중";list.appendChild(wait);
+    try{const q=FS.query(FS.collection(fdb,"fb"),FS.orderBy("at","desc"),FS.limit(50));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
+      snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");const h=document.createElement("div");h.className="fb-h";
+        const nm=document.createElement("b");nm.textContent=String(v.nick||"");const idv=document.createElement("span");idv.textContent="아이디: "+String(v.id||"");
+        const tm=document.createElement("span");const dt=new Date(Number(v.at)||0);tm.textContent=dt.toLocaleString("ko-KR",{timeZone:"Asia/Seoul",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+        const x=document.createElement("button");x.type="button";x.className="btn acct fb-x";x.textContent="지우기";
+        x.onclick=async()=>{if(x.dataset.arm!=="1"){x.dataset.arm="1";x.textContent="한 번 더";return}x.disabled=true;try{await FS.deleteDoc(FS.doc(fdb,"fb",d.id));li.remove();if(!list.children.length){const e=document.createElement("li");e.textContent="건의 없음";list.appendChild(e)}}catch(e){x.disabled=false;x.textContent="실패"}};
+        h.append(nm,idv,tm,x);const tx=document.createElement("div");tx.className="fb-t";tx.textContent=String(v.text||"");li.append(h,tx);list.appendChild(li)});
+      if(!n){const li=document.createElement("li");li.textContent="건의 없음";list.appendChild(li)}}catch(e){list.innerHTML="";const li=document.createElement("li");li.textContent="불러올 수 없음 (규칙 확인)";list.appendChild(li)}}
+  $("fb-re").onclick=loadFb;
   const runRef=day=>FS.doc(fdb,"daily",day,"runs",uid);
   async function loadDaily(){await cfgReady;const day=todayKey(),txt=dailyText(day);$("daily-date").textContent=day;$("daily-text").textContent=txt;
     const go=$("daily-go"),m=$("daily-msg");go.disabled=true;m.textContent="확인 중";
