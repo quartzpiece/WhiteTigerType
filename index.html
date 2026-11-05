@@ -154,7 +154,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.3.1</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.3.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -197,7 +197,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   </section>
 
   <section class="card daily" id="daily" hidden>
-    <div class="row" style="justify-content:space-between"><b class="rank-h">오늘의 문장</b><span class="hint" id="daily-date"></span></div>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">오늘의 문장</b><span class="row" style="gap:12px"><span class="hint" id="daily-date"></span><button class="btn acct" id="daily-back" type="button">뒤로가기</button></span></div>
     <p class="daily-text" id="daily-text"></p>
     <div class="row"><button class="btn primary" id="daily-go" type="button">도전</button><span class="hint" id="daily-msg" aria-live="polite"></span></div>
     <ol class="rank-list daily-l" id="daily-list"></ol>
@@ -858,7 +858,8 @@ function dailyText(day){const n=dayNum(day);
   if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
 const dailyHooks={start:null,finish:null};
-function closePanels(except){["login","rank","settings","daily"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"))}
+function closePanels(except){["login","rank","settings","daily"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
+  if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
 $("setbtn").onclick=()=>{const c=$("settings"),open=c.hidden;closePanels(open?"settings":null);c.hidden=!open};setSkin(store.get("tt-skin","basic"));
 // 랜덤 문단: 기본 지문 전체에서 본문 문단 하나를 골라요. 소제목(■) 아래 문단이면 소제목부터 쳐요
@@ -923,14 +924,17 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(!uid){m.textContent="로그인하면 도전 가능"}
     else{try{const sn=await FS.getDoc(runRef(day));
       if(!sn.exists()){go.disabled=false;m.textContent="남은 도전 횟수: 1회"}
-      else{const v=sn.data()||{};m.textContent=v.ms?"내 기록: "+(v.ms/1000).toFixed(2)+"초":"오늘은 이미 도전함"}}catch(e){m.textContent="불러올 수 없음"}}
+      else{const v=sn.data()||{};m.textContent="남은 도전 횟수: 0회"}}catch(e){m.textContent="불러올 수 없음"}}
     const list=$("daily-list");
     try{const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
       snap.forEach(d=>{const v=d.data()||{};if(!v.ms)return;n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
         li.append(mk("no",n),mk("nm",String(v.nick||"이름 없음")),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",(Number(v.ms)/1000).toFixed(2)+"초"));list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}}catch(e){list.innerHTML=""}}
-  dBtn.onclick=()=>{const o=dCard.hidden;closePanels(o?"daily":null);dCard.hidden=!o;if(o)loadDaily()};
+  // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
+  function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
+  dBtn.onclick=openDaily;
+  $("daily-back").onclick=()=>{dCard.hidden=true;show("setup")};
   let dDay="";
   $("daily-go").onclick=async()=>{if(!uid)return;const day=todayKey();$("daily-go").disabled=true;
     try{const sn=await FS.getDoc(runRef(day));if(sn.exists()){loadDaily();return}}catch(e){$("daily-msg").textContent="불러올 수 없음";return}
@@ -938,7 +942,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   dailyHooks.start=async()=>{if(!uid||!dDay)return;try{await FS.setDoc(runRef(dDay),{nick:nick||"",st:1,at:Date.now()})}catch(e){}};
   dailyHooks.finish=async(ms,acc)=>{if(!uid||!dDay)return;const day=dDay;dDay="";
     try{await FS.updateDoc(runRef(day),{ms:ms,acc:acc});$("result-sub").textContent+="  ·  오늘의 문장 기록 저장됨"}catch(e){$("result-sub").textContent+="  ·  기록 저장 실패"}
-    closePanels("daily");dCard.hidden=false;loadDaily()};
+    openDaily()};
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
