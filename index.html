@@ -139,7 +139,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.0.2</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.0.3</span></h1>
     <div class="hright">
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
@@ -157,10 +157,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   <section class="card login" id="login" hidden>
     <div id="login-form">
       <div class="row"><input class="ptitle" id="lg-id" aria-label="아이디" placeholder="아이디 (영문·숫자 3~20자)" autocomplete="username" autocapitalize="off" spellcheck="false"><input class="ptitle" id="lg-pw" type="password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" autocomplete="current-password"></div>
+      <div class="row" style="margin-top:10px"><input class="ptitle" id="lg-nick" aria-label="닉네임" placeholder="닉네임 (가입할 때, 12자까지)" maxlength="12" autocomplete="nickname"></div>
       <div class="row" style="margin-top:10px"><button class="btn primary" id="lg-in" type="button">로그인</button><button class="btn" id="lg-up" type="button">가입</button><span class="hint" id="lg-msg" aria-live="polite"></span></div>
     </div>
     <div id="login-on" hidden>
-      <div class="row"><span id="lg-who"></span><button class="btn" id="lg-out" type="button">로그아웃</button><span class="hint" id="lg-sync" aria-live="polite"></span></div>
+      <div class="row"><span id="lg-who"></span><span class="hint" id="lg-idv"></span><button class="btn" id="lg-out" type="button">로그아웃</button><span class="hint" id="lg-sync" aria-live="polite"></span></div>
+      <div class="row" style="margin-top:10px"><input class="ptitle" id="lg-nick2" aria-label="새 닉네임" placeholder="새 닉네임 (12자까지)" maxlength="12"><button class="btn" id="lg-nickset" type="button">닉네임 변경</button></div>
     </div>
   </section>
 
@@ -821,26 +823,32 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(/invalid-credential|wrong-password|user-not-found|invalid-email/.test(c))return "아이디 또는 비밀번호 오류";
     if(/email-already-in-use/.test(c))return "이미 있는 아이디";if(/weak-password/.test(c))return "비밀번호 6자 이상";
     if(/too-many-requests/.test(c))return "잠시 후 다시";if(/network/.test(c))return "연결 오류";return "오류: "+c};
-  let uid=null,applying=false,pushT=0,pushing=false,again=false;
+  let uid=null,applying=false,pushT=0,pushing=false,again=false,nick="",pendNick="";
+  const cleanNick=v=>[...String(v||"").replace(/\s+/g," ").trim()].slice(0,12).join("");
+  const showNick=id=>{const n=nick||id;acct.textContent=n;$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
-    try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
+    try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
     pushing=false;if(again){again=false;push()}}
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
   AU.onAuthStateChanged(auth,async user=>{
-    if(!user){uid=null;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";return}
-    const id=user.email.split("@")[0];$("lg-who").textContent=id;$("login-form").hidden=true;$("login-on").hidden=false;acct.textContent=id;msg("");
+    if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";return}
+    const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
+    if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
-      if(snap.exists()&&!fresh){applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료")}
+      if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료")}
       else{uid=user.uid;fresh=false;await push()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
   $("lg-up").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}if(pw.length<6){msg("비밀번호 6자 이상");return}
-    msg("가입 중");fresh=true;try{await AU.createUserWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){fresh=false;msg(errText(e))}};
+    pendNick=cleanNick($("lg-nick").value);if(!pendNick){msg("닉네임을 정해 주세요");return}
+    msg("가입 중");fresh=true;try{await AU.createUserWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value="";$("lg-nick").value=""}catch(e){fresh=false;msg(errText(e))}};
   $("lg-pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("lg-in").click()});
+  $("lg-nickset").onclick=async()=>{const n=cleanNick($("lg-nick2").value);if(!n||!uid){sync("닉네임을 적어 주세요");return}
+    nick=n;showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
   $("lg-out").onclick=async()=>{clearTimeout(pushT);if(uid)await push();uid=null;await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
 }
 initCloud();
