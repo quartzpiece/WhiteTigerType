@@ -49,6 +49,14 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px
 .wrap{max-width:820px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
 h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-height:1.1}
+.rank-h{font-family:var(--display);font-weight:400;font-size:1.25rem}
+.rank-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.rank-list li{display:grid;grid-template-columns:2.5em 1fr auto;gap:10px;align-items:center;padding:6px 10px;border:1px solid var(--line);background:var(--bg)}
+.rank-list li .no{font-family:var(--display);color:var(--muted)}
+.rank-list li:nth-child(-n+3) .no{color:var(--accent)}
+.rank-list li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-list li .pt{font-family:var(--display);color:var(--accent)}
+.rank-list li.me{border-color:var(--accent);background:var(--accent-soft)}
 .pts{font-family:var(--display);font-size:1.15rem;color:var(--accent);white-space:nowrap;display:inline-block}
 .pts.up{animation:ptup .6s ease-out}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
@@ -139,8 +147,9 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.1.0</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.2.0</span></h1>
     <div class="hright">
+      <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
       <button class="btn" id="edit" type="button" hidden>지문 바꾸기</button>
@@ -164,6 +173,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <div class="row"><span id="lg-who"></span><span class="hint" id="lg-idv"></span><button class="btn" id="lg-out" type="button">로그아웃</button><span class="hint" id="lg-sync" aria-live="polite"></span></div>
       <div class="row" style="margin-top:10px"><input class="ptitle" id="lg-nick2" aria-label="새 닉네임" placeholder="새 닉네임 (12자까지)" maxlength="12"><button class="btn" id="lg-nickset" type="button">닉네임 변경</button></div>
     </div>
+  </section>
+
+  <section class="card rank" id="rank" hidden>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">포인트 랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
+    <ol class="rank-list" id="rank-list"></ol>
+    <p class="hint" id="rank-msg" aria-live="polite"></p>
   </section>
 
   <div class="stats">
@@ -816,7 +831,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   try{[A,AU,FS]=await Promise.all([import(V+"firebase-app.js"),import(V+"firebase-auth.js"),import(V+"firebase-firestore.js")])}catch(e){return}
   const app=A.initializeApp(FB_CONFIG),auth=AU.getAuth(app),fdb=FS.getFirestore(app);
   const acct=$("acct"),panel=$("login"),msg=t=>$("lg-msg").textContent=t||"",sync=t=>$("lg-sync").textContent=t||"";
-  acct.hidden=false;acct.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden&&!auth.currentUser)$("lg-id").focus()};
+  acct.hidden=false;acct.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden)$("rank").hidden=true;if(!panel.hidden&&!auth.currentUser)$("lg-id").focus()};
   const mail=id=>id+"@baekho-typing.app";
   const getId=()=>{const v=$("lg-id").value.trim().toLowerCase();return /^[a-z0-9_]{3,20}$/.test(v)?v:null};
   const errText=e=>{const c=e&&e.code||"";
@@ -828,7 +843,20 @@ async function initCloud(){if(!FB_CONFIG)return;
   const showNick=id=>{const n=nick||id;acct.textContent=n;$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
     try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
-    pushing=false;if(again){again=false;push()}}
+    pushRank();pushing=false;if(again){again=false;push()}}
+  // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
+  let lastRank="";
+  async function pushRank(){if(!uid)return;const pt=Math.floor(Number(store.get("tt-pt",0))||0),nm=nick||"",key=nm+"|"+pt;if(key===lastRank)return;
+    try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()});lastRank=key}catch(e){}}
+  const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
+  async function loadRank(){const list=$("rank-list"),m=$("rank-msg");m.textContent="불러오는 중";
+    try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
+      list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
+        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";b.textContent=String(v.nick||"이름 없음");
+        const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
+      m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
+  rankBtn.onclick=()=>{rankCard.hidden=!rankCard.hidden;if(!rankCard.hidden){panel.hidden=true;loadRank()}};
+  $("rank-re").onclick=loadRank;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
@@ -837,7 +865,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
-      if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료")}
+      if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료");pushRank()}
       else{uid=user.uid;fresh=false;await push()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
     panel.hidden=true});
@@ -848,8 +876,8 @@ async function initCloud(){if(!FB_CONFIG)return;
     msg("가입 중");fresh=true;try{await AU.createUserWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value="";$("lg-nick").value=""}catch(e){fresh=false;msg(errText(e))}};
   $("lg-pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("lg-in").click()});
   $("lg-nickset").onclick=async()=>{const n=cleanNick($("lg-nick2").value);if(!n||!uid){sync("닉네임을 적어 주세요");return}
-    nick=n;showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
-  $("lg-out").onclick=async()=>{clearTimeout(pushT);if(uid)await push();uid=null;await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
+    nick=n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
+  $("lg-out").onclick=async()=>{clearTimeout(pushT);if(uid)await push();uid=null;lastRank="";await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
 }
 initCloud();
 })();
