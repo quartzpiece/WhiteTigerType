@@ -147,7 +147,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 1.2.1</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 1.2.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
@@ -218,7 +218,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 const SAMPLE="가는 말이 고와야 오는 말이 곱다.\n천 리 길도 한 걸음부터.\n구슬이 서 말이라도 꿰어야 보배다.\nThe quick brown fox jumps over the lazy dog.";
 const $=id=>document.getElementById(id);
 // 깃허브 버전에서만 채워요: 파이어베이스 설정값이 있으면 아이디 로그인과 클라우드 저장이 켜져요
-const FB_CONFIG=null;
+const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomain": "whitetigertype.firebaseapp.com", "projectId": "whitetigertype", "storageBucket": "whitetigertype.firebasestorage.app", "messagingSenderId": "371671407725", "appId": "1:371671407725:web:2fa520d22485503517f364"};
 let cloudHook=null;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&(k==="tt-lib"||k==="tt-pt"))cloudHook()}};
 
