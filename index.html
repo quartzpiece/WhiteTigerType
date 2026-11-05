@@ -167,7 +167,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.15</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.16</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -899,13 +899,14 @@ function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="�
 $("fxbtn").onclick=()=>{store.set("tt-fx",!store.get("tt-fx",true));showFx()};showFx();
 function showFxk(){const on=store.get("tt-fxk",false),b=$("fxkbtn");b.textContent="무지개 테마 한 타 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 $("fxkbtn").onclick=()=>{store.set("tt-fxk",!store.get("tt-fxk",false));showFxk()};showFxk();
-// 한 타 효과: 글자를 칠 때마다 커서 자리에서 작은 네모 고리가 퍼져요 (무지개 테마, 설정에서 켜기)
+// 한 타 효과: 글자를 칠 때마다 방금 친 글자 가운데에서 작은 네모 고리가 퍼져요 (무지개 테마, 설정에서 켜기)
 let fxkN=0;
 inp.addEventListener("input",e=>{if(document.documentElement.dataset.skin!=="rainbow"||!store.get("tt-fxk",false)||fxkN>24)return;
   if(e.inputType&&e.inputType.startsWith("delete"))return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(x){}
   requestAnimationFrame(()=>{const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
-    const B=box.getBoundingClientRect(),C=c.getBoundingClientRect();let hue=45;try{hue=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"))||45}catch(x){}
-    const k=document.createElement("i");k.className="fx-key";k.style.left=(C.left-B.left-9)+"px";k.style.top=(C.top-B.top+C.height/2-9)+"px";k.style.color="hsl("+hue+" 95% 63%)";
+    let g=c.previousElementSibling;while(g&&g.classList.contains("auto"))g=g.previousElementSibling;
+    const B=box.getBoundingClientRect(),C=(g||c).getBoundingClientRect();let hue=45;try{hue=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"))||45}catch(x){}
+    const k=document.createElement("i");k.className="fx-key";k.style.left=(C.left-B.left+C.width/2-9)+"px";k.style.top=(C.top-B.top+C.height/2-9)+"px";k.style.color="hsl("+hue+" 95% 63%)";
     box.appendChild(k);fxkN++;k.animate([{transform:"scale(.4)",opacity:1},{transform:"scale(1.6)",opacity:0}],{duration:380,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>{k.remove();fxkN--}})});
 $("setbtn").onclick=()=>{const c=$("settings"),open=c.hidden;closePanels(open?"settings":null);c.hidden=!open};setSkin(store.get("tt-skin","basic"));
 // 랜덤 문단: 기본 지문 전체에서 본문 문단 하나를 골라요. 소제목(■) 아래 문단이면 소제목부터 쳐요
