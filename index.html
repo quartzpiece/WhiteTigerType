@@ -166,7 +166,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.12</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 2.3.13</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -266,8 +266,8 @@ const $=id=>document.getElementById(id);
 const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomain": "whitetigertype.firebaseapp.com", "projectId": "whitetigertype", "storageBucket": "whitetigertype.firebasestorage.app", "messagingSenderId": "371671407725", "appId": "1:371671407725:web:2fa520d22485503517f364"};
 let cloudHook=null,eggHook=null;
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
-const EGG="무지개를바라보는이의눈동자엔무지개빛세상이비치기마련";
-const isEgg=t=>t.normalize("NFC").replace(/무지갯빛/g,"무지개빛").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
+const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
+const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&(k==="tt-lib"||k==="tt-pt"||k==="tt-egg"))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
