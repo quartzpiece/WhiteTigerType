@@ -57,6 +57,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rank-list li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank-list li .pt{font-family:var(--display);color:var(--accent)}
 .rank-list li.me{border-color:var(--accent);background:var(--accent-soft)}
+.set-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.set-l{color:var(--muted);min-width:3em}
 .pts{font-family:var(--display);font-size:1.15rem;color:var(--accent);white-space:nowrap;display:inline-block}
 .pts.up{animation:ptup .6s ease-out}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
@@ -147,19 +149,13 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.2.0</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.2.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
       <button class="btn" id="edit" type="button" hidden>지문 바꾸기</button>
-      <div class="skins" role="group" aria-label="테마">
-        <button class="skin" type="button" data-skin="basic" aria-label="기본 테마" style="--sw-point:#FFD21F;--sw-base:#0A0A08"></button>
-        <button class="skin" type="button" data-skin="green" aria-label="초록 테마" style="--sw-point:#3DDC84;--sw-base:#0A0A08"></button>
-        <button class="skin" type="button" data-skin="sky" aria-label="하늘 테마" style="--sw-point:#5BC8F5;--sw-base:#0A0A08"></button>
-        <button class="skin" type="button" data-skin="rainbow" aria-label="무지개 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
-        <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
-      </div>
+      <button class="btn acct" id="setbtn" type="button" aria-expanded="false">설정</button>
     </div>
   </header>
 
@@ -172,6 +168,19 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div id="login-on" hidden>
       <div class="row"><span id="lg-who"></span><span class="hint" id="lg-idv"></span><button class="btn" id="lg-out" type="button">로그아웃</button><span class="hint" id="lg-sync" aria-live="polite"></span></div>
       <div class="row" style="margin-top:10px"><input class="ptitle" id="lg-nick2" aria-label="새 닉네임" placeholder="새 닉네임 (12자까지)" maxlength="12"><button class="btn" id="lg-nickset" type="button">닉네임 변경</button></div>
+    </div>
+  </section>
+
+  <section class="card settings" id="settings" hidden>
+    <b class="rank-h">설정</b>
+    <div class="set-row"><span class="set-l">테마</span>
+      <div class="skins" role="group" aria-label="테마">
+        <button class="skin" type="button" data-skin="basic" aria-label="기본 테마" style="--sw-point:#FFD21F;--sw-base:#0A0A08"></button>
+        <button class="skin" type="button" data-skin="green" aria-label="초록 테마" style="--sw-point:#3DDC84;--sw-base:#0A0A08"></button>
+        <button class="skin" type="button" data-skin="sky" aria-label="하늘 테마" style="--sw-point:#5BC8F5;--sw-base:#0A0A08"></button>
+        <button class="skin" type="button" data-skin="rainbow" aria-label="무지개 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
+        <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
+      </div>
     </div>
   </section>
 
@@ -817,7 +826,9 @@ setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 function setSkin(k){if(!["basic","green","sky","baekho","rainbow"].includes(k))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
   document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",k)}
-document.querySelectorAll(".skin").forEach(b=>b.onclick=()=>setSkin(b.dataset.skin));setSkin(store.get("tt-skin","basic"));
+document.querySelectorAll(".skin").forEach(b=>b.onclick=()=>setSkin(b.dataset.skin));
+// 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
+$("setbtn").onclick=()=>{const c=$("settings"),open=c.hidden;c.hidden=!open;$("setbtn").setAttribute("aria-expanded",String(open));if(open){$("login").hidden=true;$("rank").hidden=true}};setSkin(store.get("tt-skin","basic"));
 // 랜덤 문단: 기본 지문 전체에서 본문 문단 하나를 골라요. 소제목(■) 아래 문단이면 소제목부터 쳐요
 function randomPara(){const pool=[];PRESETS.forEach(p=>{let head="";p.text.split("\n").map(s=>s.trim()).forEach(s=>{if(s.startsWith("■")){head=s;return}if(prep(s).typ.length>=40)pool.push({title:p.title,text:(head?head+"\n":"")+s})})});
   let r;do{r=pool[Math.random()*pool.length|0]}while(pool.length>1&&S.src&&r.text===S.src.text);return r}
@@ -831,7 +842,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   try{[A,AU,FS]=await Promise.all([import(V+"firebase-app.js"),import(V+"firebase-auth.js"),import(V+"firebase-firestore.js")])}catch(e){return}
   const app=A.initializeApp(FB_CONFIG),auth=AU.getAuth(app),fdb=FS.getFirestore(app);
   const acct=$("acct"),panel=$("login"),msg=t=>$("lg-msg").textContent=t||"",sync=t=>$("lg-sync").textContent=t||"";
-  acct.hidden=false;acct.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden)$("rank").hidden=true;if(!panel.hidden&&!auth.currentUser)$("lg-id").focus()};
+  acct.hidden=false;acct.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden){$("rank").hidden=true;$("settings").hidden=true;$("setbtn").setAttribute("aria-expanded","false")}if(!panel.hidden&&!auth.currentUser)$("lg-id").focus()};
   const mail=id=>id+"@baekho-typing.app";
   const getId=()=>{const v=$("lg-id").value.trim().toLowerCase();return /^[a-z0-9_]{3,20}$/.test(v)?v:null};
   const errText=e=>{const c=e&&e.code||"";
@@ -855,7 +866,7 @@ async function initCloud(){if(!FB_CONFIG)return;
         const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";b.textContent=String(v.nick||"이름 없음");
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
-  rankBtn.onclick=()=>{rankCard.hidden=!rankCard.hidden;if(!rankCard.hidden){panel.hidden=true;loadRank()}};
+  rankBtn.onclick=()=>{rankCard.hidden=!rankCard.hidden;if(!rankCard.hidden){panel.hidden=true;$("settings").hidden=true;$("setbtn").setAttribute("aria-expanded","false");loadRank()}};
   $("rank-re").onclick=loadRank;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
