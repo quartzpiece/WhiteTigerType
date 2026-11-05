@@ -154,7 +154,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.3.0</span></h1>
+    <h1>백호를 위한 커스텀 타자<span class="ver">ver 2.3.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
@@ -201,7 +201,6 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <p class="daily-text" id="daily-text"></p>
     <div class="row"><button class="btn primary" id="daily-go" type="button">도전</button><span class="hint" id="daily-msg" aria-live="polite"></span></div>
     <ol class="rank-list daily-l" id="daily-list"></ol>
-    <p class="hint">하루 한 번 · 첫 글자를 치는 순간 도전 시작 · 시간이 짧을수록 위</p>
   </section>
 
   <section class="card rank" id="rank" hidden>
@@ -923,7 +922,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     const go=$("daily-go"),m=$("daily-msg");go.disabled=true;m.textContent="확인 중";
     if(!uid){m.textContent="로그인하면 도전 가능"}
     else{try{const sn=await FS.getDoc(runRef(day));
-      if(!sn.exists()){go.disabled=false;m.textContent="도전 가능"}
+      if(!sn.exists()){go.disabled=false;m.textContent="남은 도전 횟수: 1회"}
       else{const v=sn.data()||{};m.textContent=v.ms?"내 기록: "+(v.ms/1000).toFixed(2)+"초":"오늘은 이미 도전함"}}catch(e){m.textContent="불러올 수 없음"}}
     const list=$("daily-list");
     try{const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
