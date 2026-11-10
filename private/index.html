@@ -230,7 +230,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.7</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.8</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -381,7 +381,7 @@ function wxSet(kind,on){WX[kind]=!!on;if(WX.snow||WX.rain){if(!WX.cv){const c=do
     if(!WX.run){WX.run=true;WX.last=performance.now();requestAnimationFrame(wxTick)}}
   else{WX.run=false;if(WX.cv){WX.cv.remove();WX.cv=null;removeEventListener("resize",wxSize)}WX.fl=[];WX.dr=[];WX.sp=[];WX.st=[]}}
 const wxDrop=init=>{const vy=900+Math.random()*450;return {x:Math.random()*(WX.W+WX.H*.15),y:init?Math.random()*WX.H:-20-Math.random()*WX.H*.4,vy,vx:-.14*vy,len:14+Math.random()*18}};
-const wxFlake=init=>({x:Math.random()*WX.W,y:init?Math.random()*WX.H:-10-Math.random()*80,vy:28+Math.random()*42,r:2+Math.random()*3,o:.5+Math.random()*.5,ph:Math.random()*6,w:.5+Math.random(),sw:12+Math.random()*22});
+const wxFlake=init=>({x:Math.random()*WX.W,y:init?Math.random()*WX.H:-10-Math.random()*80,vy:60+Math.random()*70,r:2+Math.random()*3,o:.5+Math.random()*.5,ph:Math.random()*6,w:.5+Math.random(),sw:12+Math.random()*22});
 function wxSplash(x,y){const n=2+Math.floor(Math.random()*3);for(let k=0;k<n&&WX.sp.length<500;k++){const life=.25+Math.random()*.25;WX.sp.push({x,y:y-1,vx:(Math.random()-.5)*170,vy:-(110+Math.random()*170),life,max:life})}}
 function wxTick(now){if(!WX.run)return;requestAnimationFrame(wxTick);if(document.hidden){WX.last=now;return}
   const dt=Math.min(.05,(now-WX.last)/1000);WX.last=now;const ctx=WX.ctx,W=WX.W,H=WX.H;if(!ctx)return;ctx.setTransform(WX.dpr,0,0,WX.dpr,0,0);ctx.clearRect(0,0,W,H);
