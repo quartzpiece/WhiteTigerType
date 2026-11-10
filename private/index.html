@@ -145,6 +145,10 @@ h1 small{display:block;font-family:var(--body);font-size:.8rem;color:var(--muted
 .stat span{font-size:.75rem;color:var(--muted);letter-spacing:.03em}
 .snow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .snow i{position:absolute;top:-12px;border-radius:50%;background:#fff;opacity:.7;animation:snowfall linear infinite}
+.rain{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.rain i{position:absolute;top:-80px;width:1px;background:linear-gradient(transparent,rgba(190,210,235,.75));animation:rainfall linear infinite}
+@keyframes rainfall{0%{transform:translate3d(0,0,0) rotate(8deg)}100%{transform:translate3d(-14vh,115vh,0) rotate(8deg)}}
+@media (prefers-reduced-motion:reduce){.rain i{animation-duration:6s!important}}
 @keyframes snowfall{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(var(--dx),50vh,0)}100%{transform:translate3d(0,100vh,0)}}
 @media (prefers-reduced-motion:reduce){.snow i{animation-duration:40s!important}}
 .card{background:var(--card);backdrop-filter:blur(2px);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px;min-width:0}
@@ -225,7 +229,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.5</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.6</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -264,6 +268,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     </div>
     <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row"><span class="set-l">투명도</span><div class="bg-ctl"><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="0" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><button class="btn acct" id="see-reset" type="button">기본값</button></div></div>
+    <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
@@ -374,7 +379,10 @@ const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
 // 눈꽃 이스터에그: 내 지문으로 이 문장을 끝까지 치면 배경에 눈이 내려요(창 뒤로만)
 const SNOW="스스로얼어붙으며온기를선물하는눈꽃처럼";
 const isSnow=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===SNOW;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop"].includes(k))cloudHook()}};
+// 비 이스터에그: 내 지문으로 이 문장을 끝까지 치면 배경에 비가 내려요(창 뒤로만)
+const RAIN="이제는하나둘검은안개에서벗어나바람을맞으며유영하고";
+const isRain=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===RAIN;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -974,6 +982,7 @@ function finish(){$("bar").style.width="100%";
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
+  else if(!S.src&&!String(curId).startsWith("preset-")&&isRain(S.lines.join(""))&&!store.get("tt-rain",false)){store.set("tt-rain",true);store.set("tt-rainfx",true);applyRain();$("result-sub").textContent+="  ·  ☂"}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isSnow(S.lines.join(""))&&!store.get("tt-snow",false)){store.set("tt-snow",true);store.set("tt-snowfx",true);applySnow();$("result-sub").textContent+="  ·  ❄"}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isEgg(S.lines.join(""))&&!store.get("tt-egg",false)){store.set("tt-egg",true);if(eggHook)eggHook();$("result-sub").textContent+="  ·  ✦"}
   else if(S.pid&&dailyHooks.preset)dailyHooks.preset(S.pid,avg,acc,Math.max(1,Math.round(S.activeDone)));
@@ -981,9 +990,9 @@ function finish(){$("bar").style.width="100%";
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60)}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60)}}
 function applyData(d){
-  const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);if(eggHook)eggHook();store.set("tt-snow",d.snow===true);store.set("tt-bookp",cleanBookP(d.bookp));{const m=d.mycap,day=todayKey();if(m&&m.d===day)store.set("tt-mycap",{d:day,p:Math.max(mineCap(),Math.max(0,Number(m.p)||0))})}setTimeout(drawList,0);store.set("tt-snowfx",d.snowfx!==false);applySnow();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
+  const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);if(eggHook)eggHook();store.set("tt-snow",d.snow===true);store.set("tt-bookp",cleanBookP(d.bookp));{const m=d.mycap,day=todayKey();if(m&&m.d===day)store.set("tt-mycap",{d:day,p:Math.max(mineCap(),Math.max(0,Number(m.p)||0))})}setTimeout(drawList,0);store.set("tt-snowfx",d.snowfx!==false);applySnow();store.set("tt-rain",d.rain===true);store.set("tt-rainfx",d.rainfx!==false);applyRain();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
   store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&hidP(q.id));
@@ -995,7 +1004,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=PRESETS.length?PRESETS.map(p=>({...p})):[{id:uid(),title:"지문 1",text:"",ph:1}];Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 // 내 지문 부정 막기(3.1.5): 같은 글자·묶음만 되풀이한 글이나 낱자(ㄱ, ㅏ)는 포인트를 줄이고, 내 지문 포인트는 하루 300까지
 const MINE_CAP=300;
@@ -1150,8 +1159,15 @@ function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snow
   L=document.createElement("div");L.className="snow";L.setAttribute("aria-hidden","true");
   for(let k=0;k<70;k++){const f=document.createElement("i"),z=2+Math.random()*4;f.style.cssText="left:"+(Math.random()*100)+"%;width:"+z+"px;height:"+z+"px;opacity:"+(.35+Math.random()*.5)+";--dx:"+(Math.random()*40-20)+"px;animation-duration:"+(7+Math.random()*9)+"s;animation-delay:-"+(Math.random()*16)+"s";L.appendChild(f)}
   c.after(L)}
+function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rainfx",true)!==false,c=document.querySelector(".bgart");if(!c)return;
+  const row=$("rain-row");if(row){row.hidden=!on;$("rainbtn").textContent="배경 비: "+(fx?"켜짐":"꺼짐");$("rainbtn").setAttribute("aria-pressed",String(fx))}
+  let L=document.querySelector(".rain");if(!(on&&fx)){if(L)L.remove();return}if(L)return;
+  L=document.createElement("div");L.className="rain";L.setAttribute("aria-hidden","true");
+  for(let k=0;k<90;k++){const f=document.createElement("i"),h=40+Math.random()*50;f.style.cssText="left:"+(Math.random()*115)+"%;height:"+h+"px;opacity:"+(.25+Math.random()*.5)+";animation-duration:"+(.55+Math.random()*.5)+"s;animation-delay:-"+(Math.random()*2)+"s";L.appendChild(f)}
+  c.after(L)}
+$("rainbtn").onclick=()=>{store.set("tt-rainfx",store.get("tt-rainfx",true)===false);applyRain()};
 $("snowbtn").onclick=()=>{store.set("tt-snowfx",store.get("tt-snowfx",true)===false);applySnow()};
-applyFont();bgLoadLocal();applySnow();
+applyFont();bgLoadLocal();applySnow();applyRain();
 $("bg-file").onchange=async()=>{const f=$("bg-file").files[0],i=bgTarget;$("bg-file").value="";if(!f||!owned("bgphoto")||i>bgSlots())return;bgMsg("줄이는 중");
   let d="";try{d=await shrinkImg(f)}catch(e){}if(!d){bgMsg("사진을 열 수 없음");return}await bgSet(i,d)};
 $("bg-rot").onclick=()=>{store.set("tt-bgrot",!store.get("tt-bgrot",true));applyBg()};
