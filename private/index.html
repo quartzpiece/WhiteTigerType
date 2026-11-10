@@ -225,7 +225,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -803,7 +803,8 @@ lib.forEach(q=>{if(q.id==="preset-hist-2-02-1x"){if(q.title==="전쟁과 분단�
   if(q.id.startsWith("preset-hist")){const nl=q.text.indexOf("\n"),first=nl<0?q.text:q.text.slice(0,nl);if(/^(Ⅱ-\d|전쟁과 분단의 고착)/.test(first)&&/\(교과서/.test(first))q.text=q.text.slice(nl+1)}});
 // 국어 3-(2), 4-(3), 5-(1) 본문 맨 앞에 원래 제목과 지은이를 넣어요
 let hk=0;lib.forEach(q=>{const H={"preset-kor-4-3":"매체와 소통 문화의 변화\n윤여탁 외\n\n","preset-kor-5-1":"겹겹의 한계들로 증명한 무한함\n김희경\n\n","preset-writing":"양곡 창고, 예술의 산실로 변신하다\n이호준\n\n"}[q.id]||(q.title==="3-(2) 작문 관습을 고려한 글쓰기"&&q.text.trim().startsWith("계절이 깊어 간다")?"양곡 창고, 예술의 산실로 변신하다\n이호준\n\n":0);if(H&&!q.text.startsWith(H.split("\n")[0])){q.text=H+q.text;hk=1}});if(hk)store.set("tt-lib",lib);
-PRESETS.forEach(p=>{if(!lib.some(q=>q.id===p.id)&&!gone.includes(p.id)){lib.push({...p});added=added||p.id}});
+// 기본 지문은 지울 수 없어요: 예전에 지운 것도 되돌려요(3.1.4)
+PRESETS.forEach(p=>{if(!lib.some(q=>q.id===p.id)){lib.push({...p});added=added||p.id}});
 if(PRESETS.length&&lib.length>1)lib=lib.filter(q=>!q.ph);
 if(!lib.length)lib.push({id:uid(),title:"지문 1",text:"",ph:1}); // ph: 빈 자리(저장 안 함)
 // 한 번만: 협상 지문을 맨 앞으로, 원래 있던 '지문 1'은 두 번째로 옮기고 이름 바꾸기
@@ -853,7 +854,7 @@ function addBtn(){
   return a}
 let selBook=null; // 지문 목록에서 고른 필사 책(연습 시작을 누르면 저장한 문단부터)
 function lockEdit(on){ta.readOnly=on;$("ptitle").readOnly=on;$("psave").disabled=on;ta.classList.toggle("ro",on)}
-function loadCur(){selBook=null;const p=cur();ta.value=p.text;$("ptitle").value=p.title;delArmed=false;$("pdel").textContent="지문 삭제";$("pdel").disabled=false;lockEdit(isPre(p.id));drawList();updateCount();showState()}
+function loadCur(){selBook=null;const p=cur();ta.value=p.text;$("ptitle").value=p.title;delArmed=false;$("pdel").textContent="지문 삭제";$("pdel").disabled=isPre(p.id);lockEdit(isPre(p.id));drawList();updateCount();showState()}
 function loadBook(id){let bk=null,n=0;try{bk=BOOKS.find(b=>b.id===id&&owned(b.id));n=bookP()[id]||0}catch(e){}if(!bk)return;selBook=bk.id;if(n>=bk.paras.length)n=0;
   ta.value=bk.paras[n];$("ptitle").value=bk.title+" · "+bk.author;lockEdit(true);$("pdel").disabled=true;delArmed=false;$("pdel").textContent="지문 삭제";
   $("count").textContent=(n+1)+" / "+bk.paras.length+"문단";drawList();showState()}
@@ -861,7 +862,7 @@ function updateCount(){if(selBook)return;const n=splitLines(ta.value).length;$("
 ta.addEventListener("input",()=>{cur().text=ta.value;updateCount();showState()});
 $("ptitle").addEventListener("input",e=>{cur().title=e.target.value;drawList();showState()});
 $("psave").onclick=()=>{const p=cur();delete p.ph;saved[p.id]={title:p.title,text:p.text};saveLib();drawList();showState("저장 완료");clearTimeout(S.saveT);S.saveT=setTimeout(()=>showState(),2000)};
-$("pdel").onclick=()=>{if(!delArmed){delArmed=true;$("pdel").textContent="한 번 더 누르면 삭제";return}
+$("pdel").onclick=()=>{if(selBook||isPre(curId))return;if(!delArmed){delArmed=true;$("pdel").textContent="한 번 더 누르면 삭제";return}
   if(curId.startsWith("preset-")){gone.push(curId);store.set("tt-gone",gone)}
   if(lib.length>1){delete saved[curId];lib=lib.filter(p=>p.id!==curId);curId=lib[0].id}else{lib[0].text="";lib[0].title="지문 1";saved[lib[0].id]={title:"지문 1",text:""}}
   saveLib();loadCur()};
