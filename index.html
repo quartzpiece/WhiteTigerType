@@ -48,6 +48,8 @@
 .skin{width:34px;height:34px;border-radius:50%!important;border:0;padding:0;cursor:pointer;
   background:radial-gradient(circle closest-side,var(--sw-point) 0 8.5px,transparent 9px 12px,var(--sw-base) 12.5px 16.5px,transparent 17px)}
 .skin[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:3px}
+.skin::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;background:var(--surface);color:var(--fg);border:1px solid var(--accent);padding:3px 8px;font-size:.8rem;font-weight:700;border-radius:0;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}
+.skin:hover::after,.skin:focus-visible::after{opacity:1}
 .skin:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
 .wrap{max-width:820px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
@@ -192,7 +194,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.1</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -941,7 +943,7 @@ function shopSkins(){document.querySelectorAll('.skin[data-shop]').forEach(b=>b.
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic","green","sky","baekho","rainbow"].includes(k)&&!(shopT&&owned(k)))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
   document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k)}
-document.querySelectorAll(".skin").forEach(b=>b.onclick=()=>setSkin(b.dataset.skin));
+document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const mk=(list,el,isTheme)=>{el.innerHTML="";list.forEach(it=>{const li=document.createElement("li"),has=owned(it.id),on=isTheme?skin===it.id:cur===it.id;if(on)li.className="on";
     if(isTheme){const w=document.createElement("span");w.className="sw";w.style.background=it.c;li.appendChild(w)}
