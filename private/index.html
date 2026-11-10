@@ -44,7 +44,8 @@
 /* 사진 배경(상점): 고른 사진 위에 검은 덮개(--bgdim), 카드는 살짝 비치게 */
 :root.photo-bg .bgart{display:block;background-image:var(--bgimg)}
 :root.photo-bg .bgart::after{background:rgba(0,0,0,var(--bgdim,.6))}
-:root.photo-bg{--card:color-mix(in srgb,var(--surface) 82%,transparent)}
+:root.photo-bg{--card:color-mix(in srgb,var(--surface) var(--cardop,80%),transparent)}
+:root.photo-bg .stats{background:color-mix(in srgb,var(--line) var(--cardop,80%),transparent)}:root.photo-bg .stat{background:var(--card)}
 .bg-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .bg-ctl input[type=range]{accent-color:var(--accent);width:140px}
 :root[data-skin="baekho"] h1{color:var(--accent);text-shadow:0 1px 10px rgba(0,0,0,.7)}
@@ -205,7 +206,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.5</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.6</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -242,7 +243,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
-    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><button class="btn acct" id="bg-pick" type="button">사진 고르기</button><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-off" type="button">빼기</button><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="20" max="85" step="5" aria-label="덮개 진하기"><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
+    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><button class="btn acct" id="bg-pick" type="button">사진 고르기</button><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-off" type="button">빼기</button><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="20" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -339,7 +340,7 @@ let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제�
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
 const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim"].includes(k))cloudHook()}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -921,11 +922,11 @@ function finish(){$("bar").style.width="100%";
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),bgdim:store.get("tt-bgdim",60)}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgdim:store.get("tt-bgdim",60)}}
 function applyData(d){
   const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);if(eggHook)eggHook();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
-  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));applyBg();shopSkins();setSkin(store.get("tt-skin","basic"));
+  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);applyBg();shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&typeof q.id==="string"&&q.id.startsWith("preset-"));
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;if(NO_PRESETS&&q.id.startsWith("preset-"))return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
@@ -935,7 +936,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=NO_PRESETS?[{id:uid(),title:"지문 1",text:"",ph:1}]:PRESETS.map(p=>({...p}));Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}store.set("tt-bgdim",60);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 function addPts(n){if(n>0)store.set("tt-tot",getTot()+n);store.set("tt-pt",store.get("tt-pt",0)+n);showPts();const e=$("pts");e.classList.remove("up");void e.offsetWidth;if(n>0)e.classList.add("up")}
 showPts();
@@ -962,7 +963,7 @@ const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000}];
 let bgHook=null;
 function applyBg(){const img=owned("bgphoto")?store.get("tt-bgimg",""):"",R=document.documentElement;
   if(img&&typeof img==="string"&&img.startsWith("data:image/")){R.style.setProperty("--bgimg",'url("'+img+'")');R.classList.add("photo-bg")}else{R.classList.remove("photo-bg");R.style.removeProperty("--bgimg")}
-  R.style.setProperty("--bgdim",String((Number(store.get("tt-bgdim",60))||60)/100));const row=$("bg-row");if(row){row.hidden=!owned("bgphoto");$("bg-off").disabled=!img;$("bg-dim").value=store.get("tt-bgdim",60)}}
+  R.style.setProperty("--bgdim",String((Number(store.get("tt-bgdim",60))||60)/100));const co=Math.min(100,Math.max(0,Number(store.get("tt-cardop",80))));R.style.setProperty("--cardop",(Number.isFinite(co)?co:80)+"%");const row=$("bg-row");if(row){row.hidden=!owned("bgphoto");$("bg-off").disabled=!img;$("bg-dim").value=store.get("tt-bgdim",60);$("bg-cardop").value=store.get("tt-cardop",80)}}
 async function shrinkImg(file){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});
   for(const M of [1600,1280,1024,800]){const k=Math.min(1,M/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*k));c.height=Math.max(1,Math.round(img.naturalHeight*k));
     const g=c.getContext("2d");g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);
@@ -1015,7 +1016,7 @@ $("bg-file").onchange=async()=>{const f=$("bg-file").files[0];$("bg-file").value
   try{localStorage.setItem("tt-bgimg",JSON.stringify(d))}catch(e){bgMsg("저장 공간 부족");return}applyBg();
   if(bgHook){bgMsg("저장 중");bgMsg(await bgHook.save(d)?"저장됨":"이 기기에만 저장됨")}else bgMsg("이 기기에 저장됨")};
 $("bg-off").onclick=async()=>{try{localStorage.removeItem("tt-bgimg")}catch(e){}applyBg();bgMsg("");if(bgHook)await bgHook.del()};
-$("bg-dim").oninput=()=>{store.set("tt-bgdim",Number($("bg-dim").value));applyBg()};
+$("bg-dim").oninput=()=>{store.set("tt-bgdim",Number($("bg-dim").value));applyBg()};$("bg-cardop").oninput=()=>{store.set("tt-cardop",Number($("bg-cardop").value));applyBg()};
 $("shopbtn").onclick=()=>{const c=$("shop"),o=c.hidden;closePanels(o?"shop":null);c.hidden=!o;if(o){$("shop-msg").textContent="";drawShop()}};
 shopSkins();
 // 오늘의 문장: 미리 정해 둔 문장 목록에서 날짜(한국 시간)마다 하나씩 골라요. 목록은 고정이라 지문을 더 넣어도 그날 문장이 바뀌지 않아요
