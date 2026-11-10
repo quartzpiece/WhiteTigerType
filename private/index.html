@@ -46,6 +46,7 @@
 :root.photo-bg .bgart::after{background:rgba(0,0,0,var(--bgdim,.6))}
 :root.photo-bg{--card:color-mix(in srgb,var(--surface) var(--cardop,80%),transparent)}
 :root.photo-bg .stats{background:color-mix(in srgb,var(--line) var(--cardop,80%),transparent)}:root.photo-bg .stat{background:var(--card)}
+:root.photo-bg :is(textarea,.ptitle,.typewrap,input.typing,.rsel,.shop-list li,.rank-list li,.fb-list li){background:color-mix(in srgb,var(--bg) var(--cardop,80%),transparent)}
 .bg-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .bg-ctl input[type=range]{accent-color:var(--accent);width:140px}
 :root[data-skin="baekho"] h1{color:var(--accent);text-shadow:0 1px 10px rgba(0,0,0,.7)}
@@ -206,7 +207,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
