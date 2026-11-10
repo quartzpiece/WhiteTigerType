@@ -45,6 +45,9 @@
 .wrap{position:relative;z-index:1}
 .hright{display:flex;align-items:center;gap:12px;margin-left:auto}
 .skins{display:flex;gap:10px;flex-wrap:wrap}
+.fonts{display:flex;gap:6px;flex-wrap:wrap}
+.fonts .btn{padding:6px 12px}
+.fonts .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 .skin{width:34px;height:34px;border-radius:50%!important;border:0;padding:0;cursor:pointer;
   background:radial-gradient(circle closest-side,var(--sw-point) 0 8.5px,transparent 9px 12px,var(--sw-base) 12.5px 16.5px,transparent 17px)}
 .skin[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:3px}
@@ -196,7 +199,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -233,6 +236,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
+    <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
       <span class="set-l">오늘의 문장 목록 (관리자)</span>
@@ -948,7 +952,13 @@ function applyFont(){const id=store.get("tt-font",""),f=SHOP_FONTS.find(x=>x.id=
 const titleName=id=>{const t=SHOP_TITLES.find(x=>x.id===id);return t?t.name:""};
 const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.includes(id)};
 function getTot(){const t=store.get("tt-tot",null),p=Number(store.get("tt-pt",0))||0;return typeof t==="number"&&t>=p?t:p}
-function shopSkins(){document.querySelectorAll('.skin[data-shop]').forEach(b=>b.hidden=!owned(b.dataset.skin));const r=$("fxbtn");if(r)r.closest(".set-row").hidden=!owned("rainbow")}
+function shopSkins(){document.querySelectorAll('.skin[data-shop]').forEach(b=>b.hidden=!owned(b.dataset.skin));const r=$("fxbtn");if(r)r.closest(".set-row").hidden=!owned("rainbow");drawFontSet()}
+// 설정 칸 글꼴: 기본 + 상점에서 산 글꼴 중에서 골라요
+function drawFontSet(){const el=$("set-fonts");if(!el)return;const cur=store.get("tt-font",""),L=[{id:"",name:"기본"}].concat(SHOP_FONTS.filter(f=>owned(f.id)));
+  if(L.length>1)loadFont(L.slice(1));el.innerHTML="";
+  L.forEach(f=>{const b=document.createElement("button");b.type="button";b.className="btn acct";b.textContent=f.name;if(f.fam)b.style.fontFamily='"'+f.fam+'",var(--body)';
+    const on=cur===f.id||(!f.id&&!SHOP_FONTS.some(x=>x.id===cur&&owned(x.id)));b.setAttribute("aria-pressed",String(on));
+    b.onclick=()=>{store.set("tt-font",f.id);applyFont();drawFontSet();if(!$("shop").hidden)drawShop()};el.appendChild(b)})}
 // 산 테마인데 아직 불러오기 전(로그인 전)이면 기본으로 보여 주되, 고른 테마는 기억해 둬요
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&owned(k)))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
@@ -963,7 +973,7 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     const b=document.createElement("button");b.type="button";b.className="btn acct";
     if(!has){b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;b.onclick=()=>buy(it)}
     else if(isTheme){b.textContent=on?"적용 중":"적용";b.disabled=on;b.onclick=()=>{setSkin(it.id);drawShop()}}
-    else if(isFont){b.textContent=on?"빼기":"적용";b.onclick=()=>{store.set("tt-font",on?"":it.id);applyFont();drawShop()}}
+    else if(isFont){b.textContent=on?"빼기":"적용";b.onclick=()=>{store.set("tt-font",on?"":it.id);applyFont();drawShop();drawFontSet()}}
     else{b.textContent=on?"빼기":"달기";b.onclick=()=>{store.set("tt-title",on?"":it.id);drawShop();if(rankHook)rankHook()}}
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_TITLES,$("shop-titles"),false);
