@@ -133,8 +133,7 @@ h1 small{display:block;font-family:var(--body);font-size:.8rem;color:var(--muted
 .stat{background:var(--surface);padding:10px 14px}
 .stat b{display:block;font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .stat span{font-size:.75rem;color:var(--muted);letter-spacing:.03em}
-#practice{position:relative;overflow:hidden}#practice>*:not(.snow){position:relative;z-index:1}
-.snow{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.snow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .snow i{position:absolute;top:-12px;border-radius:50%;background:#fff;opacity:.7;animation:snowfall linear infinite}
 @keyframes snowfall{0%{transform:translate3d(0,0,0)}50%{transform:translate3d(var(--dx),50vh,0)}100%{transform:translate3d(0,100vh,0)}}
 @media (prefers-reduced-motion:reduce){.snow i{animation-duration:40s!important}}
@@ -216,7 +215,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.11</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.0.12</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -254,7 +253,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       </div>
     </div>
     <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="20" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
-    <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">타자 창 눈: 켜짐</button></div>
+    <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -351,7 +350,7 @@ let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제�
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
 const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
-// 눈꽃 이스터에그: 내 지문으로 이 문장을 끝까지 치면 타자 창에 눈이 내려요
+// 눈꽃 이스터에그: 내 지문으로 이 문장을 끝까지 치면 배경에 눈이 내려요(창 뒤로만)
 const SNOW="스스로얼어붙으며온기를선물하는눈꽃처럼";
 const isSnow=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===SNOW;
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot"].includes(k))cloudHook()}};
@@ -678,12 +677,12 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;const inv=store.get("tt-inv",[]);
   store.set("tt-tot",getTot());if(it.multi)store.set("tt-bgslots",bgSlots()+1);else store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
   $("shop-msg").textContent=it.name+" 구매 완료";applyBg();drawShop()}
-function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snowfx",true)!==false,c=$("practice");if(!c)return;
-  const row=$("snow-row");if(row){row.hidden=!on;$("snowbtn").textContent="타자 창 눈: "+(fx?"켜짐":"꺼짐");$("snowbtn").setAttribute("aria-pressed",String(fx))}
-  let L=c.querySelector(".snow");if(!(on&&fx)){if(L)L.remove();return}if(L)return;
+function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snowfx",true)!==false,c=document.querySelector(".bgart");if(!c)return;
+  const row=$("snow-row");if(row){row.hidden=!on;$("snowbtn").textContent="배경 눈: "+(fx?"켜짐":"꺼짐");$("snowbtn").setAttribute("aria-pressed",String(fx))}
+  let L=document.querySelector(".snow");if(!(on&&fx)){if(L)L.remove();return}if(L)return;
   L=document.createElement("div");L.className="snow";L.setAttribute("aria-hidden","true");
-  for(let k=0;k<45;k++){const f=document.createElement("i"),z=2+Math.random()*4;f.style.cssText="left:"+(Math.random()*100)+"%;width:"+z+"px;height:"+z+"px;opacity:"+(.35+Math.random()*.5)+";--dx:"+(Math.random()*40-20)+"px;animation-duration:"+(7+Math.random()*9)+"s;animation-delay:-"+(Math.random()*16)+"s";L.appendChild(f)}
-  c.prepend(L)}
+  for(let k=0;k<70;k++){const f=document.createElement("i"),z=2+Math.random()*4;f.style.cssText="left:"+(Math.random()*100)+"%;width:"+z+"px;height:"+z+"px;opacity:"+(.35+Math.random()*.5)+";--dx:"+(Math.random()*40-20)+"px;animation-duration:"+(7+Math.random()*9)+"s;animation-delay:-"+(Math.random()*16)+"s";L.appendChild(f)}
+  c.after(L)}
 $("snowbtn").onclick=()=>{store.set("tt-snowfx",store.get("tt-snowfx",true)===false);applySnow()};
 applyFont();bgLoadLocal();applySnow();
 $("bg-file").onchange=async()=>{const f=$("bg-file").files[0],i=bgTarget;$("bg-file").value="";if(!f||!owned("bgphoto")||i>bgSlots())return;bgMsg("줄이는 중");
