@@ -145,6 +145,7 @@ h1 small{display:block;font-family:var(--body);font-size:.8rem;color:var(--muted
 .stat span{font-size:.75rem;color:var(--muted);letter-spacing:.03em}
 .snow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .snow i{position:absolute;top:-12px;border-radius:50%;background:#fff;opacity:.7;animation:snowfall linear infinite}
+.wx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .rain{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .rain i{position:absolute;top:-80px;width:1px;background:linear-gradient(transparent,rgba(190,210,235,.75));animation:rainfall linear infinite}
 @keyframes rainfall{0%{transform:translate3d(0,0,0) rotate(8deg)}100%{transform:translate3d(-14vh,115vh,0) rotate(8deg)}}
@@ -229,7 +230,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -372,6 +373,36 @@ const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomai
 const NO_PRESETS=false;const LIBK=NO_PRESETS?"ttc-lib":"tt-lib",CURK=NO_PRESETS?"ttc-cur":"tt-cur";let hiddenLib=[];
 // 기본 지문 뺀 사이트에서 숨길 지문: 교과서 기본 지문(시는 두 사이트 다 보여요)
 const hidP=id=>NO_PRESETS&&typeof id==="string"&&id.startsWith("preset-")&&!id.startsWith("preset-poem-");
+// 배경 날씨(캔버스, 창 뒤): 빗방울은 창 윗변이나 바닥에 닿으면 튀고, 눈은 잠깐 쌓였다가 녹아요(3.1.7)
+const WX={snow:false,rain:false,cv:null,ctx:null,run:false,fl:[],dr:[],sp:[],st:[],W:0,H:0,dpr:1,last:0};
+function wxSize(){const c=WX.cv;if(!c)return;WX.dpr=Math.min(2,window.devicePixelRatio||1);WX.W=innerWidth;WX.H=innerHeight;c.width=Math.round(WX.W*WX.dpr);c.height=Math.round(WX.H*WX.dpr)}
+function wxSet(kind,on){WX[kind]=!!on;if(WX.snow||WX.rain){if(!WX.cv){const c=document.createElement("canvas");c.className="wx";c.setAttribute("aria-hidden","true");const b=document.querySelector(".bgart");if(b)b.after(c);else document.body.prepend(c);WX.cv=c;WX.ctx=c.getContext("2d");addEventListener("resize",wxSize);wxSize()}
+    WX.cv.toggleAttribute("data-snow",WX.snow);WX.cv.toggleAttribute("data-rain",WX.rain);if(!WX.snow){WX.fl=[]}if(!WX.rain){WX.dr=[]}
+    if(!WX.run){WX.run=true;WX.last=performance.now();requestAnimationFrame(wxTick)}}
+  else{WX.run=false;if(WX.cv){WX.cv.remove();WX.cv=null;removeEventListener("resize",wxSize)}WX.fl=[];WX.dr=[];WX.sp=[];WX.st=[]}}
+const wxDrop=init=>{const vy=900+Math.random()*450;return {x:Math.random()*(WX.W+WX.H*.15),y:init?Math.random()*WX.H:-20-Math.random()*WX.H*.4,vy,vx:-.14*vy,len:14+Math.random()*18}};
+const wxFlake=init=>({x:Math.random()*WX.W,y:init?Math.random()*WX.H:-10-Math.random()*80,vy:28+Math.random()*42,r:2+Math.random()*3,o:.5+Math.random()*.5,ph:Math.random()*6,w:.5+Math.random(),sw:12+Math.random()*22});
+function wxSplash(x,y){const n=2+Math.floor(Math.random()*3);for(let k=0;k<n&&WX.sp.length<500;k++){const life=.25+Math.random()*.25;WX.sp.push({x,y:y-1,vx:(Math.random()-.5)*170,vy:-(110+Math.random()*170),life,max:life})}}
+function wxTick(now){if(!WX.run)return;requestAnimationFrame(wxTick);if(document.hidden){WX.last=now;return}
+  const dt=Math.min(.05,(now-WX.last)/1000);WX.last=now;const ctx=WX.ctx,W=WX.W,H=WX.H;if(!ctx)return;ctx.setTransform(WX.dpr,0,0,WX.dpr,0,0);ctx.clearRect(0,0,W,H);
+  const slow=matchMedia("(prefers-reduced-motion: reduce)").matches?.35:1,R=[];
+  document.querySelectorAll(".wrap .card,.wrap .stats").forEach(e=>{const r=e.getBoundingClientRect();if(r.width>0&&r.height>0&&r.bottom>0&&r.top<H)R.push({e,l:r.left,r:r.right,t:r.top})});
+  const hit=(x,y0,y1)=>{for(const r of R)if(x>=r.l&&x<=r.r&&y0<r.t&&y1>=r.t)return r;return null};
+  if(WX.rain){while(WX.dr.length<110)WX.dr.push(wxDrop(true));
+    ctx.strokeStyle="rgba(190,210,235,.55)";ctx.lineWidth=1;ctx.beginPath();
+    for(const d of WX.dr){const y0=d.y;d.x+=d.vx*dt*slow;d.y+=d.vy*dt*slow;const h=hit(d.x,y0,d.y);
+      if(h||d.y>=H){wxSplash(d.x,h?h.t:H);Object.assign(d,wxDrop(false));continue}
+      ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.vx/d.vy*d.len,d.y-d.len)}
+    ctx.stroke()}
+  if(WX.sp.length){ctx.fillStyle="rgb(205,222,240)";WX.sp=WX.sp.filter(p=>(p.life-=dt)>0);
+    for(const p of WX.sp){p.vy+=950*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;ctx.globalAlpha=Math.max(0,p.life/p.max)*.85;ctx.fillRect(p.x,p.y,1.6,1.6)}ctx.globalAlpha=1}
+  if(WX.snow){while(WX.fl.length<80)WX.fl.push(wxFlake(true));ctx.fillStyle="#fff";
+    for(const f of WX.fl){const y0=f.y;f.ph+=dt;f.x+=Math.sin(f.ph*f.w)*f.sw*dt*slow;f.y+=f.vy*dt*slow;const h=hit(f.x,y0,f.y);
+      if(h||f.y>=H){if(WX.st.length<450)WX.st.push({e:h?h.e:null,dx:h?f.x-h.l:f.x,r:f.r,o:f.o,life:3+Math.random()*4,melt:1.5+Math.random()});Object.assign(f,wxFlake(false));continue}
+      if(f.x<-10)f.x=W+5;else if(f.x>W+10)f.x=-5;ctx.globalAlpha=f.o;ctx.fillRect(f.x-f.r/2,f.y-f.r/2,f.r,f.r)}ctx.globalAlpha=1}
+  if(WX.st.length){const M=new Map(R.map(r=>[r.e,r])),pile=new Map();WX.st=WX.st.filter(q=>{q.life-=dt;return q.life>-q.melt&&(!q.e||M.has(q.e))});ctx.fillStyle="#fff";
+    for(const q of WX.st){const r=q.e?M.get(q.e):null,x=r?r.l+q.dx:q.dx,base=r?r.t:H,key=(r?R.indexOf(r):-1)+":"+Math.round(x/3),n=pile.get(key)||0;pile.set(key,n+1);
+      const k=q.life>0?1:Math.max(0,1+q.life/q.melt),w=q.r*(.35+.65*k),h=q.r*.7*(.3+.7*k);ctx.globalAlpha=q.o*k;ctx.fillRect(x-w/2,base-h-n*q.r*.55,w,h)}ctx.globalAlpha=1}}
 let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
@@ -1153,18 +1184,12 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;const inv=store.get("tt-inv",[]);
   store.set("tt-tot",getTot());if(it.multi)store.set("tt-bgslots",bgSlots()+1);else store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
   $("shop-msg").textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}
-function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snowfx",true)!==false,c=document.querySelector(".bgart");if(!c)return;
+function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snowfx",true)!==false;
   const row=$("snow-row");if(row){row.hidden=!on;$("snowbtn").textContent="배경 눈: "+(fx?"켜짐":"꺼짐");$("snowbtn").setAttribute("aria-pressed",String(fx))}
-  let L=document.querySelector(".snow");if(!(on&&fx)){if(L)L.remove();return}if(L)return;
-  L=document.createElement("div");L.className="snow";L.setAttribute("aria-hidden","true");
-  for(let k=0;k<70;k++){const f=document.createElement("i"),z=2+Math.random()*4;f.style.cssText="left:"+(Math.random()*100)+"%;width:"+z+"px;height:"+z+"px;opacity:"+(.35+Math.random()*.5)+";--dx:"+(Math.random()*40-20)+"px;animation-duration:"+(7+Math.random()*9)+"s;animation-delay:-"+(Math.random()*16)+"s";L.appendChild(f)}
-  c.after(L)}
-function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rainfx",true)!==false,c=document.querySelector(".bgart");if(!c)return;
+  wxSet("snow",on&&fx)}
+function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rainfx",true)!==false;
   const row=$("rain-row");if(row){row.hidden=!on;$("rainbtn").textContent="배경 비: "+(fx?"켜짐":"꺼짐");$("rainbtn").setAttribute("aria-pressed",String(fx))}
-  let L=document.querySelector(".rain");if(!(on&&fx)){if(L)L.remove();return}if(L)return;
-  L=document.createElement("div");L.className="rain";L.setAttribute("aria-hidden","true");
-  for(let k=0;k<90;k++){const f=document.createElement("i"),h=40+Math.random()*50;f.style.cssText="left:"+(Math.random()*115)+"%;height:"+h+"px;opacity:"+(.25+Math.random()*.5)+";animation-duration:"+(.55+Math.random()*.5)+"s;animation-delay:-"+(Math.random()*2)+"s";L.appendChild(f)}
-  c.after(L)}
+  wxSet("rain",on&&fx)}
 $("rainbtn").onclick=()=>{store.set("tt-rainfx",store.get("tt-rainfx",true)===false);applyRain()};
 $("snowbtn").onclick=()=>{store.set("tt-snowfx",store.get("tt-snowfx",true)===false);applySnow()};
 applyFont();bgLoadLocal();applySnow();applyRain();
