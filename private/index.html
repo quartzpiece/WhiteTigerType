@@ -49,6 +49,10 @@
 :root.photo-bg :is(textarea,.ptitle,.typewrap,input.typing,.rsel,.shop-list li,.rank-list li,.fb-list li){background:color-mix(in srgb,var(--bg) var(--cardop,80%),transparent)}
 .bg-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .bg-ctl input[type=range]{accent-color:var(--accent);width:140px}
+.bg-slots{display:flex;flex-wrap:wrap;gap:6px}
+.bg-slot{position:relative;width:64px;height:42px;border:2px solid var(--line);background:var(--bg) center/cover no-repeat;color:var(--muted);font:inherit;font-size:1.1rem;cursor:pointer;padding:0}
+.bg-slot:hover,.bg-slot:focus-visible{border-color:var(--accent)}.bg-slot.on{border-color:var(--accent)}
+.bg-slot .x{position:absolute;top:-8px;right:-8px;width:20px;height:20px;line-height:16px;font-size:.8rem;border:2px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;padding:0}
 :root[data-skin="baekho"] h1{color:var(--accent);text-shadow:0 1px 10px rgba(0,0,0,.7)}
 .wrap{position:relative;z-index:1}
 .hright{display:flex;align-items:center;gap:12px;margin-left:auto}
@@ -207,7 +211,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.0.8</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.0.9</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -244,7 +248,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
-    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><button class="btn acct" id="bg-pick" type="button">사진 고르기</button><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-off" type="button">빼기</button><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="20" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
+    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="20" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -341,7 +345,7 @@ let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제�
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
 const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop"].includes(k))cloudHook()}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -899,7 +903,7 @@ function submit(){const now=performance.now();if(now-S.last<120)return;S.last=no
   const lineAcc=ok/Math.max(t.length,v.length);
   if(lineAcc>=0.8&&Math.round(sp)>S.best){S.best=Math.round(sp);S.newBest=true}
   S.doneStrokes+=okS;S.okS=0;if(S.start)S.activeDone+=now-S.start;S.start=0;logStroke(now);stats();S.i++;
-  burst();if(S.i>=S.lines.length)finish();else showLine()}
+  burst();bgNext();if(S.i>=S.lines.length)finish();else showLine()}
 // 무지개 테마: 한 줄을 끝낼 때마다 입력칸 테두리에서 무지갯빛이 터져요 (설정에서 끌 수 있어요)
 function fxOn(){return store.get("tt-fx",true)}
 function burst(){if(document.documentElement.dataset.skin!=="rainbow"||!fxOn()||S.i>=S.lines.length)return;
@@ -923,11 +927,11 @@ function finish(){$("bar").style.width="100%";
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgdim:store.get("tt-bgdim",60)}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60)}}
 function applyData(d){
   const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);if(eggHook)eggHook();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
-  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);applyBg();shopSkins();setSkin(store.get("tt-skin","basic"));
+  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);applyBg();shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&typeof q.id==="string"&&q.id.startsWith("preset-"));
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;if(NO_PRESETS&&q.id.startsWith("preset-"))return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
@@ -937,7 +941,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=NO_PRESETS?[{id:uid(),title:"지문 1",text:"",ph:1}]:PRESETS.map(p=>({...p}));Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 function addPts(n){if(n>0)store.set("tt-tot",getTot()+n);store.set("tt-pt",store.get("tt-pt",0)+n);showPts();const e=$("pts");e.classList.remove("up");void e.offsetWidth;if(n>0)e.classList.add("up")}
 showPts();
@@ -959,12 +963,43 @@ setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 // 물건은 아직 없음. 테마는 {id,name,c(색),pr(값)} + CSS·설정 칸 .skin[data-shop] 버튼, 칭호는 {id,name,pr}로 넣으면 돼요
 const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{id:"sky",name:"네온 블루 테마",c:"#5BC8F5",pr:500},{id:"rainbow",name:"무지개 테마",c:"conic-gradient(#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A)",pr:1000},{id:"magenta",name:"마젠타 테마",c:"#FF2BD6",pr:500},{id:"cyan",name:"시안 테마",c:"#00F0FF",pr:500},{id:"neonpurple",name:"네온 퍼플 테마",c:"#B84DFF",pr:500}];
 const SHOP_TITLES=[];
-const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000}];
+const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
+const bgSlots=()=>Math.min(9,Math.max(0,Math.floor(Number(store.get("tt-bgslots",0))||0)));
 // 사진 배경: 사진을 1600px·700KB 이하 JPEG로 줄여 tt-bgimg에 두고, 로그인하면 bg/{uid}에도 저장해요(bgHook)
 let bgHook=null;
-function applyBg(){const img=owned("bgphoto")?store.get("tt-bgimg",""):"",R=document.documentElement;
-  if(img&&typeof img==="string"&&img.startsWith("data:image/")){R.style.setProperty("--bgimg",'url("'+img+'")');R.classList.add("photo-bg")}else{R.classList.remove("photo-bg");R.style.removeProperty("--bgimg")}
-  R.style.setProperty("--bgdim",String((Number(store.get("tt-bgdim",60))||60)/100));const co=Math.min(100,Math.max(0,Number(store.get("tt-cardop",80))));R.style.setProperty("--cardop",(Number.isFinite(co)?co:80)+"%");const row=$("bg-row");if(row){row.hidden=!owned("bgphoto");$("bg-off").disabled=!img;$("bg-dim").value=store.get("tt-bgdim",60);$("bg-cardop").value=store.get("tt-cardop",80)}}
+// 슬롯 0 = tt-bgimg(localStorage), 슬롯 1~ = IndexedDB(tt-bg/s), 로그인하면 bg/{uid}, bg/{uid}/s/{n}
+const bgImg=[];let bgShow=0,bgUrls={};
+const bgDB=()=>new Promise((ok,no)=>{try{const r=indexedDB.open("tt-bg",1);r.onupgradeneeded=()=>r.result.createObjectStore("s");r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}});
+async function idb(op,k,v){try{const db=await bgDB();return await new Promise((ok,no)=>{const t=db.transaction("s",op==="get"?"readonly":"readwrite").objectStore("s");const r=op==="get"?t.get(k):op==="put"?t.put(v,k):op==="clear"?t.clear():t.delete(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}catch(e){return op==="get"?"":false}}
+const okImg=d=>typeof d==="string"&&d.startsWith("data:image/");
+function bgUrl(i){const d=bgImg[i];if(!okImg(d))return "";if(bgUrls[i]&&bgUrls[i].d===d)return bgUrls[i].u;
+  let u=d;try{const [h,b64]=d.split(",");const bin=atob(b64),arr=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)arr[j]=bin.charCodeAt(j);u=URL.createObjectURL(new Blob([arr],{type:h.slice(5).split(";")[0]}))}catch(e){}
+  if(bgUrls[i]&&bgUrls[i].u.startsWith("blob:"))URL.revokeObjectURL(bgUrls[i].u);bgUrls[i]={d,u};const im=new Image();im.src=u;return u}
+async function bgLoadLocal(){bgImg[0]=store.get("tt-bgimg","");for(let i=1;i<=9;i++)bgImg[i]=i<=bgSlots()?(await idb("get","s"+i))||"":"";applyBg()}
+const bgFilled=()=>{const L=[];for(let i=0;i<=bgSlots();i++)if(okImg(bgImg[i]))L.push(i);return L};
+function bgPaint(){const R=document.documentElement,L=owned("bgphoto")?bgFilled():[];
+  if(!L.length){R.classList.remove("photo-bg");R.style.removeProperty("--bgimg");return}
+  if(!L.includes(bgShow)||!store.get("tt-bgrot",true))bgShow=L[0];R.style.setProperty("--bgimg",'url("'+bgUrl(bgShow)+'")');R.classList.add("photo-bg");
+  document.querySelectorAll(".bg-slot").forEach(t=>t.classList.toggle("on",Number(t.dataset.n)===bgShow))}
+// 문장(줄)을 끝낼 때마다 다음 사진으로
+function bgNext(){if(!owned("bgphoto")||!store.get("tt-bgrot",true))return;const L=bgFilled();if(L.length<2)return;bgShow=L[(L.indexOf(bgShow)+1)%L.length];bgPaint()}
+let bgTarget=0;
+function drawBgSlots(){const el=$("bg-slots");if(!el)return;el.innerHTML="";
+  for(let i=0;i<=bgSlots();i++){const has=okImg(bgImg[i]),t=document.createElement("button");t.type="button";t.className="bg-slot"+(has&&i===bgShow&&document.documentElement.classList.contains("photo-bg")?" on":"");t.dataset.n=i;
+    t.setAttribute("aria-label",(i+1)+"번 사진 "+(has?"바꾸기":"고르기"));t.title=has?"바꾸기":"사진 고르기";
+    if(has)t.style.backgroundImage='url("'+bgUrl(i)+'")';else t.textContent="+";
+    t.onclick=()=>{bgTarget=i;$("bg-file").click()};
+    if(has){const x=document.createElement("span");x.className="x";x.textContent="×";x.setAttribute("role","button");x.setAttribute("aria-label",(i+1)+"번 사진 빼기");x.title="빼기";
+      x.onclick=e=>{e.stopPropagation();bgSet(i,"")};t.appendChild(x)}
+    el.appendChild(t)}
+  const r=$("bg-rot"),on=store.get("tt-bgrot",true);r.hidden=bgSlots()<1;r.textContent="문장마다 바꾸기: "+(on?"켜짐":"꺼짐");r.setAttribute("aria-pressed",String(on))}
+async function bgSet(i,d){bgImg[i]=d;
+  if(i===0){try{if(d)localStorage.setItem("tt-bgimg",JSON.stringify(d));else localStorage.removeItem("tt-bgimg")}catch(e){bgMsg("저장 공간 부족");bgImg[0]=store.get("tt-bgimg","");applyBg();return}}
+  else if(d){if(await idb("put","s"+i,d)===false){bgMsg("저장 공간 부족")}}else await idb("del","s"+i);
+  if(d)bgShow=i;applyBg();
+  if(bgHook){if(d){bgMsg("저장 중");bgMsg(await bgHook.save(d,i)?"저장됨":"이 기기에만 저장됨")}else{bgMsg("");await bgHook.del(i)}}else bgMsg(d?"이 기기에 저장됨":"")}
+function applyBg(){const R=document.documentElement;bgPaint();
+  R.style.setProperty("--bgdim",String((Number(store.get("tt-bgdim",60))||60)/100));const co=Math.min(100,Math.max(0,Number(store.get("tt-cardop",80))));R.style.setProperty("--cardop",(Number.isFinite(co)?co:80)+"%");const row=$("bg-row");if(row){row.hidden=!owned("bgphoto");$("bg-dim").value=store.get("tt-bgdim",60);$("bg-cardop").value=store.get("tt-cardop",80);drawBgSlots()}}
 async function shrinkImg(file){const url=URL.createObjectURL(file);try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});
   for(const M of [1600,1280,1024,800]){const k=Math.min(1,M/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*k));c.height=Math.max(1,Math.round(img.naturalHeight*k));
     const g=c.getContext("2d");g.fillStyle="#000";g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);
@@ -994,12 +1029,12 @@ function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic
 document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
-  const mk=(list,el,isTheme,isFont,isEtc)=>{el.innerHTML="";list.forEach(it=>{const li=document.createElement("li"),has=owned(it.id),on=isTheme?skin===it.id:isFont?curF===it.id:cur===it.id;if(on)li.className="on";
+  const mk=(list,el,isTheme,isFont,isEtc)=>{el.innerHTML="";list.forEach(it=>{const cnt=it.multi?bgSlots():0,li=document.createElement("li"),has=it.multi?cnt>=it.max:owned(it.id),on=isTheme?skin===it.id:isFont?curF===it.id:cur===it.id;if(on)li.className="on";
     if(isTheme){const w=document.createElement("span");w.className="sw";w.style.background=it.c;li.appendChild(w)}
-    const n=document.createElement("span");n.className="nm";n.textContent=it.name;if(isFont){n.style.fontFamily='"'+it.fam+'",var(--body)';n.style.fontSize="1.1rem"}li.appendChild(n);
+    const n=document.createElement("span");n.className="nm";n.textContent=it.name+(it.multi&&cnt?" ("+cnt+"칸)":"");if(isFont){n.style.fontFamily='"'+it.fam+'",var(--body)';n.style.fontSize="1.1rem"}li.appendChild(n);
     if(!has){const p=document.createElement("span");p.className="pr";p.textContent=it.pr;li.appendChild(p)}
     const b=document.createElement("button");b.type="button";b.className="btn acct";
-    if(!has){b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;b.onclick=()=>buy(it)}
+    if(!has){b.textContent="구매";b.disabled=(!shopFree&&pt<it.pr)||(it.need&&!owned(it.need));if(it.need&&!owned(it.need))b.title="사진 배경 먼저";b.onclick=()=>buy(it)}
     else if(isTheme){b.textContent=on?"적용 중":"적용";b.disabled=on;b.onclick=()=>{setSkin(it.id);drawShop()}}
     else if(isFont){b.textContent=on?"빼기":"적용";b.onclick=()=>{store.set("tt-font",on?"":it.id);applyFont();drawShop();drawFontSet()}}
     else if(isEtc){b.textContent="설정에서 쓰기";b.onclick=()=>{$("shop").hidden=true;$("setbtn").click()}}
@@ -1007,16 +1042,13 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_ETC,$("shop-etc"),false,false,true);mk(SHOP_TITLES,$("shop-titles"),false);
   [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length)}
-function buy(it){const pt=Number(store.get("tt-pt",0))||0;if(owned(it.id)||(!shopFree&&pt<it.pr))return;const inv=store.get("tt-inv",[]);
-  store.set("tt-tot",getTot());store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
+function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;const inv=store.get("tt-inv",[]);
+  store.set("tt-tot",getTot());if(it.multi)store.set("tt-bgslots",bgSlots()+1);else store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
   $("shop-msg").textContent=it.name+" 구매 완료";applyBg();drawShop()}
-applyFont();applyBg();
-$("bg-pick").onclick=()=>$("bg-file").click();
-$("bg-file").onchange=async()=>{const f=$("bg-file").files[0];$("bg-file").value="";if(!f||!owned("bgphoto"))return;bgMsg("줄이는 중");
-  let d="";try{d=await shrinkImg(f)}catch(e){}if(!d){bgMsg("사진을 열 수 없음");return}
-  try{localStorage.setItem("tt-bgimg",JSON.stringify(d))}catch(e){bgMsg("저장 공간 부족");return}applyBg();
-  if(bgHook){bgMsg("저장 중");bgMsg(await bgHook.save(d)?"저장됨":"이 기기에만 저장됨")}else bgMsg("이 기기에 저장됨")};
-$("bg-off").onclick=async()=>{try{localStorage.removeItem("tt-bgimg")}catch(e){}applyBg();bgMsg("");if(bgHook)await bgHook.del()};
+applyFont();bgLoadLocal();
+$("bg-file").onchange=async()=>{const f=$("bg-file").files[0],i=bgTarget;$("bg-file").value="";if(!f||!owned("bgphoto")||i>bgSlots())return;bgMsg("줄이는 중");
+  let d="";try{d=await shrinkImg(f)}catch(e){}if(!d){bgMsg("사진을 열 수 없음");return}await bgSet(i,d)};
+$("bg-rot").onclick=()=>{store.set("tt-bgrot",!store.get("tt-bgrot",true));applyBg()};
 $("bg-dim").oninput=()=>{store.set("tt-bgdim",Number($("bg-dim").value));applyBg()};$("bg-cardop").oninput=()=>{store.set("tt-cardop",Number($("bg-cardop").value));applyBg()};
 $("shopbtn").onclick=()=>{const c=$("shop"),o=c.hidden;closePanels(o?"shop":null);c.hidden=!o;if(o){$("shop-msg").textContent="";drawShop()}};
 shopSkins();
@@ -1083,9 +1115,11 @@ async function initCloud(){if(!FB_CONFIG)return;
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){if(egg){try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()})}catch(e2){}}}}
   rankHook=()=>pushRank();
   // 사진 배경을 계정에 저장: bg/{uid} = {img, at} (본인만 읽고 쓰기)
-  bgHook={save:async d=>{if(!uid)return false;try{await FS.setDoc(FS.doc(fdb,"bg",uid),{img:d,at:Date.now()});return true}catch(e){return false}},
-    del:async()=>{if(!uid)return;try{await FS.deleteDoc(FS.doc(fdb,"bg",uid))}catch(e){}},
-    load:async()=>{if(!uid||!owned("bgphoto"))return;try{const sn=await FS.getDoc(FS.doc(fdb,"bg",uid));if(sn.exists()){const v=sn.data()||{};if(typeof v.img==="string"&&v.img.startsWith("data:image/")){try{localStorage.setItem("tt-bgimg",JSON.stringify(v.img))}catch(e){}applyBg()}}}catch(e){}}};
+  const bgRef=i=>i?FS.doc(fdb,"bg",uid,"s",String(i)):FS.doc(fdb,"bg",uid);
+  bgHook={save:async(d,i=0)=>{if(!uid)return false;try{await FS.setDoc(bgRef(i),{img:d,at:Date.now()});return true}catch(e){return false}},
+    del:async(i=0)=>{if(!uid)return;try{await FS.deleteDoc(bgRef(i))}catch(e){}},
+    pushAll:async()=>{if(!uid||!owned("bgphoto"))return;for(let i=0;i<=bgSlots();i++)if(okImg(bgImg[i]))await bgHook.save(bgImg[i],i)},
+    load:async()=>{if(!uid||!owned("bgphoto"))return;for(let i=0;i<=bgSlots();i++){try{const sn=await FS.getDoc(bgRef(i));if(sn.exists()){const v=sn.data()||{};if(okImg(v.img)){bgImg[i]=v.img;if(i===0){try{localStorage.setItem("tt-bgimg",JSON.stringify(v.img))}catch(e){}}else await idb("put","s"+i,v.img)}}}catch(e){}}applyBg()}};
   eggHook=()=>{if(auth.currentUser)showNick(auth.currentUser.email.split("@")[0])};
   // 닉네임은 rank/{uid}에 있는 지금 닉네임으로 보여 줘요 (바꾸면 모든 랭킹에 바로 적용)
   async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]={n:nick,egg:!!store.get("tt-egg",false),tt:store.get("tt-title","")};return}
@@ -1223,7 +1257,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료");pushRank();awardDaily();bgHook.load()}
-      else{uid=user.uid;fresh=false;await push();awardDaily();const bi=store.get("tt-bgimg","");if(bi&&owned("bgphoto"))bgHook.save(bi)}
+      else{uid=user.uid;fresh=false;await push();awardDaily();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
