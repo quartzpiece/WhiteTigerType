@@ -134,6 +134,11 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .fb-list .fb-h b{color:var(--accent);font-weight:700}
 .fb-list .fb-t{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
 .fb-list .fb-x{margin-left:auto;padding:4px 10px;font-size:.8rem}
+.fb-list .fb-r{border-left:4px solid var(--accent);padding:6px 10px;background:var(--accent-soft);display:grid;gap:4px}
+.fb-list .fb-r .fb-h b{color:var(--accent)}
+.fb-list .fb-ed{display:grid;gap:6px}.fb-list .fb-ed textarea{min-height:70px}
+.fb-list .fb-btns{display:flex;flex-wrap:wrap;gap:6px}.fb-list .fb-btns .btn{padding:4px 10px;font-size:.8rem}
+#setbtn{position:relative}#setbtn.has-new::after{content:"";position:absolute;top:-5px;right:-5px;width:10px;height:10px;background:var(--accent);border:2px solid var(--bg)}
 .home{color:inherit;text-decoration:none;cursor:pointer}
 .home:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .fx-key{position:absolute;width:18px;height:18px;pointer-events:none;z-index:3;border:2px solid currentColor;box-shadow:0 0 8px currentColor}
@@ -241,7 +246,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.10</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.1.11</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -282,6 +287,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row"><span class="set-l">투명도</span><div class="bg-ctl"><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="0" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><button class="btn acct" id="see-reset" type="button">기본값</button></div></div>
     <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
+    <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
@@ -296,6 +302,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <span class="set-l">제작자에게 건의하기</span>
       <textarea id="fb-text" aria-label="건의 내용" maxlength="500" placeholder="건의 내용"></textarea>
       <div class="row"><button class="btn primary" id="fb-send" type="button">보내기</button><span class="hint" id="fb-msg" aria-live="polite"></span></div>
+      <div id="fb-mine-w" hidden><span class="set-l">내 건의</span><ol class="fb-list" id="fb-mine"></ol></div>
     </div>
     <div class="admin-box" id="fb-admin" hidden>
       <div class="row" style="justify-content:space-between"><span class="set-l">건의함 (관리자)</span><button class="btn acct" id="fb-re" type="button">새로고침</button></div>
@@ -386,7 +393,8 @@ const NO_PRESETS=false;const LIBK=NO_PRESETS?"ttc-lib":"tt-lib",CURK=NO_PRESETS?
 // 기본 지문 뺀 사이트에서 숨길 지문: 교과서 기본 지문(시는 두 사이트 다 보여요)
 const hidP=id=>NO_PRESETS&&typeof id==="string"&&id.startsWith("preset-")&&!id.startsWith("preset-poem-");
 // 배경 날씨(캔버스, 창 뒤): 빗방울은 창 윗변이나 바닥에 닿으면 튀고, 눈은 잠깐 쌓였다가 녹아요(3.1.7)
-const WX={snow:false,rain:false,cv:null,ctx:null,run:false,fl:[],dr:[],sp:[],st:[],W:0,H:0,dpr:1,last:0};
+const WXL={snow:false,rain:false,storm:false,timer:null};
+const WX={storm:false,fla:0,snow:false,rain:false,cv:null,ctx:null,run:false,fl:[],dr:[],sp:[],st:[],W:0,H:0,dpr:1,last:0};
 function wxSize(){const c=WX.cv;if(!c)return;WX.dpr=Math.min(2,window.devicePixelRatio||1);WX.W=innerWidth;WX.H=innerHeight;c.width=Math.round(WX.W*WX.dpr);c.height=Math.round(WX.H*WX.dpr)}
 function wxSet(kind,on){WX[kind]=!!on;if(WX.snow||WX.rain){if(!WX.cv){const c=document.createElement("canvas");c.className="wx";c.setAttribute("aria-hidden","true");const b=document.querySelector(".bgart");if(b)b.after(c);else document.body.prepend(c);WX.cv=c;WX.ctx=c.getContext("2d");addEventListener("resize",wxSize);wxSize()}
     WX.cv.toggleAttribute("data-snow",WX.snow);WX.cv.toggleAttribute("data-rain",WX.rain);if(!WX.snow){WX.fl=[]}if(!WX.rain){WX.dr=[]}
@@ -414,7 +422,9 @@ function wxTick(now){if(!WX.run)return;requestAnimationFrame(wxTick);if(document
       if(f.x<-10)f.x=W+5;else if(f.x>W+10)f.x=-5;ctx.globalAlpha=f.o;ctx.fillRect(f.x-f.r/2,f.y-f.r/2,f.r,f.r)}ctx.globalAlpha=1}
   if(WX.st.length){const M=new Map(R.map(r=>[r.e,r])),pile=new Map();WX.st=WX.st.filter(q=>{q.life-=dt;return q.life>-q.melt&&(!q.e||M.has(q.e))});ctx.fillStyle="#fff";
     for(const q of WX.st){const r=q.e?M.get(q.e):null,x=r?r.l+q.dx:q.dx,base=r?r.t:H,key=(r?R.indexOf(r):-1)+":"+Math.round(x/3),n=pile.get(key)||0;pile.set(key,n+1);
-      const k=q.life>0?1:Math.max(0,1+q.life/q.melt),w=q.r*(.35+.65*k),h=q.r*.7*(.3+.7*k);ctx.globalAlpha=q.o*k;ctx.fillRect(x-w/2,base-h-n*q.r*.55,w,h)}ctx.globalAlpha=1}}
+      const k=q.life>0?1:Math.max(0,1+q.life/q.melt),w=q.r*(.35+.65*k),h=q.r*.7*(.3+.7*k);ctx.globalAlpha=q.o*k;ctx.fillRect(x-w/2,base-h-n*q.r*.55,w,h)}ctx.globalAlpha=1}
+  // 뇌우: 가끔 번쩍(움직임 줄이기 설정이면 안 해요)
+  if(WX.storm&&WX.rain&&slow===1){if(!WX.fla&&Math.random()<dt/7)WX.fla=1;if(WX.fla>0){ctx.globalAlpha=Math.min(1,WX.fla)*.32;ctx.fillStyle="#E8EEFF";ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;WX.fla=Math.max(0,WX.fla-dt*3.2)}}else WX.fla=0}
 // 큐브 테마: 연습을 시작하면 배경 큐브가 줄 수만큼 섞이고, 한 줄 칠 때마다 한 번씩 돌아가서 다 치면 맞춰져요
 const CUBE_C=["#FF4A4A","#FF8A1F","#FFD21F","#22C55E","#3D8BFF","#F2F2F2"],CUBE_RGB=CUBE_C.map(h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)));
 const CB={cv:null,ctx:null,run:false,cs:[],mv:[],an:null,yaw:.62,last:0,joy:0,ci:0,W:0,H:0,dpr:1};
@@ -1250,12 +1260,32 @@ function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()
   $("shop-msg").textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}
 function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snowfx",true)!==false;
   const row=$("snow-row");if(row){row.hidden=!on;$("snowbtn").textContent="배경 눈: "+(fx?"켜짐":"꺼짐");$("snowbtn").setAttribute("aria-pressed",String(fx))}
-  wxSet("snow",on&&fx)}
+  wxSet("snow",(on&&fx)||WXL.snow)}
 function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rainfx",true)!==false;
   const row=$("rain-row");if(row){row.hidden=!on;$("rainbtn").textContent="배경 비: "+(fx?"켜짐":"꺼짐");$("rainbtn").setAttribute("aria-pressed",String(fx))}
-  wxSet("rain",on&&fx)}
+  WX.storm=WXL.storm;wxSet("rain",(on&&fx)||WXL.rain)}
 $("rainbtn").onclick=()=>{store.set("tt-rainfx",store.get("tt-rainfx",true)===false);applyRain()};
 $("snowbtn").onclick=()=>{store.set("tt-snowfx",store.get("tt-snowfx",true)===false);applySnow()};
+// 우리 동네 날씨: 켜면 위치를 묻고, 동네 정도(소수 첫째 자리)로만 뭉뚱그린 위치를 Open-Meteo(무료)에 보내 지금 날씨를 받아요.
+// 눈이면 배경에 눈, 비면 비, 뇌우면 비와 번개. 30분마다 다시 확인. 위치는 어디에도 저장하지 않아요
+const wxName=c=>c===0?"맑음":c<=3?"구름":c===45||c===48?"안개":c>=51&&c<=57?"이슬비":c>=61&&c<=67?"비":c>=71&&c<=77?"눈":c>=80&&c<=82?"소나기":c===85||c===86?"눈":c>=95?"뇌우":"알 수 없음";
+const wxMsg=t=>{$("wx-msg").textContent=t};
+function wxLocDraw(){const on=store.get("tt-wxloc",false)===true;$("wxbtn").textContent="우리 동네 날씨: "+(on?"켜짐":"꺼짐");$("wxbtn").setAttribute("aria-pressed",String(on))}
+function wxLocSet(c){WXL.snow=c!==null&&(c>=71&&c<=77||c===85||c===86);WXL.rain=c!==null&&(c>=51&&c<=67||c>=80&&c<=82||c>=95);WXL.storm=c!==null&&c>=95;applySnow();applyRain()}
+async function wxCheck(){if(store.get("tt-wxloc",false)!==true)return;
+  if(!navigator.geolocation){wxMsg("위치 확인 불가");return}
+  let pos;try{pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:false,maximumAge:3600000,timeout:20000}))}
+  catch(e){wxMsg(e&&e.code===1?"위치 허용 필요":"위치 확인 실패");wxLocSet(null);return}
+  if(store.get("tt-wxloc",false)!==true)return;
+  const r1=x=>Math.round(x*10)/10,lat=r1(pos.coords.latitude),lon=r1(pos.coords.longitude);
+  try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=weather_code&timezone=auto");if(!r.ok)throw 0;
+    const j=await r.json(),c=Number(j&&j.current&&j.current.weather_code);if(!Number.isFinite(c))throw 0;
+    if(store.get("tt-wxloc",false)!==true)return;wxLocSet(c);wxMsg("지금 날씨: "+wxName(c))}
+  catch(e){wxMsg("날씨 확인 실패")}}
+function wxLocStart(){clearInterval(WXL.timer);WXL.timer=null;wxLocDraw();
+  if(store.get("tt-wxloc",false)===true){wxMsg("확인 중");wxCheck();WXL.timer=setInterval(wxCheck,30*60*1000)}else{wxMsg("");wxLocSet(null)}}
+$("wxbtn").onclick=()=>{store.set("tt-wxloc",store.get("tt-wxloc",false)!==true);wxLocStart()};
+wxLocStart();
 applyFont();bgLoadLocal();applySnow();applyRain();
 $("bg-file").onchange=async()=>{const f=$("bg-file").files[0],i=bgTarget;$("bg-file").value="";if(!f||!owned("bgphoto")||i>bgSlots())return;bgMsg("줄이는 중");
   let d="";try{d=await shrinkImg(f)}catch(e){}if(!d){bgMsg("사진을 열 수 없음");return}await bgSet(i,d)};
@@ -1398,11 +1428,24 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("fb-box").hidden=false;
   const fbMsg=t=>{$("fb-msg").textContent=t};
   function fbShow(){const u=auth.currentUser;$("fb-send").disabled=!u;fbMsg(u?"":"로그인하면 건의 가능");
-    const isA=!!u&&u.email.split("@")[0]===ADMIN;$("fb-admin").hidden=!isA;if(isA)loadFb()}
+    const isA=!!u&&u.email.split("@")[0]===ADMIN;$("fb-admin").hidden=!isA;if(isA)loadFb();loadMine(true)}
+  const fbTime=t=>new Date(Number(t)||0).toLocaleString("ko-KR",{timeZone:"Asia/Seoul",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+  const el=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
+  function fbReply(v){const r=el("div","fb-r"),h=el("div","fb-h");h.append(el("b","","제작자 답장"),el("span","",fbTime(v.reAt)));r.append(h,el("div","fb-t",String(v.re)));return r}
+  // 내 건의: 내가 보낸 건의와 제작자 답장만 보여요. 새 답장이 있으면 설정 버튼에 점이 떠요(설정을 열어 보면 사라져요)
+  let mineSeq=0;
+  async function loadMine(seen){const u=auth.currentUser,w=$("fb-mine-w"),list=$("fb-mine"),my=++mineSeq;if(!u){w.hidden=true;list.innerHTML="";$("setbtn").classList.remove("has-new");return}
+    try{const snap=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",u.uid),FS.limit(30)));if(my!==mineSeq)return;const rows=[];snap.forEach(d=>rows.push(d.data()||{}));rows.sort((a,b)=>(Number(b.at)||0)-(Number(a.at)||0));
+      list.innerHTML="";w.hidden=!rows.length;let top=0;
+      rows.slice(0,20).forEach(v=>{const li=el("li"),h=el("div","fb-h");h.append(el("span","",fbTime(v.at)),el("span","",v.re?"답장 옴":"답장 기다리는 중"));li.append(h,el("div","fb-t",String(v.text||"")));
+        if(v.re){li.append(fbReply(v));top=Math.max(top,Number(v.reAt)||0)}list.appendChild(li)});
+      const key="tt-fbseen-"+u.uid,old=Number(store.get(key,0))||0;
+      if(seen&&!$("settings").hidden){if(top>old)store.set(key,top);$("setbtn").classList.remove("has-new")}else $("setbtn").classList.toggle("has-new",top>old)}
+    catch(e){if(my===mineSeq)w.hidden=true}}
   $("fb-send").onclick=async()=>{const u=auth.currentUser;if(!u){fbShow();return}const t=$("fb-text").value.trim();
     if(!t){fbMsg("내용 없음");return}if([...t].length>500){fbMsg("500자까지");return}
     const id=u.email.split("@")[0];$("fb-send").disabled=true;fbMsg("보내는 중");
-    try{await FS.setDoc(FS.doc(fdb,"fb",u.uid+"_"+Date.now()),{uid:u.uid,id:id,nick:nick||id,text:t,at:Date.now()});$("fb-text").value="";fbMsg("보냄");if(id===ADMIN)loadFb()}
+    try{await FS.setDoc(FS.doc(fdb,"fb",u.uid+"_"+Date.now()),{uid:u.uid,id:id,nick:nick||id,text:t,at:Date.now()});$("fb-text").value="";fbMsg("보냄");if(id===ADMIN)loadFb();loadMine(true)}
     catch(e){fbMsg("보내기 실패")}$("fb-send").disabled=false};
   async function loadFb(){const list=$("fb-list");list.innerHTML="";const wait=document.createElement("li");wait.textContent="불러오는 중";list.appendChild(wait);
     try{const q=FS.query(FS.collection(fdb,"fb"),FS.orderBy("at","desc"),FS.limit(50));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
@@ -1411,7 +1454,17 @@ async function initCloud(){if(!FB_CONFIG)return;
         const tm=document.createElement("span");const dt=new Date(Number(v.at)||0);tm.textContent=dt.toLocaleString("ko-KR",{timeZone:"Asia/Seoul",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
         const x=document.createElement("button");x.type="button";x.className="btn acct fb-x";x.textContent="지우기";
         x.onclick=async()=>{if(x.dataset.arm!=="1"){x.dataset.arm="1";x.textContent="한 번 더";return}x.disabled=true;try{await FS.deleteDoc(FS.doc(fdb,"fb",d.id));li.remove();if(!list.children.length){const e=document.createElement("li");e.textContent="건의 없음";list.appendChild(e)}}catch(e){x.disabled=false;x.textContent="실패"}};
-        h.append(nm,idv,tm,x);const tx=document.createElement("div");tx.className="fb-t";tx.textContent=String(v.text||"");li.append(h,tx);list.appendChild(li)});
+        h.append(nm,idv,tm,x);const tx=document.createElement("div");tx.className="fb-t";tx.textContent=String(v.text||"");li.append(h,tx);
+        // 답장: 건의 하나에 답 하나. 다시 쓰면 고쳐지고, 지우면 사라져요
+        const ref=FS.doc(fdb,"fb",d.id);let cur=v.re?String(v.re):"",curAt=Number(v.reAt)||0;const box=el("div"),btns=el("div","fb-btns");
+        const draw=()=>{box.innerHTML="";if(cur)box.append(fbReply({re:cur,reAt:curAt}));btns.innerHTML="";const b=el("button","btn acct",cur?"답장 고치기":"답장");b.type="button";b.onclick=edit;btns.append(b)};
+        const edit=()=>{btns.innerHTML="";box.innerHTML="";const ed=el("div","fb-ed"),ta2=el("textarea");ta2.maxLength=500;ta2.value=cur;ta2.setAttribute("aria-label","답장 내용");ta2.placeholder="답장 내용";
+          const row=el("div","fb-btns"),ok=el("button","btn primary","보내기"),no=el("button","btn acct","취소"),m=el("span","hint");ok.type=no.type="button";row.append(ok,no);
+          if(cur){const del=el("button","btn acct","답장 지우기");del.type="button";del.onclick=async()=>{if(del.dataset.arm!=="1"){del.dataset.arm="1";del.textContent="한 번 더";return}del.disabled=true;try{const at=Date.now();await FS.updateDoc(ref,{re:"",reAt:at});cur="";curAt=at;draw()}catch(e){del.disabled=false;m.textContent="실패 (규칙 확인)"}};row.append(del)}
+          row.append(m);ed.append(ta2,row);box.append(ed);ta2.focus();no.onclick=draw;
+          ok.onclick=async()=>{const t=ta2.value.trim();if(!t){m.textContent="내용 없음";return}if([...t].length>500){m.textContent="500자까지";return}ok.disabled=true;m.textContent="보내는 중";
+            try{const at=Date.now();await FS.updateDoc(ref,{re:t,reAt:at});cur=t;curAt=at;draw()}catch(e){ok.disabled=false;m.textContent="보내기 실패 (규칙 확인)"}}};
+        draw();li.append(box,btns);list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="건의 없음";list.appendChild(li)}}catch(e){list.innerHTML="";const li=document.createElement("li");li.textContent="불러올 수 없음 (규칙 확인)";list.appendChild(li)}}
   $("fb-re").onclick=loadFb;
   // 오늘의 문장 상금: 하루가 끝나면(한국 시각 밤 12시) 그날 1·2·3위에게 200·100·50포인트.
@@ -1464,7 +1517,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
     if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
