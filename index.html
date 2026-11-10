@@ -194,7 +194,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 1.5.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -316,7 +316,7 @@ const SAMPLE="가는 말이 고와야 오는 말이 곱다.\n천 리 길도 한 
 const $=id=>document.getElementById(id);
 // 깃허브 버전에서만 채워요: 파이어베이스 설정값이 있으면 아이디 로그인과 클라우드 저장이 켜져요
 const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomain": "whitetigertype.firebaseapp.com", "projectId": "whitetigertype", "storageBucket": "whitetigertype.firebasestorage.app", "messagingSenderId": "371671407725", "appId": "1:371671407725:web:2fa520d22485503517f364"};
-let cloudHook=null,eggHook=null,rankHook=null;
+let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
 const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
@@ -950,14 +950,14 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     const n=document.createElement("span");n.className="nm";n.textContent=it.name;li.appendChild(n);
     if(!has){const p=document.createElement("span");p.className="pr";p.textContent=it.pr;li.appendChild(p)}
     const b=document.createElement("button");b.type="button";b.className="btn acct";
-    if(!has){b.textContent="구매";b.disabled=pt<it.pr;b.onclick=()=>buy(it)}
+    if(!has){b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;b.onclick=()=>buy(it)}
     else if(isTheme){b.textContent=on?"적용 중":"적용";b.disabled=on;b.onclick=()=>{setSkin(it.id);drawShop()}}
     else{b.textContent=on?"빼기":"달기";b.onclick=()=>{store.set("tt-title",on?"":it.id);drawShop();if(rankHook)rankHook()}}
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_TITLES,$("shop-titles"),false);
   [["shop-th-l","shop-themes",SHOP_THEMES],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_TITLES.length)}
-function buy(it){const pt=Number(store.get("tt-pt",0))||0;if(owned(it.id)||pt<it.pr)return;const inv=store.get("tt-inv",[]);
-  store.set("tt-tot",getTot());store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));store.set("tt-pt",pt-it.pr);showPts();shopSkins();
+function buy(it){const pt=Number(store.get("tt-pt",0))||0;if(owned(it.id)||(!shopFree&&pt<it.pr))return;const inv=store.get("tt-inv",[]);
+  store.set("tt-tot",getTot());store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
   $("shop-msg").textContent=it.name+" 구매 완료";drawShop()}
 $("shopbtn").onclick=()=>{const c=$("shop"),o=c.hidden;closePanels(o?"shop":null);c.hidden=!o;if(o){$("shop-msg").textContent="";drawShop()}};
 shopSkins();
@@ -1153,7 +1153,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{
+  AU.onAuthStateChanged(auth,async user=>{shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
     if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
