@@ -28,10 +28,10 @@
 :root[data-skin="rainbow"]{--accent:hsl(var(--hue) 95% 63%); --ok:hsl(var(--hue) 95% 63%); --accent-soft:hsl(var(--hue) 60% 13%);}
 :root[data-skin="rainbow"] h1{background:linear-gradient(90deg,#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A) 0 50%/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 :root[data-skin="rainbow"] h1 .ver{-webkit-text-fill-color:var(--muted);color:var(--muted)}
-:root[data-skin="rainbow"] .prog i{background:linear-gradient(90deg,#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A) 0 50%/200% 100%}
+:root[data-skin="rainbow"] .prog i{background:var(--accent)}
 @media (prefers-reduced-motion:no-preference){
   :root[data-skin="rainbow"]{animation:hue 6s steps(60) infinite}
-  :root[data-skin="rainbow"] h1,:root[data-skin="rainbow"] .prog i{animation:flow 3s linear infinite}
+  :root[data-skin="rainbow"] h1{animation:flow 3s linear infinite}
   .skin[data-skin="rainbow"]::before{animation:spin 6s linear infinite}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .skin{position:relative}
@@ -42,7 +42,7 @@
 :root[data-skin="cube"]{--bg:#0B0D12; --surface:#151923; --card:rgba(21,25,35,.84); --fg:#F2F2F2; --muted:#8F96A3; --line:#2E3442;
   --accent:var(--cc); --ok:var(--cc); --accent-soft:color-mix(in srgb,var(--cc) 16%,#0B0D12); --bad:#0B0D12; --bad-soft:#F2F2F2}
 :root[data-skin="cube"] h1{border-image:linear-gradient(#FF4A4A 0 16.66%,#FF8A1F 0 33.33%,#FFD21F 0 50%,#22C55E 0 66.66%,#3D8BFF 0 83.33%,#F2F2F2 0) 1}
-:root[data-skin="cube"] .prog i{background:repeating-linear-gradient(90deg,#FF4A4A 0 22px,#0B0D12 0 24px,#FF8A1F 0 46px,#0B0D12 0 48px,#FFD21F 0 70px,#0B0D12 0 72px,#22C55E 0 94px,#0B0D12 0 96px,#3D8BFF 0 118px,#0B0D12 0 120px,#F2F2F2 0 142px,#0B0D12 0 144px)}
+:root[data-skin="cube"] .prog i{background:var(--cbar,var(--cc)) 0 0/var(--pw,100%) 100% no-repeat}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="cube"]{transition:--cc .45s}}
 .skin[data-skin="cube"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;background:linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12}
 .cubefx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -74,7 +74,9 @@
 .bg-slot .x{position:absolute;top:-8px;right:-8px;width:20px;height:20px;line-height:16px;font-size:.8rem;border:2px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;padding:0}
 :root[data-skin="baekho"] h1{color:var(--accent);text-shadow:0 1px 10px rgba(0,0,0,.7)}
 .wrap{position:relative;z-index:1}
-.hright{display:flex;align-items:center;gap:12px;margin-left:auto}
+.hright{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:12px;margin-left:auto;max-width:100%}
+.hright>*{white-space:nowrap;flex:none}
+@media (max-width:560px){.hright{gap:8px}}
 .skins{display:flex;gap:10px;flex-wrap:wrap}
 .fonts{display:flex;gap:6px;flex-wrap:wrap}
 .fonts .btn{padding:6px 12px}
@@ -239,7 +241,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="bgart" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.9</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.10</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -430,6 +432,11 @@ function cubeStep(last){if(CB.an){cbTurn(CB.an.m);CB.an=null}
   const m=CB.mv.pop();CB.ci++;cbColor();if(!m)return;const inv={a:m.a,l:m.l,d:-m.d};
   if(CB.run&&!cbRed())CB.an={m:inv,t:0,dur:.34};else cbTurn(inv);
   if(last&&!CB.mv.length)CB.joy=1.7}
+// 큐브 테마 진행 막대: 한 문장에 한 칸씩, 빨강부터 여섯 색을 돌아가며 칠해요(칸 크기는 막대 전체 길이 기준)
+function cubeBar(){const b=$("bar");if(!b)return;const n=S.lines&&S.lines.length;if(!cbOn()||!n){b.style.removeProperty("--cbar");return}
+  const pw=b.parentElement.clientWidth||0,g=pw/n>=8?2:0,st=[];for(let k=0;k<n;k++){const a=k/n*100,e=(k+1)/n*100,c=CUBE_C[k%6];st.push(c+" "+a+"%",c+" calc("+e+"% - "+g+"px)");if(g)st.push("#0B0D12 calc("+e+"% - "+g+"px)","#0B0D12 "+e+"%")}
+  b.style.setProperty("--pw",pw?pw+"px":"100%");b.style.setProperty("--cbar","linear-gradient(90deg,"+st.join(",")+")")}
+addEventListener("resize",()=>{try{cubeBar()}catch(e){}});
 function cbSize(){const c=CB.cv;if(!c)return;CB.dpr=Math.min(2,window.devicePixelRatio||1);CB.W=innerWidth;CB.H=innerHeight;c.width=Math.round(CB.W*CB.dpr);c.height=Math.round(CB.H*CB.dpr)}
 function cubeSync(){if(cbOn()){if(!CB.cs.length)cbReset();cbColor();
     if(!CB.cv){const c=document.createElement("canvas");c.className="cubefx";c.setAttribute("aria-hidden","true");const b=document.querySelector(".bgart");if(b)b.after(c);else document.body.prepend(c);CB.cv=c;CB.ctx=c.getContext("2d");addEventListener("resize",cbSize);cbSize()}
@@ -616,7 +623,7 @@ function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   show("practice");showLine()}
 function showLine(){S.start=0;$("typing").value="";
   $("lineno").textContent=(S.src?S.src.title+"  ·  ":"")+(S.i+1)+" / "+S.lines.length+" 줄";
-  $("bar").style.width=(S.i/S.lines.length*100)+"%";
+  $("bar").style.width=(S.i/S.lines.length*100)+"%";cubeBar();
   [...$("lines").children].forEach((d,k)=>d.className=(k<S.i?"done":k===S.i?"now":"")+(d.dataset.h?" head":""));
   $("target").classList.toggle("head",isHead(S.lines[S.i]||""));
   const now=$("lines").children[S.i];if(now)now.scrollIntoView({block:"nearest"});
@@ -682,7 +689,7 @@ function burst(){if(document.documentElement.dataset.skin!=="rainbow"||!fxOn()||
   const col=d=>"hsl("+(hue+d)+" 95% 63%)";
   const ring=document.createElement("div");ring.className="fx-ring";ring.style.color=col(0);box.appendChild(ring);
   ring.animate([{transform:"scale(1)",opacity:1},{transform:"scale(1.025,1.15)",opacity:1,offset:.35},{transform:"scale(1.06,1.4)",opacity:0}],{duration:750,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>ring.remove()}
-function finish(){$("bar").style.width="100%";
+function finish(){$("bar").style.width="100%";cubeBar();
   S.frozen=speeds(performance.now());const avg=S.frozen[1],acc=S.typed?Math.round(S.correct/S.typed*100):100;
   stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";
   // 연습을 마치면 총 타수의 1할(10%, 소수점 버림)만큼 포인트를 줘요
@@ -842,7 +849,7 @@ function drawFontSet(){const el=$("set-fonts");if(!el)return;const cur=store.get
 // 산 테마인데 아직 불러오기 전(로그인 전)이면 기본으로 보여 주되, 고른 테마는 기억해 둬요
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&owned(k)))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
-  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync()}catch(e){}}
+  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}}
 document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
