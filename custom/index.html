@@ -265,7 +265,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.13</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.14</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1132,8 +1132,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function awardDaily(){if(!uid||awarding)return;awarding=true;const me=uid;
     try{const today=todayKey(),seen=new Set(store.get("tt-aw",[])),add=[];let won=[];
       for(let i=1;i<=7;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);if(day<PRIZE_FROM)break;if(seen.has(day))continue;
-        const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(3));const snap=await FS.getDocs(q);
-        let k=0;snap.forEach(d=>{const v=d.data()||{};if(!v.ms)return;if(d.id===me)won.push([day,k]);k++});add.push(day)}
+        const R=await dailyRuns(day,3);R.rows.forEach((r,k)=>{if(r.id===me)won.push([day,k])});add.push(day)}
       if(me!==uid||!add.length)return;
       const aw=[...seen,...add].sort().slice(-40);store.set("tt-aw",aw);
       if(won.length){const g=won.reduce((a,[,k])=>a+PRIZE[k],0);addPts(g);
@@ -1149,15 +1148,19 @@ async function initCloud(){if(!FB_CONFIG)return;
       if(!sn.exists()){go.disabled=false;m.textContent="남은 도전 횟수: 1회"}
       else{const v=sn.data()||{};m.textContent="남은 도전 횟수: 0회"}}catch(e){m.textContent="불러올 수 없음"}}
     await fillDaily($("daily-list"),day)}
+  // 오늘의 문장 순위: 2026-11-11부터는 타수 높은 순(막 치고 넘긴 기록은 정확도가 낮아 타수도 낮아요), 그 전 날짜는 시간 짧은 순 그대로
+  // 타수 = 오늘의 문장 타수 × 정확도 ÷ 걸린 시간(분). 저장된 ms·acc로 계산해서 규칙은 안 바꿔도 돼요
+  const SPD_FROM="2026-11-11";
+  async function dailyRuns(day,n){const sk=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0),bySpd=day>=SPD_FROM;
+    const snap=await FS.getDocs(FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(bySpd?300:n)));const rows=[];
+    snap.forEach(d=>{const v=d.data()||{};const ms=Number(v.ms);if(!ms)return;const ac=Math.round(Number(v.acc)||0);rows.push({id:d.id,v,ms,ac,ts:Math.round(sk*ac/100/(ms/60000))})});
+    if(bySpd)rows.sort((a,b)=>b.ts-a.ts||a.ms-b.ms);return {rows:rows.slice(0,n),bySpd}}
   async function fillDaily(list,day){
-    try{const q=FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
-      // 타수: 오늘의 문장 타수 × 정확도 ÷ 걸린 시간(분)
-      const sk=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0);
+    try{const R=await dailyRuns(day,20);list.innerHTML="";let n=0;
       const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
-      const rows=[];snap.forEach(d=>{const v=d.data()||{};if(v.ms)rows.push({id:d.id,v})});const nm=await nickMap(rows.map(r=>r.id));
-      rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
-        const ms=Number(v.ms),ac=Math.round(Number(v.acc)||0),ts=Math.round(sk*ac/100/(ms/60000));
+      const rows=R.rows;const nm=await nickMap(rows.map(r=>r.id));
+      rows.forEach(({id,v,ms,ac,ts})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
         li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
