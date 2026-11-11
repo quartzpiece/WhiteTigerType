@@ -295,7 +295,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -613,8 +613,7 @@ const POEMS=[{id:"preset-poem-jahwasang",title:"자화상 · 윤동주",text:"�
 // 애국가는 기본 지문 뺀 사이트에도 넣어요(3.3.5)
 const ANTHEM={id:"preset-anthem",title:"애국가 1절",text:`동해물과 백두산이 마르고 닳도록
 하느님이 보우하사 우리나라 만세
-무궁화 삼천리 화려강산
-대한 사람, 대한으로 길이 보전하세`};
+무궁화 삼천리 화려강산 대한사람 대한으로 길이 보전하세`};
 const PRESETS=[ANTHEM,...POEMS];
 const gone=store.get("tt-gone",[]);let added=null;
 lib.forEach(q=>{if(q.id==="preset-drama"&&q.title==="연극 동아리 협상")q.title="3-(1) 함께 만족하는 협상"});
