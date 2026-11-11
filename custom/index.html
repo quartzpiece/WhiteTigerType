@@ -905,16 +905,17 @@ function applySnow(){const on=!!store.get("tt-snow",false),fx=store.get("tt-snow
   wxSet("snow",(on&&fx)||WXL.snow)}
 function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rainfx",true)!==false;
   const row=$("rain-row");if(row){row.hidden=!on;$("rainbtn").textContent="배경 비: "+(fx?"켜짐":"꺼짐");$("rainbtn").setAttribute("aria-pressed",String(fx))}
-  WX.storm=WXL.storm;wxSet("rain",(on&&fx)||WXL.rain)}
+  WX.storm=WXL.storm;wxSet("rain",(on&&fx)||WXL.rain);try{applyHolo()}catch(e){}}
 $("rainbtn").onclick=()=>{store.set("tt-rainfx",store.get("tt-rainfx",true)===false);applyRain()};
 // 무지개 이스터에그를 열면 화면이 홀로그램처럼 반짝여요(설정 "홀로그램" 줄에서 끄기, tt-holofx)
 // 비 갠 뒤 무지개: 우리 동네 날씨가 비였다가 그치면 30분 동안 이스터에그가 없어도 켜져요(tt-rbuntil = 끝나는 시각)
 var holoT=null;
 function rbLeft(){return store.get("tt-wxloc",false)===true?Math.max(0,(Number(store.get("tt-rbuntil",0))||0)-Date.now()):0}
-function applyHolo(){const rb=rbLeft(),on=!!store.get("tt-egg",false)||rb>0,fx=store.get("tt-holofx",true)!==false,R=document.documentElement;
+// 비 갠 뒤 무지개는 배경에 비가 다시 오는 동안 꺼 둬요(이스터에그 무지개는 그대로)
+function applyHolo(){const rb=rbLeft(),egg=!!store.get("tt-egg",false),has=egg||rb>0,on=egg||(rb>0&&!WX.rain),fx=store.get("tt-holofx",true)!==false,R=document.documentElement;
   clearTimeout(holoT);holoT=rb>0?setTimeout(applyHolo,rb+300):null;
   {const m=$("wx-msg");if(m&&rb<=0)m.textContent=m.textContent.replace(/ · 비 갠 뒤 무지개.*$/,"")}
-  const row=$("holo-row");if(row){row.hidden=!on;$("holobtn").textContent="무지개 반짝임: "+(fx?"켜짐":"꺼짐");$("holobtn").setAttribute("aria-pressed",String(fx))}
+  const row=$("holo-row");if(row){row.hidden=!has;$("holobtn").textContent="무지개 반짝임: "+(fx?"켜짐":"꺼짐");$("holobtn").setAttribute("aria-pressed",String(fx))}
   const h=document.querySelector(".holo");if(h&&on&&fx&&!h.children.length){for(let k=0;k<16;k++){const i=document.createElement("i"),e=()=>Math.random()<.5?2+Math.random()*9:89+Math.random()*9,a=()=>2+Math.random()*96,side=Math.random()<.5;i.style.left=(side?e():a())+"%";i.style.top=(side?a():e())+"%";i.style.setProperty("--d",(3.2+Math.random()*3).toFixed(2)+"s");i.style.setProperty("--w",(-Math.random()*6).toFixed(2)+"s");h.appendChild(i)}}
   R.classList.toggle("holo-on",on&&fx)}
 $("holobtn").onclick=()=>{store.set("tt-holofx",store.get("tt-holofx",true)===false);applyHolo()};
