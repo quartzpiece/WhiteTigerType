@@ -289,7 +289,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.2.1</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.2.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -435,7 +435,6 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="kbw" id="kbw" hidden>
       <div class="row"><span class="set-l">키별 속도</span><button class="btn acct" id="kb-run" type="button" aria-pressed="true">이번 연습</button><button class="btn acct" id="kb-all" type="button" aria-pressed="false">전체 기록</button><button class="btn acct" id="kb-clr" type="button">기록 지우기</button></div>
       <div class="kb" id="kb" role="img" aria-label="키별 평균 시간"></div>
-      <p class="hint" id="kb-slow"></p>
     </div>
     <div class="row"><button class="btn primary" id="again" type="button">처음부터 다시</button><button class="btn" id="randnext" type="button" hidden>다음 랜덤 문단</button><button class="btn" id="edit2" type="button">지문 바꾸기</button></div>
   </section>
@@ -835,8 +834,7 @@ function drawKb(){const w=$("kbw"),runN=kbCount(KS.run),all=kbAll(),allN=kbCount
     else{const p=vs.length>1&&hi>lo?Math.round(18+72*(hi-a)/(hi-lo)):60;d.style.setProperty("--p",p+"%");if(p>=55)d.classList.add("hi");
       d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j+"</b><small>"+(a/1000).toFixed(2)+"</small>";d.title=j+" 평균 "+(a/1000).toFixed(2)+"초 ("+D[k][1]+"번)"}
     row.appendChild(d)});
-  const slow=Object.entries(avg).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k,a])=>(KB_ROWS.find(x=>x&&x[0]===k)||[k,k])[1]+" "+(a/1000).toFixed(2)+"초");
-  $("kb-slow").textContent=slow.length?"느린 키: "+slow.join(" · ")+"  ·  "+(KS.view==="run"?"이번 연습":"전체 기록")+", 진할수록 빠름":""}
+}
 // 내 기록: 연습을 끝까지 마칠 때마다 tt-runs에 {at, t(제목), s(평균 타수), a(정확도), n(줄 수)}를 200개까지 쌓아요(로그인하면 클라우드에도)
 const runsGet=()=>{const r=store.get("tt-runs",[]);return Array.isArray(r)?r.filter(x=>x&&Number.isFinite(Number(x.at))&&Number.isFinite(Number(x.s))):[]};
 function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0))})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
