@@ -287,13 +287,14 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.target{font-size:1.3rem}}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
+#kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
 </style>
 
 <div class="bgart" aria-hidden="true"></div>
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.2.18</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.3.0</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -344,6 +345,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
     <div class="set-row" id="piano-row" hidden><span class="set-l">피아노</span><button class="btn acct" id="pianobtn" type="button" aria-pressed="true">피아노 소리: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
+    <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><span class="hint" id="kbl-msg">세벌식은 컴퓨터 키보드, 영문 상태로</span></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -390,6 +392,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <div class="kbw" id="kbw" hidden>
         <div class="row"><span class="set-l">키별 속도</span><button class="btn acct" id="kb-run" type="button" aria-pressed="true">마지막 연습</button><button class="btn acct" id="kb-all" type="button" aria-pressed="false">전체 기록</button><button class="btn acct" id="kb-clr" type="button">기록 지우기</button></div>
         <div class="kb" id="kb" role="img" aria-label="키별 평균 시간"></div>
+        <p class="hint kb-note" id="kb-note" hidden>세벌식 390 기록 · 밑줄은 받침</p>
       </div>
     </div>
   </section>
@@ -562,7 +565,7 @@ const isRain=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===RAIN;
 // 피아노 이스터에그: 내 지문으로 이 문장을 끝까지 치면 연습할 때 키마다 피아노 음이 나요
 const PIANO="작은자판을두드리는소리조차삶속에화음을더하고";
 const isPiano=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===PIANO;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys"].includes(k))cloudHook()}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -1084,7 +1087,7 @@ function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   Object.assign(S,{activeDone:0,t0:0,log:[],doneStrokes:0,okS:0,frozen:null,newBest:false,best:0,i:0,start:0,totalStrokes:0,totalMs:0,typed:0,correct:0});stats(0);
   $("lines").innerHTML=S.lines.map(l=>"<div"+(isHead(l)?' data-h="1"':"")+">"+esc(l)+"</div>").join("");
   show("practice");showLine()}
-function showLine(){S.start=0;$("typing").value="";KS.last=0;
+function showLine(){S.start=0;$("typing").value="";try{h3Reset()}catch(e){}KS.last=0;
   $("lineno").textContent=(S.src?S.src.title+"  ·  ":"")+(S.i+1)+" / "+S.lines.length+" 줄";
   $("bar").style.width=(S.i/S.lines.length*100)+"%";cubeBar();
   [...$("lines").children].forEach((d,k)=>d.className=(k<S.i?"done":k===S.i?"now":"")+(d.dataset.h?" head":""));
@@ -1171,11 +1174,11 @@ function finish(){$("bar").style.width="100%";cubeBar();
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:kbAll()}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:store.get("tt-keys",{}),keys3:store.get("tt-keys3",{})}}
 function applyData(d){
   const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);applyHolo();if(eggHook)eggHook();store.set("tt-snow",d.snow===true);store.set("tt-bookp",cleanBookP(d.bookp));{const m=d.mycap,day=todayKey();if(m&&m.d===day)store.set("tt-mycap",{d:day,p:Math.max(mineCap(),Math.max(0,Number(m.p)||0))})}setTimeout(drawList,0);store.set("tt-snowfx",d.snowfx!==false);applySnow();store.set("tt-piano",d.piano===true);store.set("tt-pianofx",d.pianofx!==false);applyPiano();store.set("tt-rain",d.rain===true);store.set("tt-rainfx",d.rainfx!==false);applyRain();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
-  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));if(d.keys&&typeof d.keys==="object"&&!Array.isArray(d.keys)){const K={};for(const k in d.keys){const r=d.keys[k];if(/^([A-Z]|Space)$/.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}if(Object.keys(K).length||!kbCount(kbAll()))store.set("tt-keys",K)}shopSkins();setSkin(store.get("tt-skin","basic"));
+  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));for(const [f,sk,re] of [["keys","tt-keys",/^([A-Z]|Space)$/],["keys3","tt-keys3",/^([A-Z0-9]|Space|[;',./])$/]]){const src=d[f];if(!src||typeof src!=="object"||Array.isArray(src))continue;const K={};for(const k in src){const r=src[k];if(re.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}const cur=store.get(sk,{});if(Object.keys(K).length||!kbCount(cur&&typeof cur==="object"?cur:{}))store.set(sk,K)}shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&hidP(q.id));
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;if(hidP(q.id)||isPre(q.id))return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
@@ -1185,7 +1188,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=PRESETS.length?PRESETS.map(p=>({...p})):[{id:uid(),title:"지문 1",text:"",ph:1}];Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-keys3",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 // 내 지문 부정 막기(3.1.5): 같은 글자·묶음만 되풀이한 글이나 낱자(ㄱ, ㅏ)는 포인트를 줄이고, 내 지문 포인트는 하루 300까지
 const MINE_CAP=300;
@@ -1201,6 +1204,49 @@ function addPts(n){if(n>0)store.set("tt-tot",getTot()+n);store.set("tt-pt",store
 showPts();
 
 const inp=$("typing");
+// 세벌식 390 (3.3.0): 사이트 안 입력기. 컴퓨터 입력기는 영문 상태로 두고, 키 위치(e.code)로 초성·중성·종성을 바로 조합해요
+// 배열은 리눅스 한글 입력기 libhangul의 '세벌식 390' 표 그대로 (US 자판 글자 → 자모 또는 기호)
+const KBL=()=>store.get("tt-kbl","2")==="390"?"390":"2";
+const K390={"!":0x11bd,"'":0x1110,"/":0x1169,"0":0x110f,"1":0x11c2,"2":0x11bb,"3":0x11b8,"4":0x116d,"5":0x1172,"6":0x1163,"7":0x1168,"8":0x1174,"9":0x116e,";":0x1107,"<":"2",">":"3","A":0x11ae,"B":"!","C":0x11b1,"D":0x11b0,"E":0x11bf,"F":0x11a9,"G":"/","H":"'","I":"8","J":"4","K":"5","L":"6","M":"1","N":"0","O":"9","P":">","Q":0x11c1,"R":0x1164,"S":0x11ad,"T":";","U":"7","V":0x11b6,"W":0x11c0,"X":0x11b9,"Y":"<","Z":0x11be,"a":0x11bc,"b":0x116e,"c":0x1166,"d":0x1175,"e":0x1167,"f":0x1161,"g":0x1173,"h":0x1102,"i":0x1106,"j":0x110b,"k":0x1100,"l":0x110c,"m":0x1112,"n":0x1109,"o":0x110e,"p":0x1111,"q":0x11ba,"r":0x1162,"s":0x11ab,"t":0x1165,"u":0x1103,"v":0x1169,"w":0x11af,"x":0x11a8,"y":0x1105,"z":0x11b7};
+const US_SH={Digit1:"!",Digit2:"@",Digit3:"#",Digit4:"$",Digit5:"%",Digit6:"^",Digit7:"&",Digit8:"*",Digit9:"(",Digit0:")",Minus:"_",Equal:"+",BracketLeft:"{",BracketRight:"}",Backslash:"|",Semicolon:":",Quote:'"',Comma:"<",Period:">",Slash:"?",Backquote:"~"};
+const US_NO={Minus:"-",Equal:"=",BracketLeft:"[",BracketRight:"]",Backslash:"\\",Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/",Backquote:"`"};
+const usChar=(c,sh)=>{if(/^Key[A-Z]$/.test(c)){const l=c.slice(3);return sh?l:l.toLowerCase()}if(/^Digit[0-9]$/.test(c))return sh?US_SH[c]:c.slice(5);return sh?US_SH[c]:US_NO[c]};
+const CJ_CHO="ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ",CJ_JUNG="ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ",CJ_JONG=" ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+const H3C={"1100+1100":0x1101,"1103+1103":0x1104,"1107+1107":0x1108,"1109+1109":0x110a,"110c+110c":0x110d,
+  "1169+1161":0x116a,"1169+1162":0x116b,"1169+1175":0x116c,"116e+1165":0x116f,"116e+1166":0x1170,"116e+1175":0x1171,"1173+1175":0x1174,
+  "11a8+11a8":0x11a9,"11a8+11ba":0x11aa,"11ab+11bd":0x11ac,"11ab+11c2":0x11ad,"11af+11a8":0x11b0,"11af+11b7":0x11b1,"11af+11b8":0x11b2,"11af+11ba":0x11b3,"11af+11c0":0x11b4,"11af+11c1":0x11b5,"11af+11c2":0x11b6,"11b8+11ba":0x11b9,"11ba+11ba":0x11bb};
+const h3c=(a,b)=>H3C[a.toString(16)+"+"+b.toString(16)]||0;
+const H3={cho:0,jung:0,jong:0,hist:[],out:""};
+const h3Render=()=>{const {cho,jung,jong}=H3;if(cho&&jung)return String.fromCharCode(0xAC00+((cho-0x1100)*21+(jung-0x1161))*28+(jong?jong-0x11A7:0));
+  return (cho?CJ_CHO[cho-0x1100]:"")+(jung?CJ_JUNG[jung-0x1161]:"")+(jong?CJ_JONG[jong-0x11A7]:"")};
+function h3Reset(){H3.cho=H3.jung=H3.jong=0;H3.hist=[];H3.out="";if(KBL()==="390")S.composing=false}
+function h3Put(val,typ){const v=inp.value,pre=H3.out&&v.endsWith(H3.out)?v.slice(0,v.length-H3.out.length):v;H3.out=val;inp.value=pre+val;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(e){}
+  S.composing=!!val&&!!(H3.cho||H3.jung||H3.jong);inp.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:typ||"insertText",data:val||null}))}
+function h3Jamo(code){const snap={cho:H3.cho,jung:H3.jung,jong:H3.jong};let fresh=false;
+  if(code<0x1161){ // 초성
+    if(H3.cho&&!H3.jung&&!H3.jong&&h3c(H3.cho,code))H3.cho=h3c(H3.cho,code);else fresh=true;
+    if(fresh){h3Reset();H3.cho=code}}
+  else if(code<0x11A8){ // 중성
+    if(H3.jung&&!H3.jong&&h3c(H3.jung,code))H3.jung=h3c(H3.jung,code);
+    else if(!H3.jung&&!H3.jong)H3.jung=code;else{fresh=true;h3Reset();H3.jung=code}}
+  else{ // 종성
+    if(H3.jong&&h3c(H3.jong,code))H3.jong=h3c(H3.jong,code);
+    else if(H3.cho&&H3.jung&&!H3.jong)H3.jong=code;else{fresh=true;h3Reset();H3.jong=code}}
+  if(!fresh)H3.hist.push(snap);else H3.hist=[];h3Put(h3Render());if(fresh){}}
+let h3WarnT=0;function h3Warn(t){let w=$("kbl-warn");if(!w){w=document.createElement("div");w.id="kbl-warn";w.className="hint kbl-warn";w.setAttribute("role","status");inp.closest(".typewrap").after(w)}
+  w.textContent=t;w.hidden=false;clearTimeout(h3WarnT);h3WarnT=setTimeout(()=>{w.hidden=true},4000)}
+inp.addEventListener("keydown",e=>{if(KBL()!=="390"||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.isComposing||e.keyCode===229){if(e.code&&/^(Key|Digit)/.test(e.code))h3Warn("세벌식: 한/영 키로 영문 상태로 전환");else if(!e.code)h3Warn("세벌식은 컴퓨터 키보드만 지원");return}
+  if(H3.out&&!inp.value.endsWith(H3.out))h3Reset();
+  if(inp.selectionStart!==inp.value.length||inp.selectionEnd!==inp.value.length){if(H3.out)h3Reset()}
+  const c=e.code||"";
+  if(c==="Backspace"){if(!H3.out)return;e.preventDefault();if(H3.hist.length){const p=H3.hist.pop();H3.cho=p.cho;H3.jung=p.jung;H3.jong=p.jong;h3Put(h3Render(),"deleteContentBackward")}else{h3Put("","deleteContentBackward");h3Reset()}return}
+  const ch=usChar(c,e.shiftKey);if(ch===undefined){if(c!=="ShiftLeft"&&c!=="ShiftRight"&&c!=="CapsLock")h3Reset();return}
+  const v=K390[ch];
+  if(typeof v==="number"){e.preventDefault();h3Jamo(v);return}
+  h3Reset();
+  if(typeof v==="string"){e.preventDefault();inp.value+=v;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(er){}inp.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:"insertText",data:v}))}});
+inp.addEventListener("blur",()=>{if(H3.out)h3Reset()});
 inp.addEventListener("compositionstart",()=>S.composing=true);
 inp.addEventListener("compositionend",()=>{S.composing=false;paint()});
 inp.addEventListener("input",()=>{if(S.src&&S.src.daily&&!S.dStarted&&inp.value){S.dStarted=true;if(dailyHooks.start)dailyHooks.start()}
@@ -1212,23 +1258,29 @@ inp.addEventListener("paste",e=>e.preventDefault());
 // 키별 속도: 앞 키를 누르고 이 키를 누르기까지 걸린 시간. 1.5초 넘게 쉬면 빼요. 컴퓨터 키보드만(폰 화면 키보드는 어떤 키인지 안 알려 줘요)
 // 이번 연습은 KS.run, 여러 번 모은 기록은 tt-keys(이 기기에만) = {키: [합(ms), 횟수]}
 const KB_ROWS=[["Q","ㅂ"],["W","ㅈ"],["E","ㄷ"],["R","ㄱ"],["T","ㅅ"],["Y","ㅛ"],["U","ㅕ"],["I","ㅑ"],["O","ㅐ"],["P","ㅔ"],null,["A","ㅁ"],["S","ㄴ"],["D","ㅇ"],["F","ㄹ"],["G","ㅎ"],["H","ㅗ"],["J","ㅓ"],["K","ㅏ"],["L","ㅣ"],null,["Z","ㅋ"],["X","ㅌ"],["C","ㅊ"],["V","ㅍ"],["B","ㅠ"],["N","ㅜ"],["M","ㅡ"],null,["Space","스페이스"]];
+// 세벌식 390 자판 그림: 숫자 줄과 ; ' , . / 도 글자 키예요. 받침 키는 밑줄(jg)
+const KB3_ROWS=[["1","ㅎ",1],["2","ㅆ",1],["3","ㅂ",1],["4","ㅛ"],["5","ㅠ"],["6","ㅑ"],["7","ㅖ"],["8","ㅢ"],["9","ㅜ"],["0","ㅋ"],null,["Q","ㅅ",1],["W","ㄹ",1],["E","ㅕ"],["R","ㅐ"],["T","ㅓ"],["Y","ㄹ"],["U","ㄷ"],["I","ㅁ"],["O","ㅊ"],["P","ㅍ"],null,["A","ㅇ",1],["S","ㄴ",1],["D","ㅣ"],["F","ㅏ"],["G","ㅡ"],["H","ㄴ"],["J","ㅇ"],["K","ㄱ"],["L","ㅈ"],[";","ㅂ"],["'","ㅌ"],null,["Z","ㅁ",1],["X","ㄱ",1],["C","ㅔ"],["V","ㅗ"],["B","ㅜ"],["N","ㅅ"],["M","ㅎ"],[",",","],[".","."],["/","ㅗ"],null,["Space","스페이스"]];
+const KS_P={Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/"};
+const ksName=c=>c==="Space"?"Space":/^Key[A-Z]$/.test(c)?c.slice(3):/^Digit[0-9]$/.test(c)?c.slice(5):KS_P[c]||null;
+const kbKey=()=>KBL()==="390"?"tt-keys3":"tt-keys";
 const KS={run:{},last:0,view:"run"};
 inp.addEventListener("keydown",e=>{if(e.repeat)return;const c=e.code||"",now=performance.now();if(/^(Shift|Control|Alt|Meta|CapsLock)/.test(c))return;
-  if((/^Key[A-Z]$/.test(c)||c==="Space")&&KS.last&&now-KS.last<1500){const k=c==="Space"?"Space":c.slice(3),r=KS.run[k]||(KS.run[k]=[0,0]);r[0]+=now-KS.last;r[1]++}
+  const k=ksName(c);if(k&&KS.last&&now-KS.last<1500){const r=KS.run[k]||(KS.run[k]=[0,0]);r[0]+=now-KS.last;r[1]++}
   KS.last=c&&c!=="Enter"&&c!=="NumpadEnter"?now:0});
-function kbAll(){const v=store.get("tt-keys",{});return v&&typeof v==="object"?v:{}}
-function kbSave(){const A=kbAll();for(const k in KS.run){const [s0,n0]=Array.isArray(A[k])?A[k]:[0,0];let s1=s0+KS.run[k][0],n1=n0+KS.run[k][1];if(n1>400){s1=s1*400/n1;n1=400}A[k]=[Math.round(s1),n1]}store.set("tt-keys",A)}
+function kbAll(){const v=store.get(kbKey(),{});return v&&typeof v==="object"?v:{}}
+function kbSave(){const A=kbAll();for(const k in KS.run){const [s0,n0]=Array.isArray(A[k])?A[k]:[0,0];let s1=s0+KS.run[k][0],n1=n0+KS.run[k][1];if(n1>400){s1=s1*400/n1;n1=400}A[k]=[Math.round(s1),n1]}store.set(kbKey(),A)}
 const kbCount=D=>Object.values(D).reduce((a,r)=>a+(Array.isArray(r)?r[1]:0),0);
 function drawKb(){const w=$("kbw"),runN=kbCount(KS.run),all=kbAll(),allN=kbCount(all);if(runN<10&&KS.view==="run")KS.view="all";
   if(!runN&&!allN||(KS.view==="all"&&allN<10&&runN<10)){w.hidden=true;return}w.hidden=false;
   $("kb-run").disabled=runN<10;$("kb-run").setAttribute("aria-pressed",String(KS.view==="run"));$("kb-all").setAttribute("aria-pressed",String(KS.view==="all"));
   const D=KS.view==="run"?KS.run:all,min=KS.view==="run"?2:3,avg={};for(const k in D){const r=D[k];if(Array.isArray(r)&&r[1]>=min)avg[k]=r[0]/r[1]}
   const vs=Object.values(avg),lo=Math.min(...vs),hi=Math.max(...vs),box=$("kb");box.innerHTML="";let row=null;
-  const nr=()=>{row=document.createElement("div");row.className="kb-r";box.appendChild(row)};nr();
-  KB_ROWS.forEach(x=>{if(!x){nr();return}const [k,j]=x,d=document.createElement("div"),a=avg[k];d.className="k"+(k==="Space"?" sp":"");
-    if(a===undefined){d.classList.add("no");d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j+"</b><small>-</small>";d.title=j+": 기록 부족"}
+  const three=KBL()==="390",ROWS=three?KB3_ROWS:KB_ROWS,PADS=["0","4%","7%","11%"];let ri=0;
+  const nr=()=>{row=document.createElement("div");row.className="kb-r";if(three)row.style.paddingLeft=PADS[ri]||"0";ri++;box.appendChild(row)};nr();
+  ROWS.forEach(x=>{if(!x){nr();return}const [k,j0,jg]=x,j=jg?"받침 "+j0:j0,d=document.createElement("div"),a=avg[k];d.className="k"+(k==="Space"?" sp":"")+(jg?" jg":"");
+    if(a===undefined){d.classList.add("no");d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j0+"</b><small>-</small>";d.title=j+": 기록 부족"}
     else{const p=vs.length>1&&hi>lo?Math.round(18+72*(hi-a)/(hi-lo)):60;d.style.setProperty("--p",p+"%");if(p>=55)d.classList.add("hi");
-      d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j+"</b><small>"+(a/1000).toFixed(2)+"</small>";d.title=j+" 평균 "+(a/1000).toFixed(2)+"초 ("+D[k][1]+"번)"}
+      d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j0+"</b><small>"+(a/1000).toFixed(2)+"</small>";d.title=j+" 평균 "+(a/1000).toFixed(2)+"초 ("+D[k][1]+"번)"}
     row.appendChild(d)});
 }
 // 내 기록: 연습을 끝까지 마칠 때마다 tt-runs에 {at, t(제목), s(평균 타수), a(정확도), n(줄 수)}를 200개까지 쌓아요(로그인하면 클라우드에도)
@@ -1289,11 +1341,15 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 // 폰 화면 키보드는 어떤 키인지 안 알려 줘서, 친 글자로 음을 골라요
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
+function applyKbl(){const t=KBL()==="390";$("kbl-2").setAttribute("aria-pressed",String(!t));$("kbl-390").setAttribute("aria-pressed",String(t));
+  const n=$("kb-note");if(n)n.hidden=!t;try{if(!$("kbw").hidden||t)drawKb()}catch(e){}}
+$("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
+$("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 function applyPiano(){const on=!!store.get("tt-piano",false),fx=store.get("tt-pianofx",true)!==false,row=$("piano-row");if(row){row.hidden=!on;$("pianobtn").textContent="피아노 소리: "+(fx?"켜짐":"꺼짐");$("pianobtn").setAttribute("aria-pressed",String(fx))}}
 $("pianobtn").onclick=()=>{store.set("tt-pianofx",store.get("tt-pianofx",true)===false);applyPiano();if(pianoOn())pnNote(pnHz(2),.8)};
-applyPiano();
+applyPiano();applyKbl();
 $("kb-run").onclick=()=>{KS.view="run";drawKb()};$("kb-all").onclick=()=>{KS.view="all";drawKb()};
-$("kb-clr").onclick=()=>{const b=$("kb-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="기록 지우기";store.set("tt-keys",{});KS.run={};drawKb()};
+$("kb-clr").onclick=()=>{const b=$("kb-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="기록 지우기";store.set(kbKey(),{});KS.run={};drawKb()};
 // 가만히 있어도 시간이 흘러가므로 현재 타수가 조금씩 떨어져요
 setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 
