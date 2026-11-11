@@ -295,7 +295,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.2</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.3</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -346,7 +346,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
     <div class="set-row" id="piano-row" hidden><span class="set-l">피아노</span><button class="btn acct" id="pianobtn" type="button" aria-pressed="true">피아노 소리: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
-    <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><span class="hint" id="kbl-msg" hidden>세벌식 사용시 키보드 영문 자판을 이용해주세요.</span></div>
+    <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><button class="btn acct" id="kbl-390os" type="button" aria-pressed="false">세벌식 390 (내 입력기)</button><span class="hint" id="kbl-msg" hidden>세벌식 사용시 키보드 영문 자판을 이용해주세요.</span><span class="hint" id="kbl-osmsg" hidden>컴퓨터 입력기를 세벌식 390으로 설정</span></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -830,7 +830,9 @@ showPts();
 const inp=$("typing");
 // 세벌식 390 (3.3.0): 사이트 안 입력기. 컴퓨터 입력기는 영문 상태로 두고, 키 위치(e.code)로 초성·중성·종성을 바로 조합해요
 // 배열은 리눅스 한글 입력기 libhangul의 '세벌식 390' 표 그대로 (US 자판 글자 → 자모 또는 기호)
-const KBL=()=>store.get("tt-kbl","2")==="390"?"390":"2";
+// tt-kbl: "2" 두벌식, "390" 세벌식 390(사이트 입력기), "390os" 세벌식 390(내 컴퓨터 입력기). 기록은 390os도 세벌식 쪽
+const KBL=()=>{const v=store.get("tt-kbl","2");return v==="390"||v==="390os"?"390":"2"};
+const IME_ON=()=>store.get("tt-kbl","2")==="390";
 const K390={"!":0x11bd,"'":0x1110,"/":0x1169,"0":0x110f,"1":0x11c2,"2":0x11bb,"3":0x11b8,"4":0x116d,"5":0x1172,"6":0x1163,"7":0x1168,"8":0x1174,"9":0x116e,";":0x1107,"<":"2",">":"3","A":0x11ae,"B":"!","C":0x11b1,"D":0x11b0,"E":0x11bf,"F":0x11a9,"G":"/","H":"'","I":"8","J":"4","K":"5","L":"6","M":"1","N":"0","O":"9","P":">","Q":0x11c1,"R":0x1164,"S":0x11ad,"T":";","U":"7","V":0x11b6,"W":0x11c0,"X":0x11b9,"Y":"<","Z":0x11be,"a":0x11bc,"b":0x116e,"c":0x1166,"d":0x1175,"e":0x1167,"f":0x1161,"g":0x1173,"h":0x1102,"i":0x1106,"j":0x110b,"k":0x1100,"l":0x110c,"m":0x1112,"n":0x1109,"o":0x110e,"p":0x1111,"q":0x11ba,"r":0x1162,"s":0x11ab,"t":0x1165,"u":0x1103,"v":0x1169,"w":0x11af,"x":0x11a8,"y":0x1105,"z":0x11b7};
 const US_SH={Digit1:"!",Digit2:"@",Digit3:"#",Digit4:"$",Digit5:"%",Digit6:"^",Digit7:"&",Digit8:"*",Digit9:"(",Digit0:")",Minus:"_",Equal:"+",BracketLeft:"{",BracketRight:"}",Backslash:"|",Semicolon:":",Quote:'"',Comma:"<",Period:">",Slash:"?",Backquote:"~"};
 const US_NO={Minus:"-",Equal:"=",BracketLeft:"[",BracketRight:"]",Backslash:"\\",Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/",Backquote:"`"};
@@ -843,7 +845,7 @@ const h3c=(a,b)=>H3C[a.toString(16)+"+"+b.toString(16)]||0;
 const H3={cho:0,jung:0,jong:0,hist:[],out:""};
 const h3Render=()=>{const {cho,jung,jong}=H3;if(cho&&jung)return String.fromCharCode(0xAC00+((cho-0x1100)*21+(jung-0x1161))*28+(jong?jong-0x11A7:0));
   return (cho?CJ_CHO[cho-0x1100]:"")+(jung?CJ_JUNG[jung-0x1161]:"")+(jong?CJ_JONG[jong-0x11A7]:"")};
-function h3Reset(){H3.cho=H3.jung=H3.jong=0;H3.hist=[];H3.out="";if(KBL()==="390")S.composing=false}
+function h3Reset(){H3.cho=H3.jung=H3.jong=0;H3.hist=[];H3.out="";if(IME_ON())S.composing=false}
 function h3Put(val,typ){const v=inp.value,pre=H3.out&&v.endsWith(H3.out)?v.slice(0,v.length-H3.out.length):v;H3.out=val;inp.value=pre+val;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(e){}
   S.composing=!!val&&!!(H3.cho||H3.jung||H3.jong);inp.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:typ||"insertText",data:val||null}))}
 function h3Jamo(code){const snap={cho:H3.cho,jung:H3.jung,jong:H3.jong};let fresh=false;
@@ -859,7 +861,7 @@ function h3Jamo(code){const snap={cho:H3.cho,jung:H3.jung,jong:H3.jong};let fres
   if(!fresh)H3.hist.push(snap);else H3.hist=[];h3Put(h3Render());if(fresh){}}
 let h3WarnT=0;function h3Warn(t){let w=$("kbl-warn");if(!w){w=document.createElement("div");w.id="kbl-warn";w.className="hint kbl-warn";w.setAttribute("role","status");inp.closest(".typewrap").after(w)}
   w.textContent=t;w.hidden=false;clearTimeout(h3WarnT);h3WarnT=setTimeout(()=>{w.hidden=true},4000)}
-inp.addEventListener("keydown",e=>{if(KBL()!=="390"||e.ctrlKey||e.metaKey||e.altKey)return;
+inp.addEventListener("keydown",e=>{if(!IME_ON()||e.ctrlKey||e.metaKey||e.altKey)return;
   if(e.isComposing||e.keyCode===229){if(e.code&&/^(Key|Digit)/.test(e.code))h3Warn("세벌식: 한/영 키로 영문 상태로 전환");else if(!e.code)h3Warn("세벌식은 컴퓨터 키보드만 지원");return}
   if(H3.out&&!inp.value.endsWith(H3.out))h3Reset();
   if(inp.selectionStart!==inp.value.length||inp.selectionEnd!==inp.value.length){if(H3.out)h3Reset()}
@@ -969,10 +971,11 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 // 폰 화면 키보드는 어떤 키인지 안 알려 줘서, 친 글자로 음을 골라요
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
-function applyKbl(){const t=KBL()==="390";$("kbl-msg").hidden=!t;$("kbl-2").setAttribute("aria-pressed",String(!t));$("kbl-390").setAttribute("aria-pressed",String(t));
+function applyKbl(){const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
   if(!$("rec").hidden){REC_K=null;recKSet()}}
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
+$("kbl-390os").onclick=()=>{try{h3Reset()}catch(e){}store.set("tt-kbl","390os");S.composing=false;KS.run={};applyKbl()};
 function applyPiano(){const on=!!store.get("tt-piano",false),fx=store.get("tt-pianofx",true)!==false,row=$("piano-row");if(row){row.hidden=!on;$("pianobtn").textContent="피아노 소리: "+(fx?"켜짐":"꺼짐");$("pianobtn").setAttribute("aria-pressed",String(fx))}}
 $("pianobtn").onclick=()=>{store.set("tt-pianofx",store.get("tt-pianofx",true)===false);applyPiano();if(pianoOn())pnNote(pnHz(2),.8)};
 applyPiano();applyKbl();
