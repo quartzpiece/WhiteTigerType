@@ -288,13 +288,14 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
+.rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
 
 <div class="bgart" aria-hidden="true"></div>
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.3.1</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.3.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -383,6 +384,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card" id="rec" hidden>
     <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></div>
+    <div class="row rec-k" role="group" aria-label="자판"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button></div>
     <div class="rec-sum" id="rec-sum"></div>
     <span class="set-l" id="rec-ch-l">평균 타수 (최근 30번)</span>
     <svg class="rec-ch" id="rec-ch" viewBox="0 0 600 170" role="img" aria-label="최근 연습 평균 타수"></svg>
@@ -1262,20 +1264,22 @@ const KB_ROWS=[["Q","ㅂ"],["W","ㅈ"],["E","ㄷ"],["R","ㄱ"],["T","ㅅ"],["Y",
 const KB3_ROWS=[["1","ㅎ",1],["2","ㅆ",1],["3","ㅂ",1],["4","ㅛ"],["5","ㅠ"],["6","ㅑ"],["7","ㅖ"],["8","ㅢ"],["9","ㅜ"],["0","ㅋ"],null,["Q","ㅅ",1],["W","ㄹ",1],["E","ㅕ"],["R","ㅐ"],["T","ㅓ"],["Y","ㄹ"],["U","ㄷ"],["I","ㅁ"],["O","ㅊ"],["P","ㅍ"],null,["A","ㅇ",1],["S","ㄴ",1],["D","ㅣ"],["F","ㅏ"],["G","ㅡ"],["H","ㄴ"],["J","ㅇ"],["K","ㄱ"],["L","ㅈ"],[";","ㅂ"],["'","ㅌ"],null,["Z","ㅁ",1],["X","ㄱ",1],["C","ㅔ"],["V","ㅗ"],["B","ㅜ"],["N","ㅅ"],["M","ㅎ"],[",",","],[".","."],["/","ㅗ"],null,["Space","스페이스"]];
 const KS_P={Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/"};
 const ksName=c=>c==="Space"?"Space":/^Key[A-Z]$/.test(c)?c.slice(3):/^Digit[0-9]$/.test(c)?c.slice(5):KS_P[c]||null;
-const kbKey=()=>KBL()==="390"?"tt-keys3":"tt-keys";
-const KS={run:{},last:0,view:"run"};
+const kbKey=(L=KBL())=>L==="390"?"tt-keys3":"tt-keys";
+// 내 기록 칸에서 보는 자판(두벌식/세벌식 390). 열 때마다 지금 고른 자판으로 시작해요
+let REC_K=null;const recK=()=>REC_K||KBL();
+const KS={run:{},last:0,view:"run",runK:"2"};
 inp.addEventListener("keydown",e=>{if(e.repeat)return;const c=e.code||"",now=performance.now();if(/^(Shift|Control|Alt|Meta|CapsLock)/.test(c))return;
   const k=ksName(c);if(k&&KS.last&&now-KS.last<1500){const r=KS.run[k]||(KS.run[k]=[0,0]);r[0]+=now-KS.last;r[1]++}
   KS.last=c&&c!=="Enter"&&c!=="NumpadEnter"?now:0});
-function kbAll(){const v=store.get(kbKey(),{});return v&&typeof v==="object"?v:{}}
-function kbSave(){const A=kbAll();for(const k in KS.run){const [s0,n0]=Array.isArray(A[k])?A[k]:[0,0];let s1=s0+KS.run[k][0],n1=n0+KS.run[k][1];if(n1>400){s1=s1*400/n1;n1=400}A[k]=[Math.round(s1),n1]}store.set(kbKey(),A)}
+function kbAll(L){const v=store.get(kbKey(L),{});return v&&typeof v==="object"?v:{}}
+function kbSave(){KS.runK=KBL();const A=kbAll();for(const k in KS.run){const [s0,n0]=Array.isArray(A[k])?A[k]:[0,0];let s1=s0+KS.run[k][0],n1=n0+KS.run[k][1];if(n1>400){s1=s1*400/n1;n1=400}A[k]=[Math.round(s1),n1]}store.set(kbKey(),A)}
 const kbCount=D=>Object.values(D).reduce((a,r)=>a+(Array.isArray(r)?r[1]:0),0);
-function drawKb(){const w=$("kbw"),runN=kbCount(KS.run),all=kbAll(),allN=kbCount(all);if(runN<10&&KS.view==="run")KS.view="all";
+function drawKb(){const w=$("kbw"),VK=recK(),RUN=KS.runK===VK?KS.run:{},runN=kbCount(RUN),all=kbAll(VK),allN=kbCount(all);if(runN<10&&KS.view==="run")KS.view="all";
   if(!runN&&!allN||(KS.view==="all"&&allN<10&&runN<10)){w.hidden=true;return}w.hidden=false;
   $("kb-run").disabled=runN<10;$("kb-run").setAttribute("aria-pressed",String(KS.view==="run"));$("kb-all").setAttribute("aria-pressed",String(KS.view==="all"));
-  const D=KS.view==="run"?KS.run:all,min=KS.view==="run"?2:3,avg={};for(const k in D){const r=D[k];if(Array.isArray(r)&&r[1]>=min)avg[k]=r[0]/r[1]}
+  const D=KS.view==="run"?RUN:all,min=KS.view==="run"?2:3,avg={};for(const k in D){const r=D[k];if(Array.isArray(r)&&r[1]>=min)avg[k]=r[0]/r[1]}
   const vs=Object.values(avg),lo=Math.min(...vs),hi=Math.max(...vs),box=$("kb");box.innerHTML="";let row=null;
-  const three=KBL()==="390",ROWS=three?KB3_ROWS:KB_ROWS,PADS=["0","4%","7%","11%"];let ri=0;
+  const three=VK==="390",ROWS=three?KB3_ROWS:KB_ROWS,PADS=["0","4%","7%","11%"];let ri=0;
   const nr=()=>{row=document.createElement("div");row.className="kb-r";if(three)row.style.paddingLeft=PADS[ri]||"0";ri++;box.appendChild(row)};nr();
   ROWS.forEach(x=>{if(!x){nr();return}const [k,j0,jg]=x,j=jg?"받침 "+j0:j0,d=document.createElement("div"),a=avg[k];d.className="k"+(k==="Space"?" sp":"")+(jg?" jg":"");
     if(a===undefined){d.classList.add("no");d.innerHTML=(k==="Space"?"":"<i>"+k+"</i>")+"<b>"+j0+"</b><small>-</small>";d.title=j+": 기록 부족"}
@@ -1285,10 +1289,10 @@ function drawKb(){const w=$("kbw"),runN=kbCount(KS.run),all=kbAll(),allN=kbCount
 }
 // 내 기록: 연습을 끝까지 마칠 때마다 tt-runs에 {at, t(제목), s(평균 타수), a(정확도), n(줄 수)}를 200개까지 쌓아요(로그인하면 클라우드에도)
 const runsGet=()=>{const r=store.get("tt-runs",[]);return Array.isArray(r)?r.filter(x=>x&&Number.isFinite(Number(x.at))&&Number.isFinite(Number(x.s))):[]};
-function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0))})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
-function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length}])))}
+function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0)),...(x.k==="390"?{k:"390"}:{})})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
+function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(KBL()==="390"?{k:"390"}:{})}])))}
 const recDate=t=>{const d=new Date(Number(t)+9*3600e3),z=n=>String(n).padStart(2,"0");return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+" "+z(d.getUTCHours())+":"+z(d.getUTCMinutes())};
-function drawRec(){const R=runsGet(),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+function drawRec(){const VK=recK(),R=runsGet().filter(x=>(x.k==="390")===(VK==="390")),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
   const sum=$("rec-sum");sum.innerHTML="";const last=R.slice(-10),avg=L=>L.length?Math.round(L.reduce((a,x)=>a+x.s,0)/L.length):0,acc=L=>L.length?Math.round(L.reduce((a,x)=>a+x.a,0)/L.length):0;
   [[R.length+"번","연습 횟수"],[R.length?Math.max(...R.map(x=>x.s)):0,"최고 평균 타수"],[avg(last),"최근 10번 평균 타수"],[acc(last)+"%","최근 10번 정확도"]].forEach(([b,t])=>{const d=el("div");d.append(el("b","",String(b)),el("span","",t));sum.appendChild(d)});
   const ch=$("rec-ch"),P=R.slice(-30);ch.innerHTML="";ch.style.display=P.length<2?"none":"";$("rec-ch-l").hidden=P.length<2;
@@ -1305,8 +1309,10 @@ function drawRec(){const R=runsGet(),el=(t,c,x)=>{const e=document.createElement
   else{const li=el("li");li.style.display="block";li.textContent="아직 기록 없음 · 연습을 끝까지 마치면 쌓여요";list.appendChild(li)}
   // 키별 속도는 결과 화면에는 안 보이고 여기서만 봐요(기본은 전체 기록)
   KS.view="all";drawKb()}
-$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o)drawRec()};
-$("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="연습 기록 지우기";store.set("tt-runs",[]);drawRec()};
+$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o){REC_K=null;recKSet()}};
+function recKSet(){const t=recK()==="390";$("rec-k2").setAttribute("aria-pressed",String(!t));$("rec-k3").setAttribute("aria-pressed",String(t));const n=$("kb-note");if(n)n.hidden=!t;drawRec();try{drawKb()}catch(e){}}
+$("rec-k2").onclick=()=>{REC_K="2";recKSet()};$("rec-k3").onclick=()=>{REC_K="390";recKSet()};
+$("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="연습 기록 지우기";const t=recK()==="390";store.set("tt-runs",runsGet().filter(x=>(x.k==="390")!==t));drawRec()};
 // 피아노: 키마다 음이 정해져 있어요. 5음 음계(도레미솔라)라서 아무렇게나 쳐도 어울려요. 아래 줄은 낮은 음, 위 줄은 높은 음, 스페이스는 낮은 화음
 const PN_BASE=[0,2,4,7,9],pnHz=k=>261.63*Math.pow(2,(Math.floor(k/5)*12+PN_BASE[((k%5)+5)%5])/12);
 const PN_MAP={};["Z","X","C","V","B","N","M"].forEach((k,i)=>PN_MAP[k]=i-5);["A","S","D","F","G","H","J","K","L"].forEach((k,i)=>PN_MAP[k]=i);["Q","W","E","R","T","Y","U","I","O","P"].forEach((k,i)=>PN_MAP[k]=i+5);
@@ -1342,14 +1348,14 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
 function applyKbl(){const t=KBL()==="390";$("kbl-msg").hidden=!t;$("kbl-2").setAttribute("aria-pressed",String(!t));$("kbl-390").setAttribute("aria-pressed",String(t));
-  const n=$("kb-note");if(n)n.hidden=!t;try{if(!$("kbw").hidden||t)drawKb()}catch(e){}}
+  if(!$("rec").hidden){REC_K=null;recKSet()}}
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 function applyPiano(){const on=!!store.get("tt-piano",false),fx=store.get("tt-pianofx",true)!==false,row=$("piano-row");if(row){row.hidden=!on;$("pianobtn").textContent="피아노 소리: "+(fx?"켜짐":"꺼짐");$("pianobtn").setAttribute("aria-pressed",String(fx))}}
 $("pianobtn").onclick=()=>{store.set("tt-pianofx",store.get("tt-pianofx",true)===false);applyPiano();if(pianoOn())pnNote(pnHz(2),.8)};
 applyPiano();applyKbl();
 $("kb-run").onclick=()=>{KS.view="run";drawKb()};$("kb-all").onclick=()=>{KS.view="all";drawKb()};
-$("kb-clr").onclick=()=>{const b=$("kb-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="기록 지우기";store.set(kbKey(),{});KS.run={};drawKb()};
+$("kb-clr").onclick=()=>{const b=$("kb-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="기록 지우기";store.set(kbKey(recK()),{});if(KS.runK===recK())KS.run={};drawKb()};
 // 가만히 있어도 시간이 흘러가므로 현재 타수가 조금씩 떨어져요
 setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 
