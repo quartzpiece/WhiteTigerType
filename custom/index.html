@@ -294,7 +294,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.0</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -345,7 +345,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
     <div class="set-row" id="piano-row" hidden><span class="set-l">피아노</span><button class="btn acct" id="pianobtn" type="button" aria-pressed="true">피아노 소리: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
-    <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><span class="hint" id="kbl-msg">세벌식은 컴퓨터 키보드, 영문 상태로</span></div>
+    <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><span class="hint" id="kbl-msg" hidden>세벌식 사용시 키보드 영문 자판을 이용해주세요.</span></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
@@ -963,7 +963,7 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 // 폰 화면 키보드는 어떤 키인지 안 알려 줘서, 친 글자로 음을 골라요
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
-function applyKbl(){const t=KBL()==="390";$("kbl-2").setAttribute("aria-pressed",String(!t));$("kbl-390").setAttribute("aria-pressed",String(t));
+function applyKbl(){const t=KBL()==="390";$("kbl-msg").hidden=!t;$("kbl-2").setAttribute("aria-pressed",String(!t));$("kbl-390").setAttribute("aria-pressed",String(t));
   const n=$("kb-note");if(n)n.hidden=!t;try{if(!$("kbw").hidden||t)drawKb()}catch(e){}}
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
