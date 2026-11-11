@@ -265,7 +265,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.12</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.1.13</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -307,7 +307,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row"><span class="set-l">투명도</span><div class="bg-ctl"><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="0" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><button class="btn acct" id="see-reset" type="button">기본값</button></div></div>
     <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
     <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
-    <div class="set-row" id="holo-row" hidden><span class="set-l">홀로그램</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">화면 반짝임: 켜짐</button></div>
+    <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
@@ -908,8 +908,13 @@ function applyRain(){const on=!!store.get("tt-rain",false),fx=store.get("tt-rain
   WX.storm=WXL.storm;wxSet("rain",(on&&fx)||WXL.rain)}
 $("rainbtn").onclick=()=>{store.set("tt-rainfx",store.get("tt-rainfx",true)===false);applyRain()};
 // 무지개 이스터에그를 열면 화면이 홀로그램처럼 반짝여요(설정 "홀로그램" 줄에서 끄기, tt-holofx)
-function applyHolo(){const on=!!store.get("tt-egg",false),fx=store.get("tt-holofx",true)!==false,R=document.documentElement;
-  const row=$("holo-row");if(row){row.hidden=!on;$("holobtn").textContent="화면 반짝임: "+(fx?"켜짐":"꺼짐");$("holobtn").setAttribute("aria-pressed",String(fx))}
+// 비 갠 뒤 무지개: 우리 동네 날씨가 비였다가 그치면 30분 동안 이스터에그가 없어도 켜져요(tt-rbuntil = 끝나는 시각)
+var holoT=null;
+function rbLeft(){return store.get("tt-wxloc",false)===true?Math.max(0,(Number(store.get("tt-rbuntil",0))||0)-Date.now()):0}
+function applyHolo(){const rb=rbLeft(),on=!!store.get("tt-egg",false)||rb>0,fx=store.get("tt-holofx",true)!==false,R=document.documentElement;
+  clearTimeout(holoT);holoT=rb>0?setTimeout(applyHolo,rb+300):null;
+  {const m=$("wx-msg");if(m&&rb<=0)m.textContent=m.textContent.replace(/ · 비 갠 뒤 무지개.*$/,"")}
+  const row=$("holo-row");if(row){row.hidden=!on;$("holobtn").textContent="무지개 반짝임: "+(fx?"켜짐":"꺼짐");$("holobtn").setAttribute("aria-pressed",String(fx))}
   const h=document.querySelector(".holo");if(h&&on&&fx&&!h.children.length){for(let k=0;k<16;k++){const i=document.createElement("i"),e=()=>Math.random()<.5?2+Math.random()*9:89+Math.random()*9,a=()=>2+Math.random()*96,side=Math.random()<.5;i.style.left=(side?e():a())+"%";i.style.top=(side?a():e())+"%";i.style.setProperty("--d",(3.2+Math.random()*3).toFixed(2)+"s");i.style.setProperty("--w",(-Math.random()*6).toFixed(2)+"s");h.appendChild(i)}}
   R.classList.toggle("holo-on",on&&fx)}
 $("holobtn").onclick=()=>{store.set("tt-holofx",store.get("tt-holofx",true)===false);applyHolo()};
@@ -929,10 +934,13 @@ async function wxCheck(){if(store.get("tt-wxloc",false)!==true)return;
   const r1=x=>Math.round(x*10)/10,lat=r1(pos.coords.latitude),lon=r1(pos.coords.longitude);
   try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=weather_code&timezone=auto");if(!r.ok)throw 0;
     const j=await r.json(),c=Number(j&&j.current&&j.current.weather_code);if(!Number.isFinite(c))throw 0;
-    if(store.get("tt-wxloc",false)!==true)return;wxLocSet(c);wxMsg("지금 날씨: "+wxName(c))}
+    if(store.get("tt-wxloc",false)!==true)return;wxLocSet(c);
+    const was=store.get("tt-wxrain",false)===true;store.set("tt-wxrain",WXL.rain);
+    if(WXL.rain)store.set("tt-rbuntil",0);else if(was)store.set("tt-rbuntil",Date.now()+30*60*1000);applyHolo();
+    const rb=rbLeft();wxMsg("지금 날씨: "+wxName(c)+(rb>0?" · 비 갠 뒤 무지개 "+Math.ceil(rb/60000)+"분":""))}
   catch(e){wxMsg("날씨 확인 실패")}}
 function wxLocStart(){clearInterval(WXL.timer);WXL.timer=null;wxLocDraw();
-  if(store.get("tt-wxloc",false)===true){wxMsg("확인 중");wxCheck();WXL.timer=setInterval(wxCheck,30*60*1000)}else{wxMsg("");wxLocSet(null)}}
+  if(store.get("tt-wxloc",false)===true){wxMsg("확인 중");wxCheck();WXL.timer=setInterval(wxCheck,30*60*1000)}else{wxMsg("");wxLocSet(null)}applyHolo()}
 $("wxbtn").onclick=()=>{store.set("tt-wxloc",store.get("tt-wxloc",false)!==true);wxLocStart()};
 wxLocStart();
 applyFont();bgLoadLocal();applySnow();applyRain();
