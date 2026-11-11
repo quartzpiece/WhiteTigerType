@@ -289,7 +289,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.2.4</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.2.5</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -376,7 +376,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <svg class="rec-ch" id="rec-ch" viewBox="0 0 600 170" role="img" aria-label="최근 연습 평균 타수"></svg>
     <span class="set-l" id="rec-l-l">최근 연습</span>
     <ol class="rec-list" id="rec-list"></ol>
-    <div id="rec-kb"></div>
+    <div id="rec-kb">
+      <div class="kbw" id="kbw" hidden>
+        <div class="row"><span class="set-l">키별 속도</span><button class="btn acct" id="kb-run" type="button" aria-pressed="true">마지막 연습</button><button class="btn acct" id="kb-all" type="button" aria-pressed="false">전체 기록</button><button class="btn acct" id="kb-clr" type="button">기록 지우기</button></div>
+        <div class="kb" id="kb" role="img" aria-label="키별 평균 시간"></div>
+      </div>
+    </div>
   </section>
   <section class="card shop" id="shop" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">상점</b><span class="pts" id="shop-pts"></span></div>
@@ -433,10 +438,6 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   <section class="card" id="done" hidden>
     <p class="result" id="result"></p>
     <p class="hint" id="result-sub"></p>
-    <div class="kbw" id="kbw" hidden>
-      <div class="row"><span class="set-l">키별 속도</span><button class="btn acct" id="kb-run" type="button" aria-pressed="true">이번 연습</button><button class="btn acct" id="kb-all" type="button" aria-pressed="false">전체 기록</button><button class="btn acct" id="kb-clr" type="button">기록 지우기</button></div>
-      <div class="kb" id="kb" role="img" aria-label="키별 평균 시간"></div>
-    </div>
     <div class="row"><button class="btn primary" id="again" type="button">처음부터 다시</button><button class="btn" id="randnext" type="button" hidden>다음 랜덤 문단</button><button class="btn" id="edit2" type="button">지문 바꾸기</button></div>
   </section>
 </div>
@@ -763,7 +764,7 @@ function burst(){if(document.documentElement.dataset.skin!=="rainbow"||!fxOn()||
   ring.animate([{transform:"scale(1)",opacity:1},{transform:"scale(1.025,1.15)",opacity:1,offset:.35},{transform:"scale(1.06,1.4)",opacity:0}],{duration:750,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>ring.remove()}
 function finish(){$("bar").style.width="100%";cubeBar();
   S.frozen=speeds(performance.now());const avg=S.frozen[1],acc=S.typed?Math.round(S.correct/S.typed*100):100;
-  stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";try{runAdd(avg,acc);kbSave();kbHome();KS.view="run";drawKb()}catch(e){}
+  stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";try{runAdd(avg,acc);kbSave()}catch(e){}
   // 연습을 마치면 총 타수의 1할(10%, 소수점 버림)만큼 포인트를 줘요
   const total=S.doneStrokes;let gain=Math.floor(total/10),note="";
   if(!S.src&&!isPre(curId)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
@@ -860,10 +861,9 @@ function drawRec(){const R=runsGet(),el=(t,c,x)=>{const e=document.createElement
   if(R.length){const hd=el("li","hd");hd.append(el("span","","날짜"),el("span","","지문"),el("span","s","타수"),el("span","a","정확도"));list.appendChild(hd);
     R.slice(-50).reverse().forEach(x=>{const li=el("li");li.append(el("span","d",recDate(x.at)),el("span","t",x.t),el("span","s",String(x.s)),el("span","a",x.a+"%"));li.title=x.t+" · "+x.n+"줄";list.appendChild(li)})}
   else{const li=el("li");li.style.display="block";li.textContent="아직 기록 없음 · 연습을 끝까지 마치면 쌓여요";list.appendChild(li)}
-  // 키별 속도(전체 기록)도 여기서 봐요: 결과 화면의 키보드 칸을 잠깐 옮겨 와요
-  $("rec-kb").appendChild($("kbw"));KS.view="all";drawKb()}
-$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o)drawRec();else kbHome()};
-function kbHome(){const w=$("kbw"),d=$("done");if(w.parentElement!==d)d.insertBefore(w,d.querySelector(".row"))}
+  // 키별 속도는 결과 화면에는 안 보이고 여기서만 봐요(기본은 전체 기록)
+  KS.view="all";drawKb()}
+$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o)drawRec()};
 $("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="연습 기록 지우기";store.set("tt-runs",[]);drawRec()};
 // 피아노: 키마다 음이 정해져 있어요. 5음 음계(도레미솔라)라서 아무렇게나 쳐도 어울려요. 아래 줄은 낮은 음, 위 줄은 높은 음, 스페이스는 낮은 화음
 const PN_BASE=[0,2,4,7,9],pnHz=k=>261.63*Math.pow(2,(Math.floor(k/5)*12+PN_BASE[((k%5)+5)%5])/12);
