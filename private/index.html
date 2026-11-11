@@ -289,7 +289,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.2.5</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.2.6</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1246,14 +1246,18 @@ $("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset
 // 피아노: 키마다 음이 정해져 있어요. 5음 음계(도레미솔라)라서 아무렇게나 쳐도 어울려요. 아래 줄은 낮은 음, 위 줄은 높은 음, 스페이스는 낮은 화음
 const PN_BASE=[0,2,4,7,9],pnHz=k=>261.63*Math.pow(2,(Math.floor(k/5)*12+PN_BASE[((k%5)+5)%5])/12);
 const PN_MAP={};["Z","X","C","V","B","N","M"].forEach((k,i)=>PN_MAP[k]=i-5);["A","S","D","F","G","H","J","K","L"].forEach((k,i)=>PN_MAP[k]=i);["Q","W","E","R","T","Y","U","I","O","P"].forEach((k,i)=>PN_MAP[k]=i+5);
-const PN={ctx:null,out:null,live:0,last:0};
+const PN={ctx:null,out:null,vs:[],last:0};
 const pianoOn=()=>store.get("tt-piano",false)===true&&store.get("tt-pianofx",true)!==false;
-function pnNote(hz,vel){try{if(!PN.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;PN.ctx=new C();const comp=PN.ctx.createDynamicsCompressor();const g=PN.ctx.createGain();g.gain.value=.5;g.connect(comp);comp.connect(PN.ctx.destination);PN.out=g}
-  const c=PN.ctx;if(c.state==="suspended")c.resume();if(PN.live>14)return;const t=c.currentTime,lp=c.createBiquadFilter();lp.type="lowpass";lp.frequency.setValueAtTime(Math.min(9000,hz*9),t);lp.frequency.exponentialRampToValueAtTime(Math.max(400,hz*2),t+1.2);lp.connect(PN.out);
-  const dur=Math.max(.9,2.2-hz/700);PN.live++;
+// 빠르게 쳐도 음이 빠지지 않게: 동시에 울리는 음이 많으면 가장 오래된 음을 빨리 줄이고 새 음을 바로 내요
+function pnNote(hz,vel){try{if(!PN.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;PN.ctx=new C({latencyHint:"interactive"});const comp=PN.ctx.createDynamicsCompressor();const g=PN.ctx.createGain();g.gain.value=.5;g.connect(comp);comp.connect(PN.ctx.destination);PN.out=g}
+  const c=PN.ctx;if(c.state!=="running")c.resume();const t=c.currentTime;
+  PN.vs=PN.vs.filter(v=>v.end>t);while(PN.vs.length>=10){const v=PN.vs.shift();try{v.g.gain.cancelScheduledValues(t);v.g.gain.setValueAtTime(v.g.gain.value,t);v.g.gain.linearRampToValueAtTime(0,t+.03);v.os.forEach(o=>o.stop(t+.04))}catch(e){}}
+  const lp=c.createBiquadFilter(),vg=c.createGain();lp.type="lowpass";lp.frequency.setValueAtTime(Math.min(9000,hz*9),t);lp.frequency.exponentialRampToValueAtTime(Math.max(400,hz*2),t+.8);vg.gain.value=1;lp.connect(vg);vg.connect(PN.out);
+  const dur=Math.max(.7,1.5-hz/900),os=[];
   [[1,1,0],[2,.45,.3],[3,.22,.55],[4,.12,.7],[5,.06,.8]].forEach(([m,a,fast],i)=>{const o=c.createOscillator(),g=c.createGain();o.type=i?"sine":"triangle";o.frequency.value=hz*m*(1+(m-1)*.0007);
-    const peak=.22*a*vel,end=t+dur*(1-fast*.7);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+.006);g.gain.exponentialRampToValueAtTime(peak*.35,t+.12);g.gain.exponentialRampToValueAtTime(.0001,end);
-    o.connect(g);g.connect(lp);o.start(t);o.stop(end+.05);if(!i)o.onended=()=>{PN.live=Math.max(0,PN.live-1)}})}catch(e){}}
+    const peak=.22*a*vel,end=t+dur*(1-fast*.7);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+.003);g.gain.exponentialRampToValueAtTime(peak*.35,t+.1);g.gain.exponentialRampToValueAtTime(.0001,end);
+    o.connect(g);g.connect(lp);o.start(t);o.stop(end+.05);os.push(o)});
+  PN.vs.push({g:vg,os,end:t+dur+.05})}catch(e){}}
 inp.addEventListener("keydown",e=>{if(e.repeat||!pianoOn())return;const c=e.code||"";let k=null;
   if(/^Key[A-Z]$/.test(c))k=PN_MAP[c.slice(3)];if(k!==null&&k!==undefined){PN.last=performance.now();pnNote(pnHz(k),.9);return}
   if(c==="Space"){PN.last=performance.now();pnNote(pnHz(-10),.55);pnNote(pnHz(-7),.4)}});
