@@ -295,7 +295,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -388,8 +388,6 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="rec-sum" id="rec-sum"></div>
     <span class="set-l" id="rec-ch-l">평균 타수 (최근 30번)</span>
     <svg class="rec-ch" id="rec-ch" viewBox="0 0 600 170" role="img" aria-label="최근 연습 평균 타수"></svg>
-    <span class="set-l" id="rec-l-l">최근 연습</span>
-    <ol class="rec-list" id="rec-list"></ol>
     <div id="rec-kb">
       <div class="kbw" id="kbw" hidden>
         <div class="row"><span class="set-l">키별 속도</span><button class="btn acct" id="kb-run" type="button" aria-pressed="true">마지막 연습</button><button class="btn acct" id="kb-all" type="button" aria-pressed="false">전체 기록</button><button class="btn acct" id="kb-clr" type="button">기록 지우기</button></div>
@@ -397,6 +395,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <p class="hint kb-note" id="kb-note" hidden>세벌식 390 기록 · 밑줄은 받침</p>
       </div>
     </div>
+    <span class="set-l" id="rec-l-l">최근 연습</span>
+    <ol class="rec-list" id="rec-list"></ol>
   </section>
   <section class="card shop" id="shop" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">상점</b><span class="pts" id="shop-pts"></span></div>
@@ -465,7 +465,7 @@ const $=id=>document.getElementById(id);
 const FB_CONFIG={"apiKey": "AIzaSyDWoxFutx0PNqjsZ8yOu1_bk2jG6JHfF8I", "authDomain": "whitetigertype.firebaseapp.com", "projectId": "whitetigertype", "storageBucket": "whitetigertype.firebasestorage.app", "messagingSenderId": "371671407725", "appId": "1:371671407725:web:2fa520d22485503517f364"};
 // NO_PRESETS: 기본 지문을 뺀 사이트(/custom/)에서만 true (build.py가 바꿔요). 계정·랭킹·포인트는 같이 써요
 // PID_ALL: 두 사이트의 기본 지문 id 전부(build.py가 채워요). 계정 삭제 때 지문 랭킹 기록을 빠짐없이 지우려고 써요
-const PID_ALL=["preset-drama", "preset-hist-2-01-3", "preset-hist-2-01-4", "preset-hist-2-01-5", "preset-hist-2-02-1x", "preset-hist-2-02-2", "preset-hist-2-03-1", "preset-hist-2-03-2", "preset-hist-2-03-3", "preset-hist-2-03-4", "preset-hist-2-03-5", "preset-hist-2-04-1", "preset-hist-2-04-2", "preset-kor-4-3", "preset-kor-5-1", "preset-poem-byeol", "preset-poem-chimmuk", "preset-poem-chohon", "preset-poem-gwangya", "preset-poem-jahwasang", "preset-poem-sanyuhwa", "preset-poem-seosi", "preset-writing"];
+const PID_ALL=["preset-anthem", "preset-drama", "preset-hist-2-01-3", "preset-hist-2-01-4", "preset-hist-2-01-5", "preset-hist-2-02-1x", "preset-hist-2-02-2", "preset-hist-2-03-1", "preset-hist-2-03-2", "preset-hist-2-03-3", "preset-hist-2-03-4", "preset-hist-2-03-5", "preset-hist-2-04-1", "preset-hist-2-04-2", "preset-kor-4-3", "preset-kor-5-1", "preset-poem-byeol", "preset-poem-chimmuk", "preset-poem-chohon", "preset-poem-gwangya", "preset-poem-jahwasang", "preset-poem-sanyuhwa", "preset-poem-seosi", "preset-writing"];
 const NO_PRESETS=true;const LIBK=NO_PRESETS?"ttc-lib":"tt-lib",CURK=NO_PRESETS?"ttc-cur":"tt-cur";let hiddenLib=[];
 // 기본 지문 뺀 사이트에서 숨길 지문: 교과서 기본 지문(시는 두 사이트 다 보여요)
 const hidP=id=>NO_PRESETS&&typeof id==="string"&&id.startsWith("preset-")&&!id.startsWith("preset-poem-");
@@ -629,7 +629,7 @@ if(!NO_PRESETS&&!store.get("tt-mig1",false)){
   if(oi>=0){const o=lib.splice(oi,1)[0];o.title="3-(2) 작문 관습을 고려한 글쓰기";lib.splice(Math.min(1,lib.length),0,o)}
   store.set("tt-mig1",true);store.set(LIBK,lib)}
 // 사이트에 넣은 3-(2)와 겹치는 빈 '3-(2)' 지문은 지우고, 넣어 둔 지문을 순서대로 맨 앞에
-if(!NO_PRESETS&&!store.get("tt-mig2",false)){const W=PRESETS[1];
+if(!NO_PRESETS&&!store.get("tt-mig2",false)){const W=PRESETS.find(p=>p.id==="preset-writing");
   lib=lib.filter(q=>q.id.startsWith("preset-")||!(q.title===W.title&&(!q.text.trim()||q.text.trim()===W.text.trim())));
   store.set("tt-mig2",true);store.set(LIBK,lib)}
 lib.sort((a,b)=>{const ia=PRESETS.findIndex(p=>p.id===a.id),ib=PRESETS.findIndex(p=>p.id===b.id);return (ia<0?99:ia)-(ib<0?99:ib)});
@@ -646,7 +646,7 @@ function showState(msg){const el=$("pstate");if(msg){el.textContent=msg;el.class
 let delArmed=false;
 function drawList(){const box=$("plist");box.innerHTML="";
   // 국어 · 한국사 · 내 지문으로 나눠서 보여 줘요
-  const groups=[["국어",p=>p.id==="preset-drama"||p.id==="preset-writing"||p.id.startsWith("preset-kor")],["한국사",p=>p.id.startsWith("preset-hist")],["시",p=>p.id.startsWith("preset-poem-")],["필사",null],["내 지문",p=>!p.id.startsWith("preset-")]];
+  const groups=[["노래",p=>p.id==="preset-anthem"],["국어",p=>p.id==="preset-drama"||p.id==="preset-writing"||p.id.startsWith("preset-kor")],["한국사",p=>p.id.startsWith("preset-hist")],["시",p=>p.id.startsWith("preset-poem-")],["필사",null],["내 지문",p=>!p.id.startsWith("preset-")]];
   groups.forEach(([name,f],gi)=>{
     // 산 필사 책: 누르면 저장해 둔 문단부터 바로 이어서 쳐요
     if(!f){let bl=[],P={};try{bl=BOOKS.filter(b=>owned(b.id));P=bookP()}catch(e){}if(!bl.length)return;
