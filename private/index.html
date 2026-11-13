@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.12</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.13</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1393,7 +1393,7 @@ function bookGo(b,i){if(!owned(b.id))return;i=Math.max(0,Math.min(b.paras.length
 // 문단을 끝내면 저장하고 바로 다음 문단으로
 function bookDone(src,gain){const b=BOOKS.find(x=>x.id===src.book);if(!b){show("done");return}const n=src.para+1;setBookP(b.id,n);
   if(n<b.paras.length){bookGo(b,n);$("lineno").textContent+="  ·  저장됨"+(gain?"  ·  포인트 +"+gain:"");return}
-  $("result").textContent=b.title+" 필사 완료";$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";show("done")}
+  $("result").textContent=b.title+" 필사 완료";$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{const nw=(S.achNw||[]).concat(achCheck());S.achNw=[];if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}show("done")}
 function drawBooks(){const el=$("book-list"),P=bookP();el.innerHTML="";
   BOOKS.forEach(b=>{const li=document.createElement("li"),n=P[b.id]||0,N=b.paras.length,has=owned(b.id);
     const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+esc(b.title)+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
@@ -1472,9 +1472,10 @@ const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.inclu
 // p-anthem(3.4.9): 기본 지문 애국가 1절을 평균 타수 600 이상으로 끝까지. p-mine(3.4.10): 내 지문(기본 지문·오늘의 문장·랜덤·필사 아님)을 끝까지 1번
 const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하기"},
   {id:"p-anthem",name:"애국자",desc:"애국가 1절 600타 달성하기."},
-  {id:"e-rainbow",name:"무지갯빛",desc:"무지갯빛 배경 발견하기",flag:"tt-egg",hide:1},
-  {id:"e-rain",name:"비내리는",desc:"비 내리는 배경 발견하기",flag:"tt-rain",hide:1},
-  {id:"e-snow",name:"새하얀",desc:"눈 내리는 배경 발견하기",flag:"tt-snow",hide:1}];
+  {id:"b-nalgae",name:"날자꾸나",desc:"『날개』 필사 완료하기",book:"book-nalgae"}, // book: 그 책 필사를 끝 문단까지(3.4.13)
+  {id:"e-rainbow",name:"무지갯빛",desc:"무지갯빛 배경 발견하기",flag:"tt-egg"},
+  {id:"e-rain",name:"비내리는",desc:"비 내리는 배경 발견하기",flag:"tt-rain"},
+  {id:"e-snow",name:"새하얀",desc:"눈 내리는 배경 발견하기",flag:"tt-snow"}];
 // 3.4.2: 우리 동네 날씨로 배경이 켜져도 같은 업적. 3.4.3: 설명은 사용자가 정한 글, 순서 무지개·비·눈
 function achGet(){const v=store.get("tt-ach",{});if(!v||typeof v!=="object"||Array.isArray(v))return {};const o={};for(const k in v)if(ACH.some(a=>a.id===k))o[k]=v[k];return o}
 const achHas=id=>!!achGet()[id];
@@ -1484,7 +1485,8 @@ function achMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return
 function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&ACH.some(a=>a.id===id)){A[id]=Date.now();nw.push(ACH.find(a=>a.id===id))}}
   if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}}return nw}
 // 연습을 마칠 때(f) 또는 기록만으로(f 없음) 판정해요
-function achCheck(f){const R=runsGet(),ids=[];for(const a of ACH)if((a.cnt&&a.cnt(R)>=a.goal)||(a.flag&&store.get(a.flag,false)===true))ids.push(a.id);
+function achCheck(f){const R=runsGet(),ids=[];let BP={};try{BP=bookP()}catch(e){}
+  for(const a of ACH)if((a.cnt&&a.cnt(R)>=a.goal)||(a.flag&&store.get(a.flag,false)===true)||(a.book&&(()=>{const b=BOOKS.find(x=>x.id===a.book);return b&&(BP[a.book]||0)>=b.paras.length})()))ids.push(a.id);
   // 3.4.6: 지금 날씨 배경도 다시 봐요(로그인 불러오기가 날씨로 얻은 업적을 지운 경우를 막아요)
   try{if(WXL.rain)ids.push("e-rain");if(WXL.snow)ids.push("e-snow");if(rbLeft()>0)ids.push("e-rainbow")}catch(e){}
   if(f&&f.anthem&&f.spd>=600)ids.push("p-anthem");if(f&&f.mine)ids.push("p-mine");
