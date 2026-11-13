@@ -192,6 +192,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .pts.up{animation:ptup .6s ease-out}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:var(--surface);color:var(--fg);border:2px solid var(--accent);padding:10px 16px;max-width:calc(100% - 32px);font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .toast b{color:var(--accent)}
+.ach-toasts{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(320px,calc(100% - 32px));pointer-events:none}.toast.ach{position:static;transform:none;max-width:100%;animation:achIn .3s ease-out}@keyframes achIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.toast.ach{animation:none}}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pts.up{animation:none}}
 h1 .ver{font-family:var(--body);font-size:.85rem;font-weight:400;color:var(--muted);margin-left:10px;letter-spacing:.02em;text-transform:none;vertical-align:middle;white-space:nowrap;display:inline-block}
@@ -297,7 +298,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.13</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.14</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1177,7 +1178,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   if(!S.src&&!isPre(curId)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
-  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem",mine:!S.src&&!isPre(curId)});S.achNw=nw}catch(e){S.achNw=[]}
+  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem",mine:!S.src&&!isPre(curId)})}catch(e){}
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isRain(S.lines.join(""))&&!store.get("tt-rain",false)){store.set("tt-rain",true);store.set("tt-rainfx",true);applyRain();$("result-sub").textContent+="  ·  ☂"}
@@ -1185,7 +1186,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   else if(!S.src&&!String(curId).startsWith("preset-")&&isSnow(S.lines.join(""))&&!store.get("tt-snow",false)){store.set("tt-snow",true);store.set("tt-snowfx",true);applySnow();$("result-sub").textContent+="  ·  ❄"}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isEgg(S.lines.join(""))&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook();$("result-sub").textContent+="  ·  ✦"}
   else if(S.pid&&dailyHooks.preset)dailyHooks.preset(S.pid,avg,acc,Math.max(1,Math.round(S.activeDone)));
-  try{const nw=(S.achNw||[]).concat(achCheck());S.achNw=[];if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}
+  try{achCheck()}catch(e){}
   show("done")}
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
@@ -1393,7 +1394,7 @@ function bookGo(b,i){if(!owned(b.id))return;i=Math.max(0,Math.min(b.paras.length
 // 문단을 끝내면 저장하고 바로 다음 문단으로
 function bookDone(src,gain){const b=BOOKS.find(x=>x.id===src.book);if(!b){show("done");return}const n=src.para+1;setBookP(b.id,n);
   if(n<b.paras.length){bookGo(b,n);$("lineno").textContent+="  ·  저장됨"+(gain?"  ·  포인트 +"+gain:"");return}
-  $("result").textContent=b.title+" 필사 완료";$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{const nw=(S.achNw||[]).concat(achCheck());S.achNw=[];if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}show("done")}
+  $("result").textContent=b.title+" 필사 완료";$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{achCheck()}catch(e){}show("done")}
 function drawBooks(){const el=$("book-list"),P=bookP();el.innerHTML="";
   BOOKS.forEach(b=>{const li=document.createElement("li"),n=P[b.id]||0,N=b.paras.length,has=owned(b.id);
     const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+esc(b.title)+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
@@ -1483,7 +1484,10 @@ const titleOk=id=>owned(id)||(ACH.some(a=>a.id===id)&&achHas(id));
 function achMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const A=achGet();let ch=false;
   for(const a of ACH){const t=Number(src[a.id]);if(Number.isFinite(t)&&t>0&&(!A[a.id]||t<A[a.id])){A[a.id]=Math.floor(t);ch=true}}if(ch)store.set("tt-ach",A)}
 function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&ACH.some(a=>a.id===id)){A[id]=Date.now();nw.push(ACH.find(a=>a.id===id))}}
-  if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}}return nw}
+  if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}achToast(nw)}return nw}
+// 업적을 얻으면 오른쪽 아래에 5초 동안 알려요(3.4.14)
+function achToast(nw){try{let box=document.querySelector(".ach-toasts");if(!box){box=document.createElement("div");box.className="ach-toasts";document.body.appendChild(box)}
+  for(const a of nw){const t=document.createElement("div");t.className="toast ach";t.setAttribute("role","status");t.innerHTML="업적 달성 <b>"+esc(a.name)+"</b>";box.appendChild(t);setTimeout(()=>t.remove(),5000)}}catch(e){}}
 // 연습을 마칠 때(f) 또는 기록만으로(f 없음) 판정해요
 function achCheck(f){const R=runsGet(),ids=[];let BP={};try{BP=bookP()}catch(e){}
   for(const a of ACH)if((a.cnt&&a.cnt(R)>=a.goal)||(a.flag&&store.get(a.flag,false)===true)||(a.book&&(()=>{const b=BOOKS.find(x=>x.id===a.book);return b&&(BP[a.book]||0)>=b.paras.length})()))ids.push(a.id);
