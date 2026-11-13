@@ -288,7 +288,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
-.ach-l{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);padding:10px 12px;display:grid;gap:4px;align-content:start}.ach-l li b{font-weight:700}.ach-l li span{color:var(--muted);font-size:.78rem}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{justify-self:start;padding:3px 10px;font-size:.8rem;margin-top:2px}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l{grid-template-columns:repeat(2,1fr)}}
+.ach-l{display:grid;grid-template-columns:repeat(3,1fr);gap:0;list-style:none;margin:0;padding:0 1px 1px 0}.ach-l li{background:var(--card);border:1px solid var(--line);margin:0 -1px -1px 0;padding:10px 12px;display:grid;gap:4px;align-content:start}.ach-l li b{font-weight:700}.ach-l li span{color:var(--muted);font-size:.78rem}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{justify-self:start;padding:3px 10px;font-size:.8rem;margin-top:2px}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l{grid-template-columns:repeat(2,1fr)}}
+.rec-main{display:grid;gap:14px;min-width:0}
 .rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
 
@@ -385,7 +386,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card" id="rec" hidden>
     <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></div>
-    <div class="row rec-k" role="group" aria-label="자판"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button></div>
+    <div class="row rec-k" role="group" aria-label="기록 종류"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button><button class="btn acct" id="rec-ka" type="button" aria-pressed="false">업적</button></div>
+    <div class="rec-main" id="rec-main">
     <div class="rec-sum" id="rec-sum"></div>
     <span class="set-l" id="rec-ch-l">평균 타수 (최근 30번)</span>
     <svg class="rec-ch" id="rec-ch" viewBox="0 0 600 170" role="img" aria-label="최근 연습 평균 타수"></svg>
@@ -398,8 +400,11 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     </div>
     <span class="set-l" id="rec-l-l">최근 연습</span>
     <ol class="rec-list" id="rec-list"></ol>
+    </div>
+    <div class="rec-main" id="rec-ach" hidden>
     <span class="set-l" id="ach-h">업적 <span class="hint" id="ach-n"></span></span>
     <ul class="ach-l" id="ach-list"></ul>
+    </div>
   </section>
   <section class="card shop" id="shop" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">상점</b><span class="pts" id="shop-pts"></span></div>
@@ -899,7 +904,7 @@ const KS_P={Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/"};
 const ksName=c=>c==="Space"?"Space":/^Key[A-Z]$/.test(c)?c.slice(3):/^Digit[0-9]$/.test(c)?c.slice(5):KS_P[c]||null;
 const kbKey=(L=KBL())=>L==="390"?"tt-keys3":"tt-keys";
 // 내 기록 칸에서 보는 자판(두벌식/세벌식 390). 열 때마다 지금 고른 자판으로 시작해요
-let REC_K=null;const recK=()=>REC_K||KBL();
+let REC_K=null,REC_ACH=false;const recK=()=>REC_K||KBL(); // REC_ACH: 내 기록 칸에서 업적 탭을 보는 중
 const KS={run:{},last:0,view:"run",runK:"2"};
 inp.addEventListener("keydown",e=>{if(e.repeat)return;const c=e.code||"",now=performance.now();if(/^(Shift|Control|Alt|Meta|CapsLock)/.test(c))return;
   const k=ksName(c);if(k&&KS.last&&now-KS.last<1500){const r=KS.run[k]||(KS.run[k]=[0,0]);r[0]+=now-KS.last;r[1]++}
@@ -942,9 +947,9 @@ function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=
   else{const li=el("li");li.style.display="block";li.textContent="아직 기록 없음 · 연습을 끝까지 마치면 쌓여요";list.appendChild(li)}
   // 키별 속도는 결과 화면에는 안 보이고 여기서만 봐요(기본은 전체 기록)
   KS.view="all";drawKb()}
-$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o){REC_K=null;recKSet()}};
-function recKSet(){const t=recK()==="390";$("rec-k2").setAttribute("aria-pressed",String(!t));$("rec-k3").setAttribute("aria-pressed",String(t));const n=$("kb-note");if(n)n.hidden=!t;drawRec();try{drawKb()}catch(e){}}
-$("rec-k2").onclick=()=>{REC_K="2";recKSet()};$("rec-k3").onclick=()=>{REC_K="390";recKSet()};
+$("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o){REC_K=null;REC_ACH=false;recKSet()}};
+function recKSet(){const t=recK()==="390",A=REC_ACH&&ACH.length>0;$("rec-k2").setAttribute("aria-pressed",String(!A&&!t));$("rec-k3").setAttribute("aria-pressed",String(!A&&t));$("rec-ka").setAttribute("aria-pressed",String(A));$("rec-ka").hidden=!ACH.length;$("rec-main").hidden=A;$("rec-ach").hidden=!A;const n=$("kb-note");if(n)n.hidden=!t;drawRec();try{drawKb()}catch(e){}if(A)$("rec-clr").hidden=true}
+$("rec-k2").onclick=()=>{REC_K="2";REC_ACH=false;recKSet()};$("rec-k3").onclick=()=>{REC_K="390";REC_ACH=false;recKSet()};$("rec-ka").onclick=()=>{REC_ACH=true;recKSet()};
 $("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="연습 기록 지우기";const t=recK()==="390";store.set("tt-runs",runsGet().filter(x=>(x.k==="390")!==t));drawRec()};
 // 피아노: 키마다 음이 정해져 있어요. 5음 음계(도레미솔라)라서 아무렇게나 쳐도 어울려요. 아래 줄은 낮은 음, 위 줄은 높은 음, 스페이스는 낮은 화음
 const PN_BASE=[0,2,4,7,9],pnHz=k=>261.63*Math.pow(2,(Math.floor(k/5)*12+PN_BASE[((k%5)+5)%5])/12);
@@ -1100,7 +1105,7 @@ function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&AC
 function achCheck(f){const R=runsGet(),ids=[];for(const a of ACH)if((a.cnt&&a.cnt(R)>=a.goal)||(a.flag&&store.get(a.flag,false)===true))ids.push(a.id);
   return achGrant(ids)}
 try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
-function drawAch(){const el=$("ach-list");if(!el)return;el.hidden=$("ach-h").hidden=!ACH.length;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
+function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
   ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
     const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
