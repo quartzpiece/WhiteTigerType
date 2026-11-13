@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.4</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.5</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -341,16 +341,16 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
-    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row"><span class="set-l">투명도</span><div class="bg-ctl"><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="0" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><button class="btn acct" id="see-reset" type="button">기본값</button></div></div>
-    <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
-    <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
-    <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
-    <div class="set-row" id="piano-row" hidden><span class="set-l">피아노</span><button class="btn acct" id="pianobtn" type="button" aria-pressed="true">피아노 소리: 켜짐</button></div>
-    <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
+    <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><button class="btn acct" id="kbl-390os" type="button" aria-pressed="false">세벌식 390 (내 입력기)</button><span class="hint" id="kbl-msg" hidden>세벌식 사용시 키보드 영문 자판을 이용해주세요.</span><span class="hint" id="kbl-osmsg" hidden>컴퓨터 입력기를 세벌식 390으로 설정</span></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
+    <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
+    <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
+    <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
+    <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
+    <div class="set-row" id="piano-row" hidden><span class="set-l">피아노</span><button class="btn acct" id="pianobtn" type="button" aria-pressed="true">피아노 소리: 켜짐</button></div>
     <div class="admin-box" id="admin-box" hidden>
       <span class="set-l">오늘의 문장 목록 (관리자)</span>
       <p class="hint">한 줄에 한 문장 · 첫 줄이 오늘, 다음 줄이 내일 순서 · 끝까지 가면 처음부터 다시 · 오늘 이미 도전한 사람이 있으면 첫 줄은 그대로 두기</p>
@@ -1177,7 +1177,7 @@ async function wxCheck(){if(store.get("tt-wxloc",false)!==true)return;
   if(!navigator.geolocation){wxMsg("위치 확인 불가");return}
   let pos;try{pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:false,maximumAge:3600000,timeout:20000}))}
   catch(e){if(e&&e.code===1){ // 3.4.4: 거부하면 날씨를 꺼 둬요. 다시 켜면 위치를 새로 물어요(브라우저가 막아 둔 경우엔 사이트 설정에서 허용해야 해요)
-    store.set("tt-wxloc",false);clearInterval(WXL.timer);WXL.timer=null;wxLocDraw();wxLocSet(null);applyHolo();wxMsg("위치 막힘 · 주소창 왼쪽 아이콘에서 위치 허용 후 다시 켜기");return}
+    store.set("tt-wxloc",false);clearInterval(WXL.timer);WXL.timer=null;wxLocDraw();wxLocSet(null);applyHolo();wxMsg("위치 이용이 거부되었습니다. 주소창 왼쪽 아이콘에서 위치 이용 허용 후 다시 시도해 주세요.");return}
     wxMsg("위치 확인 실패");wxLocSet(null);return}
   if(store.get("tt-wxloc",false)!==true)return;
   const r1=x=>Math.round(x*10)/10,lat=r1(pos.coords.latitude),lon=r1(pos.coords.longitude);
