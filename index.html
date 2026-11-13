@@ -296,7 +296,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.8</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.3.9</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -385,8 +385,6 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card" id="rec" hidden>
     <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></div>
-    <span class="set-l" id="ach-h">업적 <span class="hint" id="ach-n"></span></span>
-    <ul class="ach-l" id="ach-list"></ul>
     <div class="row rec-k" role="group" aria-label="자판"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button></div>
     <div class="rec-sum" id="rec-sum"></div>
     <span class="set-l" id="rec-ch-l">평균 타수 (최근 30번)</span>
@@ -400,6 +398,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     </div>
     <span class="set-l" id="rec-l-l">최근 연습</span>
     <ol class="rec-list" id="rec-list"></ol>
+    <span class="set-l" id="ach-h">업적 <span class="hint" id="ach-n"></span></span>
+    <ul class="ach-l" id="ach-list"></ul>
   </section>
   <section class="card shop" id="shop" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">상점</b><span class="pts" id="shop-pts"></span></div>
@@ -1083,13 +1083,9 @@ function applyFont(){const id=store.get("tt-font",""),f=SHOP_FONTS.find(x=>x.id=
 const titleName=id=>{const t=SHOP_TITLES.find(x=>x.id===id)||ACH.find(x=>x.id===id);return t?t.name:""};
 const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.includes(id)};
 // 업적(3.3.8): 조건을 채우면 tt-ach {id: 얻은 시각}에 남고, 그 이름을 칭호(tt-title)로 달 수 있어요. 한 번 얻으면 기록을 지워도 남아요
-const ACH=[{id:"a-first",name:"첫걸음",desc:"연습 1번 끝내기",goal:1,cnt:R=>R.length},
-  {id:"a-100",name:"꾸준함",desc:"연습 100번 끝내기",goal:100,cnt:R=>R.length},
-  {id:"a-500",name:"500타",desc:"평균 타수 500 이상 · 정확도 95% 이상 · 총 타수 100 이상"},
-  {id:"a-perfect",name:"완벽주의자",desc:"정확도 100%로 10번 끝내기",goal:10,cnt:R=>R.filter(r=>r.a>=100).length},
-  {id:"a-daily1",name:"오늘의 1등",desc:"오늘의 문장 하루 1위"},
-  {id:"a-anthem",name:"애국자",desc:"애국가 1절 끝까지 치기"}];
-function achGet(){const v=store.get("tt-ach",{});return v&&typeof v==="object"&&!Array.isArray(v)?v:{}}
+// 업적 목록: {id, name, desc, goal?, cnt?(기록=>개수)}. 3.3.9에 사용자 요청으로 전부 뺌(틀은 남김). 다시 넣을 땐 새 id로
+const ACH=[];
+function achGet(){const v=store.get("tt-ach",{});if(!v||typeof v!=="object"||Array.isArray(v))return {};const o={};for(const k in v)if(ACH.some(a=>a.id===k))o[k]=v[k];return o}
 const achHas=id=>!!achGet()[id];
 const titleOk=id=>owned(id)||(ACH.some(a=>a.id===id)&&achHas(id));
 function achMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const A=achGet();let ch=false;
@@ -1100,7 +1096,7 @@ function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&AC
 function achCheck(f){const R=runsGet(),ids=[];for(const a of ACH)if(a.cnt&&a.cnt(R)>=a.goal)ids.push(a.id);
   if(f){if(f.spd>=500&&f.acc>=95&&f.strokes>=100)ids.push("a-500");if(f.anthem)ids.push("a-anthem")}return achGrant(ids)}
 try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
-function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
+function drawAch(){const el=$("ach-list");if(!el)return;el.hidden=$("ach-h").hidden=!ACH.length;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
   ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
     const d=document.createElement("span");d.textContent=a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
@@ -1376,7 +1372,7 @@ async function initCloud(){if(!FB_CONFIG)return;
         const R=await dailyRuns(day,3);R.rows.forEach((r,k)=>{if(r.id===me)won.push([day,k])});add.push(day)}
       if(won.some(([,k])=>k===0)&&me===uid)achGrant(["a-daily1"]);
       // 업적이 생기기 전에 1위 한 날도 한 번만 찾아봐요
-      if(me===uid&&!achHas("a-daily1")&&!store.get("tt-achd1",false)){for(let i=1;i<=60;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);if(day<PRIZE_FROM)break;const R=await dailyRuns(day,1);if(R.rows[0]&&R.rows[0].id===me){achGrant(["a-daily1"]);break}}if(me===uid)store.set("tt-achd1",true)}
+      if(me===uid&&ACH.some(a=>a.id==="a-daily1")&&!achHas("a-daily1")&&!store.get("tt-achd1",false)){for(let i=1;i<=60;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);if(day<PRIZE_FROM)break;const R=await dailyRuns(day,1);if(R.rows[0]&&R.rows[0].id===me){achGrant(["a-daily1"]);break}}if(me===uid)store.set("tt-achd1",true)}
       if(me!==uid||!add.length)return;
       const aw=[...seen,...add].sort().slice(-40);store.set("tt-aw",aw);
       if(won.length){const g=won.reduce((a,[,k])=>a+PRIZE[k],0);addPts(g);
