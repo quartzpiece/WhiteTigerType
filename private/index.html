@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.10</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.11</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1590,8 +1590,10 @@ const DAILY_POOL=["저는 풀빛고등학교 연극 동아리의 대표 김선�
 const DAILY_ORDER=(()=>{const a=DAILY_POOL.map((_,i)=>i);let x=20261105;for(let i=a.length-1;i>0;i--){x=(x*1103515245+12345)%2147483648;const j=x%(i+1);[a[i],a[j]]=[a[j],a[i]]}return a})();
 function todayKey(){try{return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Seoul"}).format(new Date())}catch(e){const d=new Date(Date.now()+9*3600e3);return d.toISOString().slice(0,10)}}
 let DAILY_CUSTOM=null; // 관리자가 정한 목록 {list, start}
+// 지난 날짜에 실제로 나온 문장(3.4.11): 관리자가 목록을 새로 저장할 때 config.hist {날짜: 문장}에 남겨서, 목록을 바꿔도 지난 날짜 문장이 안 바뀌어요
+let DAILY_HIST={};const DAILY_FIX={}; // DAILY_FIX: 그 전 날짜를 손으로 바로잡을 때
 const dayNum=day=>Math.floor(Date.parse(day+"T00:00:00Z")/86400000);
-function dailyText(day){const n=dayNum(day);
+function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[day];if(typeof DAILY_HIST[day]==="string"&&DAILY_HIST[day])return DAILY_HIST[day];
   if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length&&day>=DAILY_CUSTOM.start){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
 const dailyHooks={start:null,finish:null,preset:null};
@@ -1701,7 +1703,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 오늘의 문장: daily/{날짜}/runs/{uid}. 첫 글자에서 만들고(nick, st, at), 끝나면 ms·acc를 한 번만 더해요
   const dCard=$("daily"),dBtn=$("dailybtn");dBtn.hidden=false;
   const ADMIN="admin",cfgRef=FS.doc(fdb,"config","daily");
-  async function loadCfg(){try{const c=await FS.getDoc(cfgRef);if(c.exists()){const v=c.data()||{};if(Array.isArray(v.list)&&v.list.length&&typeof v.start==="string")DAILY_CUSTOM={list:v.list.map(String).filter(Boolean),start:v.start}}}catch(e){}}
+  async function loadCfg(){try{const c=await FS.getDoc(cfgRef);if(c.exists()){const v=c.data()||{};if(Array.isArray(v.list)&&v.list.length&&typeof v.start==="string")DAILY_CUSTOM={list:v.list.map(String).filter(Boolean),start:v.start};if(v.hist&&typeof v.hist==="object"&&!Array.isArray(v.hist)){const H={};for(const k in v.hist)if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&typeof v.hist[k]==="string")H[k]=v.hist[k];DAILY_HIST=H}}}catch(e){}}
   const cfgReady=loadCfg();
   function adminPrev(){const L=$("admin-list").value.split("\n").map(x=>x.replace(/\s+/g," ").trim()).filter(Boolean);
     $("admin-prev").textContent=L.length?L.length+"문장 · 오늘: "+L[0]+(L[1]?"  /  내일: "+L[1]:""):"비어 있음 (기본 목록 사용)";return L}
@@ -1713,7 +1715,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("admin-list").addEventListener("input",adminPrev);
   $("admin-save").onclick=async()=>{const L=adminPrev(),m=$("admin-msg");if(!L.length){m.textContent="한 문장 이상 필요";return}
     if(L.some(x=>[...x].length>150)){m.textContent="150자 넘는 문장이 있음";return}
-    m.textContent="저장 중";try{const v={list:L,start:todayKey(),at:Date.now()};await FS.setDoc(cfgRef,v);DAILY_CUSTOM={list:L,start:v.start};m.textContent="저장 완료"}catch(e){m.textContent="저장 실패 (규칙 확인)"}};
+    m.textContent="저장 중";try{const today=todayKey(),H={...DAILY_HIST};for(let d=D_FROM;d<today;d=dShift(d,1))if(!H[d])H[d]=dailyText(d); // 지난 날짜 문장은 지금 규칙대로 남겨 둬요
+      const v={list:L,start:today,at:Date.now(),hist:H};await FS.setDoc(cfgRef,v);DAILY_CUSTOM={list:L,start:v.start};DAILY_HIST=H;m.textContent="저장 완료"}catch(e){m.textContent="저장 실패 (규칙 확인)"}};
   $("setbtn").addEventListener("click",()=>{if(!$("settings").hidden){adminShow();fbShow()}});
   // 건의하기: fb/{uid_시각} = {uid, id, nick, text, at}. 로그인한 사람이 보내고, 관리자(admin)만 읽고 지울 수 있어요
   $("fb-box").hidden=false;
