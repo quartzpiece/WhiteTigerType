@@ -192,7 +192,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .pts.up{animation:ptup .6s ease-out}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:var(--surface);color:var(--fg);border:2px solid var(--accent);padding:10px 16px;max-width:calc(100% - 32px);font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .toast b{color:var(--accent)}
-.qs{margin-left:-.5em} /* 줄 맨 앞 「『의 왼쪽 여백 줄이기(3.4.17): 이 글꼴은 낫표가 칸 오른쪽 반에 그려져요 */
+.qs{margin-left:-.5em}.qe{margin-right:-.5em} /* 줄 맨 앞 「『의 왼쪽 여백 줄이기(3.4.17): 이 글꼴은 낫표가 칸 오른쪽 반에 그려져요 */
 .ach-toasts{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(320px,calc(100% - 32px));pointer-events:none}.toast.ach{position:static;transform:none;max-width:100%;animation:achIn .3s ease-out}@keyframes achIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.toast.ach{animation:none}}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pts.up{animation:none}}
@@ -299,7 +299,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.17</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.18</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -666,7 +666,7 @@ function drawList(){const box=$("plist");box.innerHTML="";
     if(!f){let bl=[],P={};try{bl=BOOKS.filter(b=>owned(b.id));P=bookP()}catch(e){}if(!bl.length)return;
       const g=document.createElement("div");g.className="pgroup";g.innerHTML="<span>"+name+"</span>";const grid=document.createElement("div");grid.className="pgrid";
       bl.forEach(bk=>{const n=Math.min(P[bk.id]||0,bk.paras.length),b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");
-        b.setAttribute("aria-pressed",String(selBook===bk.id));b.innerHTML="<span>"+(/^[「『]/.test(bk.title)?"<span class=\"qs\">"+bk.title[0]+"</span>"+esc(bk.title.slice(1)):esc(bk.title))+"</span> <b>"+n+"/"+bk.paras.length+"</b>";b.title=bk.title+" · "+bk.author+" · "+n+" / "+bk.paras.length+"문단";
+        b.setAttribute("aria-pressed",String(selBook===bk.id));b.innerHTML="<span>"+qHTML(bk.title)+"</span> <b>"+n+"/"+bk.paras.length+"</b>";b.title=bk.title+" · "+bk.author+" · "+n+" / "+bk.paras.length+"문단";
         b.onclick=()=>loadBook(bk.id);grid.appendChild(b)});
       g.appendChild(grid);box.appendChild(g);return}
     const items=lib.filter(f),last=gi===groups.length-1;if(!items.length&&!last)return;
@@ -717,7 +717,9 @@ stats(0);
 function show(id){["setup","practice","done"].forEach(x=>$(x).hidden=x!==id);$("books").hidden=true;const dly=!!(S.src&&S.src.daily);$("randnext").hidden=!S.src||dly||!!S.src.book;$("again").hidden=dly;$("edit").hidden=id==="setup"}
 const isHead=l=>l.trim().startsWith("■");
 // 글 맨 앞이 「 『이면 그 글자만 span.qs로 감싸 왼쪽 여백을 줄여요(3.4.17)
-function qText(el,t){t=String(t);if(/^[「『]/.test(t)){el.innerHTML="<span class=\"qs\">"+t[0]+"</span>"+esc(t.slice(1))}else el.textContent=t}
+// 3.4.18: 띄어쓰기 앞의 」 』도 오른쪽 여백을 줄여요(span.qe)
+function qHTML(t){return esc(String(t)).replace(/^([「『])/,"<span class=\"qs\">$1</span>").replace(/([」』])(?= )/g,"<span class=\"qe\">$1</span>")}
+function qText(el,t){t=String(t);if(/[「『」』]/.test(t))el.innerHTML=qHTML(t);else el.textContent=t}
 function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
 function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
@@ -1022,7 +1024,7 @@ function bookDone(src,gain){const b=BOOKS.find(x=>x.id===src.book);if(!b){show("
   qText($("result"),b.title+" 필사 완료");$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{achCheck()}catch(e){}show("done")}
 function drawBooks(){const el=$("book-list"),P=bookP();el.innerHTML="";
   BOOKS.forEach(b=>{const li=document.createElement("li"),n=P[b.id]||0,N=b.paras.length,has=owned(b.id);
-    const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+(/^[「『]/.test(b.title)?"<span class=\"qs\">"+b.title[0]+"</span>"+esc(b.title.slice(1)):esc(b.title))+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
+    const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+qHTML(b.title)+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
     const pr=document.createElement("span");pr.className="hint";pr.textContent=n+" / "+N+"문단 ("+Math.floor(n/N*100)+"%)";t.appendChild(pr);
     const bar=document.createElement("div");bar.className="bp";bar.innerHTML="<i style=\"width:"+(n/N*100)+"%\"></i>";li.appendChild(bar);
     const c=document.createElement("div");c.className="bc";
