@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.5</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.6</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1104,6 +1104,8 @@ function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&AC
   if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}}return nw}
 // 연습을 마칠 때(f) 또는 기록만으로(f 없음) 판정해요
 function achCheck(f){const R=runsGet(),ids=[];for(const a of ACH)if((a.cnt&&a.cnt(R)>=a.goal)||(a.flag&&store.get(a.flag,false)===true))ids.push(a.id);
+  // 3.4.6: 지금 날씨 배경도 다시 봐요(로그인 불러오기가 날씨로 얻은 업적을 지운 경우를 막아요)
+  try{if(WXL.rain)ids.push("e-rain");if(WXL.snow)ids.push("e-snow");if(rbLeft()>0)ids.push("e-rainbow")}catch(e){}
   return achGrant(ids)}
 try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
 function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
