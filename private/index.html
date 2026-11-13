@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1554,7 +1554,9 @@ function wxLocSet(c){WXL.snow=c!==null&&(c>=71&&c<=77||c===85||c===86);WXL.rain=
 async function wxCheck(){if(store.get("tt-wxloc",false)!==true)return;
   if(!navigator.geolocation){wxMsg("위치 확인 불가");return}
   let pos;try{pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{enableHighAccuracy:false,maximumAge:3600000,timeout:20000}))}
-  catch(e){wxMsg(e&&e.code===1?"위치 허용 필요":"위치 확인 실패");wxLocSet(null);return}
+  catch(e){if(e&&e.code===1){ // 3.4.4: 거부하면 날씨를 꺼 둬요. 다시 켜면 위치를 새로 물어요(브라우저가 막아 둔 경우엔 사이트 설정에서 허용해야 해요)
+    store.set("tt-wxloc",false);clearInterval(WXL.timer);WXL.timer=null;wxLocDraw();wxLocSet(null);applyHolo();wxMsg("위치 막힘 · 주소창 왼쪽 아이콘에서 위치 허용 후 다시 켜기");return}
+    wxMsg("위치 확인 실패");wxLocSet(null);return}
   if(store.get("tt-wxloc",false)!==true)return;
   const r1=x=>Math.round(x*10)/10,lat=r1(pos.coords.latitude),lon=r1(pos.coords.longitude);
   try{const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=weather_code&timezone=auto");if(!r.ok)throw 0;
