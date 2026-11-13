@@ -290,7 +290,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
-.ach-l{display:grid;gap:4px;list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:7.5em minmax(0,1fr) auto auto;grid-template-areas:"n d t b";gap:4px 14px;align-items:center}.ach-l li b{grid-area:n;font-weight:700}.ach-l li>span{color:var(--muted);font-size:.8rem}.ach-l li>span:nth-of-type(1){grid-area:d}.ach-l li>span:nth-of-type(2){grid-area:t;white-space:nowrap}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{grid-area:b;padding:3px 10px;font-size:.8rem;white-space:nowrap}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n b" "d d" "t t"}}
+.ach-l{display:grid;gap:4px;list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:7.5em minmax(0,1fr) auto auto auto;grid-template-areas:"n d p t b";gap:4px 14px;align-items:center}.ach-l li b{grid-area:n;font-weight:700}.ach-l li>span{color:var(--muted);font-size:.8rem}.ach-l li>span:nth-of-type(1){grid-area:d}.ach-l li>span:nth-of-type(2){grid-area:t;white-space:nowrap}.ach-l li .pc{grid-area:p;font-style:normal;font-size:.8rem;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{grid-area:b;padding:3px 10px;font-size:.8rem;white-space:nowrap}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n b" "d d" "t p"}.ach-l li .pc{justify-self:end}}
 .rec-main{display:grid;gap:14px;min-width:0}
 .rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
@@ -299,7 +299,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.18</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.19</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -564,7 +564,7 @@ function cbTick(now){if(!CB.run)return;requestAnimationFrame(cbTick);if(document
       const pts=quad(h);ctx.fillStyle="#0E1017";ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();
       const st=q.st.find(t=>t.n[a]===s);if(!st)continue;const C=CUBE_RGB[st.c],g=.35+.65*lt+.25*u;
       ctx.fillStyle="rgb("+C.map(x=>Math.min(255,Math.round(x*g))).join(",")+")";const sp2=quad(hs);ctx.beginPath();sp2.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill()}}}
-let cloudHook=null,eggHook=null,rankHook=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
+let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
 const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
 const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
@@ -1113,7 +1113,7 @@ const titleOk=id=>owned(id)||(ACH.some(a=>a.id===id)&&achHas(id));
 function achMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const A=achGet();let ch=false;
   for(const a of ACH){const t=Number(src[a.id]);if(Number.isFinite(t)&&t>0&&(!A[a.id]||t<A[a.id])){A[a.id]=Math.floor(t);ch=true}}if(ch)store.set("tt-ach",A)}
 function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&ACH.some(a=>a.id===id)){A[id]=Date.now();nw.push(ACH.find(a=>a.id===id))}}
-  if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}achToast(nw)}return nw}
+  if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}{const q=achQuiet?nw.filter(a=>!achQuiet.has(a.id)):nw;if(q.length)achToast(q)}if(rankHook)try{rankHook()}catch(e){}}return nw}
 // 업적을 얻으면 오른쪽 아래에 5초 동안 알려요(3.4.14)
 function achToast(nw){try{let box=document.querySelector(".ach-toasts");if(!box){box=document.createElement("div");box.className="ach-toasts";document.body.appendChild(box)}
   for(const a of nw){const t=document.createElement("div");t.className="toast ach";t.setAttribute("role","status");t.innerHTML="업적 달성 <b>"+esc(a.name)+"</b>";box.appendChild(t);setTimeout(()=>t.remove(),5000)}}catch(e){}}
@@ -1126,13 +1126,15 @@ function achCheck(f){const R=runsGet(),ids=[];let BP={};try{BP=bookP()}catch(e){
   return achGrant(ids)}
 try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
 function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
+  let S=null;try{S=achStatsHook?achStatsHook(()=>{if(!$("rec").hidden)drawAch()}):null}catch(e){}
   ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
     const d=document.createElement("span");qText(d,(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":""));li.appendChild(d);
+    if(S&&S.n){const k=S.c[a.id]||0,r=k/S.n*100,pc=document.createElement("i");pc.className="pc";pc.textContent=(k&&r<1?"1% 미만":Math.round(r)+"%");pc.title="로그인한 "+S.n+"명 중 "+k+"명 달성";li.appendChild(pc)}
     if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
       const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"칭호 빼기":"칭호 달기";bt.setAttribute("aria-pressed",String(on));
       bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
-    el.appendChild(li)});$("ach-n").textContent=n+"/"+ACH.length}
+    el.appendChild(li)});$("ach-n").textContent=n+"/"+ACH.length+(S&&S.n?"  ·  달성 비율은 로그인한 "+S.n+"명 기준":"")}
 function getTot(){const t=store.get("tt-tot",null),p=Number(store.get("tt-pt",0))||0;return typeof t==="number"&&t>=p?t:p}
 function shopSkins(){document.querySelectorAll('.skin[data-shop]').forEach(b=>b.hidden=!owned(b.dataset.skin));const r=$("fxbtn");if(r)r.closest(".set-row").hidden=!owned("rainbow");drawFontSet()}
 // 설정 칸 글꼴: 기본 + 상점에서 산 글꼴 중에서 골라요
@@ -1280,11 +1282,17 @@ async function initCloud(){if(!FB_CONFIG)return;
     pushRank();pushing=false;if(again){again=false;push()}}
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
-  async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",key=nm+"|"+pt+"|"+egg+"|"+tt;if(key===lastRank)return;
-    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;
+  async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",ac=Object.keys(achGet()).sort(),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",");if(key===lastRank)return;
+    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac; // a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
-      const alts=[];if(tt){const w={...v};delete w.tt;alts.push(w)}if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
+      const alts=[];if(v.a){const w={...v};delete w.a;alts.push(w)}if(tt){const w={...v};delete w.a;delete w.tt;alts.push(w)}if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
   rankHook=()=>pushRank();
+  // 업적별 달성 비율(3.4.19): rank 문서(로그인한 사람마다 하나)를 모두 읽어 a(얻은 업적)를 세요. 5분 동안은 다시 안 읽어요
+  let achSt=null,achStAt=0,achStLoading=false;
+  const achStNow=()=>{if(!achSt)return null;const c={...achSt.c};let n=achSt.n;if(uid&&nick){n++;Object.keys(achGet()).forEach(id=>{c[id]=(c[id]||0)+1})}return{n,c}};
+  achStatsHook=done=>{if(!achStLoading&&(!achSt||Date.now()-achStAt>300000)){achStLoading=true;
+    FS.getDocs(FS.query(FS.collection(fdb,"rank"))).then(snap=>{let n=0;const c={};snap.forEach(d=>{if(d.id===uid)return;const v=d.data()||{};if(!v.nick)return;n++;new Set(Array.isArray(v.a)?v.a:[]).forEach(id=>{c[id]=(c[id]||0)+1})});achSt={n,c};achStAt=Date.now();if(done)done()}).catch(e=>{}).finally(()=>{achStLoading=false})}
+    return achStNow()};
   // 사진 배경을 계정에 저장: bg/{uid} = {img, at} (본인만 읽고 쓰기)
   const bgRef=i=>i?FS.doc(fdb,"bg",uid,"s",String(i)):FS.doc(fdb,"bg",uid);
   bgHook={save:async(d,i=0)=>{if(!uid)return false;try{await FS.setDoc(bgRef(i),{img:d,at:Date.now()});return true}catch(e){return false}},
@@ -1457,7 +1465,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
-      if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);applying=true;try{clearMine();applyData(snap.data())}finally{applying=false}uid=user.uid;sync("불러오기 완료");pushRank();awardDaily();bgHook.load()}
+      if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
     panel.hidden=true});
