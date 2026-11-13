@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.0</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -416,7 +416,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <ul class="shop-list" id="shop-etc"></ul>
     <span class="set-l" id="shop-bk-l">필사</span>
     <ul class="shop-list" id="shop-books"></ul>
-    <span class="set-l" id="shop-tt-l">칭호</span>
+    <span class="set-l" id="shop-tt-l">업적</span>
     <ul class="shop-list" id="shop-titles"></ul>
     <p class="shop-empty" id="shop-empty">준비 중</p>
     <p class="hint" id="shop-msg" aria-live="polite"></p>
@@ -1177,7 +1177,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   if(!S.src&&!isPre(curId)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
-  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem"});if(nw.length)$("result-sub").textContent+="  ·  칭호: "+nw.map(a=>a.name).join(", ")}catch(e){}
+  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem"});if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isRain(S.lines.join(""))&&!store.get("tt-rain",false)){store.set("tt-rain",true);store.set("tt-rainfx",true);applyRain();$("result-sub").textContent+="  ·  ☂"}
@@ -1185,7 +1185,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   else if(!S.src&&!String(curId).startsWith("preset-")&&isSnow(S.lines.join(""))&&!store.get("tt-snow",false)){store.set("tt-snow",true);store.set("tt-snowfx",true);applySnow();$("result-sub").textContent+="  ·  ❄"}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isEgg(S.lines.join(""))&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook();$("result-sub").textContent+="  ·  ✦"}
   else if(S.pid&&dailyHooks.preset)dailyHooks.preset(S.pid,avg,acc,Math.max(1,Math.round(S.activeDone)));
-  try{const nw=achCheck();if(nw.length)$("result-sub").textContent+="  ·  칭호: "+nw.map(a=>a.name).join(", ")}catch(e){}
+  try{const nw=achCheck();if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}
   show("done")}
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
@@ -1377,8 +1377,8 @@ $("kb-clr").onclick=()=>{const b=$("kb-clr");if(b.dataset.arm!=="1"){b.dataset.a
 setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 
 
-// 상점: 포인트(tt-pt)로 테마·칭호를 사요. 산 것은 tt-inv, 단 칭호는 tt-title, 받은 포인트 누적은 tt-tot(랭킹 기준)
-// 물건은 아직 없음. 테마는 {id,name,c(색),pr(값)} + CSS·설정 칸 .skin[data-shop] 버튼, 칭호는 {id,name,pr}로 넣으면 돼요
+// 상점: 포인트(tt-pt)로 테마·업적 표시를 사요. 산 것은 tt-inv, 단 업적 표시는 tt-title, 받은 포인트 누적은 tt-tot(랭킹 기준)
+// 물건은 아직 없음. 테마는 {id,name,c(색),pr(값)} + CSS·설정 칸 .skin[data-shop] 버튼, 업적 표시는 {id,name,pr}로 넣으면 돼요
 const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{id:"sky",name:"네온 블루 테마",c:"#5BC8F5",pr:500},{id:"rainbow",name:"무지개 테마",c:"conic-gradient(#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A)",pr:1000},{id:"magenta",name:"마젠타 테마",c:"#FF2BD6",pr:500},{id:"cyan",name:"시안 테마",c:"#00F0FF",pr:500},{id:"neonpurple",name:"네온 퍼플 테마",c:"#B84DFF",pr:500},{id:"cube",name:"큐브 테마",c:"linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12",pr:1500}];
 const SHOP_TITLES=[];
 const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
@@ -1466,9 +1466,9 @@ function applyFont(){const id=store.get("tt-font",""),f=SHOP_FONTS.find(x=>x.id=
   if(f&&owned(f.id)){loadFont([f]);document.documentElement.style.setProperty("--tfont",'"'+f.fam+'",'+'var(--body)')}else document.documentElement.style.removeProperty("--tfont")}
 const titleName=id=>{const t=SHOP_TITLES.find(x=>x.id===id)||ACH.find(x=>x.id===id);return t?t.name:""};
 const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.includes(id)};
-// 업적(3.3.8): 조건을 채우면 tt-ach {id: 얻은 시각}에 남고, 그 이름을 칭호(tt-title)로 달 수 있어요. 한 번 얻으면 기록을 지워도 남아요
+// 업적(3.3.8): 조건을 채우면 tt-ach {id: 얻은 시각}에 남고, 그 이름을 닉네임 앞에(tt-title) 달 수 있어요. 한 번 얻으면 기록을 지워도 남아요
 // 업적 목록: {id, name(=칭호), desc, goal?, cnt?(기록=>개수), flag?(이 값이 true면 달성), hide?(달성 전엔 조건 숨김)}. 3.3.9에 처음 6개는 뺌, 옛 id(a-*)는 다시 쓰지 않기
-// 3.4.0: 이스터에그(무지개·눈·비)를 열면 칭호. 조건은 달성한 뒤에만 보여요
+// 3.4.0: 이스터에그(무지개·눈·비)를 열면 업적. 조건은 달성한 뒤에만 보여요
 const ACH=[{id:"e-rainbow",name:"무지갯빛",desc:"내 지문으로 「무지개를 바라보는 이의 눈동자엔 무지갯빛 세상이 비치기 마련」 치기",flag:"tt-egg",hide:1},
   {id:"e-snow",name:"새하얀",desc:"내 지문으로 「스스로 얼어붙으며 온기를 선물하는 눈꽃처럼」 치기",flag:"tt-snow",hide:1},
   {id:"e-rain",name:"비내리는",desc:"내 지문으로 「이제는 하나 둘 검은 안개에서 벗어나, 바람을 맞으며 유영하고」 치기",flag:"tt-rain",hide:1}];
@@ -1488,7 +1488,7 @@ function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
     const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
     if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
-      const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"칭호 빼기":"칭호 달기";bt.setAttribute("aria-pressed",String(on));
+      const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"업적 빼기":"업적 달기";bt.setAttribute("aria-pressed",String(on));
       bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
     el.appendChild(li)});$("ach-n").textContent=n+"/"+ACH.length}
 function getTot(){const t=store.get("tt-tot",null),p=Number(store.get("tt-pt",0))||0;return typeof t==="number"&&t>=p?t:p}
@@ -1636,7 +1636,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   let lastRank="";
   async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",key=nm+"|"+pt+"|"+egg+"|"+tt;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;
-    try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 칭호(tt)를 아직 안 받으면 칭호 빼고, 그래도 안 되면 egg도 빼고
+    try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
       const alts=[];if(tt){const w={...v};delete w.tt;alts.push(w)}if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
   rankHook=()=>pushRank();
   // 사진 배경을 계정에 저장: bg/{uid} = {img, at} (본인만 읽고 쓰기)
