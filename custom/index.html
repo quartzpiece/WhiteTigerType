@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.2</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.3</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1091,10 +1091,10 @@ const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.inclu
 // 업적(3.3.8): 조건을 채우면 tt-ach {id: 얻은 시각}에 남고, 그 이름을 닉네임 앞에(tt-title) 달 수 있어요. 한 번 얻으면 기록을 지워도 남아요
 // 업적 목록: {id, name(=칭호), desc, goal?, cnt?(기록=>개수), flag?(이 값이 true면 달성), hide?(달성 전엔 조건 숨김)}. 3.3.9에 처음 6개는 뺌, 옛 id(a-*)는 다시 쓰지 않기
 // 3.4.0: 이스터에그(무지개·눈·비)를 열면 업적. 조건은 달성한 뒤에만 보여요
-const ACH=[{id:"e-rainbow",name:"무지갯빛",desc:"내 지문으로 「무지개를 바라보는 이의 눈동자엔 무지갯빛 세상이 비치기 마련」 치기",wx:"우리 동네 날씨에서 비가 그쳤을 때",flag:"tt-egg",hide:1},
-  {id:"e-snow",name:"새하얀",desc:"내 지문으로 「스스로 얼어붙으며 온기를 선물하는 눈꽃처럼」 치기",wx:"우리 동네 날씨가 눈일 때",flag:"tt-snow",hide:1},
-  {id:"e-rain",name:"비내리는",desc:"내 지문으로 「이제는 하나 둘 검은 안개에서 벗어나, 바람을 맞으며 유영하고」 치기",wx:"우리 동네 날씨가 비일 때",flag:"tt-rain",hide:1}];
-// 3.4.2: 우리 동네 날씨로 배경이 켜져도 같은 업적(wx). 날씨로만 얻은 사람에게는 이스터에그 문장을 보여 주지 않아요
+const ACH=[{id:"e-rainbow",name:"무지갯빛",desc:"무지갯빛 배경 발견하기",flag:"tt-egg",hide:1},
+  {id:"e-rain",name:"비내리는",desc:"비 내리는 배경 발견하기",flag:"tt-rain",hide:1},
+  {id:"e-snow",name:"새하얀",desc:"눈 내리는 배경 발견하기",flag:"tt-snow",hide:1}];
+// 3.4.2: 우리 동네 날씨로 배경이 켜져도 같은 업적. 3.4.3: 설명은 사용자가 정한 글, 순서 무지개·비·눈
 function achGet(){const v=store.get("tt-ach",{});if(!v||typeof v!=="object"||Array.isArray(v))return {};const o={};for(const k in v)if(ACH.some(a=>a.id===k))o[k]=v[k];return o}
 const achHas=id=>!!achGet()[id];
 const titleOk=id=>owned(id)||(ACH.some(a=>a.id===id)&&achHas(id));
@@ -1109,7 +1109,7 @@ try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤
 function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
   ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
-    const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":(a.wx?[a.flag&&store.get(a.flag,false)===true?a.desc:"",a.wx].filter(Boolean).join(" · "):a.desc)+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
+    const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
     if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
       const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"업적 빼기":"업적 달기";bt.setAttribute("aria-pressed",String(on));
       bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
