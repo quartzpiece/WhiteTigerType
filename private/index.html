@@ -288,6 +288,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
+.ach-l{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);padding:10px 12px;display:grid;gap:4px;align-content:start}.ach-l li b{font-weight:700}.ach-l li span{color:var(--muted);font-size:.78rem}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{justify-self:start;padding:3px 10px;font-size:.8rem;margin-top:2px}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l{grid-template-columns:repeat(2,1fr)}}
 .rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
 
@@ -295,7 +296,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.3.7</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.3.8</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -384,6 +385,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card" id="rec" hidden>
     <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></div>
+    <span class="set-l" id="ach-h">업적 <span class="hint" id="ach-n"></span></span>
+    <ul class="ach-l" id="ach-list"></ul>
     <div class="row rec-k" role="group" aria-label="자판"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button></div>
     <div class="rec-sum" id="rec-sum"></div>
     <span class="set-l" id="rec-ch-l">평균 타수 (최근 30번)</span>
@@ -567,7 +570,7 @@ const isRain=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===RAIN;
 // 피아노 이스터에그: 내 지문으로 이 문장을 끝까지 치면 연습할 때 키마다 피아노 음이 나요
 const PIANO="작은자판을두드리는소리조차삶속에화음을더하고";
 const isPiano=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===PIANO;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3"].includes(k))cloudHook()}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3","tt-ach"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -1169,6 +1172,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   if(!S.src&&!isPre(curId)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
+  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem"});if(nw.length)$("result-sub").textContent+="  ·  업적: "+nw.map(a=>a.name).join(", ")}catch(e){}
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
   else if(!S.src&&!String(curId).startsWith("preset-")&&isRain(S.lines.join(""))&&!store.get("tt-rain",false)){store.set("tt-rain",true);store.set("tt-rainfx",true);applyRain();$("result-sub").textContent+="  ·  ☂"}
@@ -1180,21 +1184,21 @@ function finish(){$("bar").style.width="100%";cubeBar();
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:store.get("tt-keys",{}),keys3:store.get("tt-keys3",{})}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:store.get("tt-keys",{}),keys3:store.get("tt-keys3",{}),ach:achGet()}}
 function applyData(d){
   const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);applyHolo();if(eggHook)eggHook();store.set("tt-snow",d.snow===true);store.set("tt-bookp",cleanBookP(d.bookp));{const m=d.mycap,day=todayKey();if(m&&m.d===day)store.set("tt-mycap",{d:day,p:Math.max(mineCap(),Math.max(0,Number(m.p)||0))})}setTimeout(drawList,0);store.set("tt-snowfx",d.snowfx!==false);applySnow();store.set("tt-piano",d.piano===true);store.set("tt-pianofx",d.pianofx!==false);applyPiano();store.set("tt-rain",d.rain===true);store.set("tt-rainfx",d.rainfx!==false);applyRain();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
-  store.set("tt-title",typeof d.title==="string"&&owned(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));for(const [f,sk,re] of [["keys","tt-keys",/^([A-Z]|Space)$/],["keys3","tt-keys3",/^([A-Z0-9]|Space|[;',./])$/]]){const src=d[f];if(!src||typeof src!=="object"||Array.isArray(src))continue;const K={};for(const k in src){const r=src[k];if(re.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}const cur=store.get(sk,{});if(Object.keys(K).length||!kbCount(cur&&typeof cur==="object"?cur:{}))store.set(sk,K)}shopSkins();setSkin(store.get("tt-skin","basic"));
+  achMerge(d.ach);store.set("tt-title",typeof d.title==="string"&&titleOk(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));for(const [f,sk,re] of [["keys","tt-keys",/^([A-Z]|Space)$/],["keys3","tt-keys3",/^([A-Z0-9]|Space|[;',./])$/]]){const src=d[f];if(!src||typeof src!=="object"||Array.isArray(src))continue;const K={};for(const k in src){const r=src[k];if(re.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}const cur=store.get(sk,{});if(Object.keys(K).length||!kbCount(cur&&typeof cur==="object"?cur:{}))store.set(sk,K)}shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&hidP(q.id));
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;if(hidP(q.id)||isPre(q.id))return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
   if(lib.some(p=>!p.ph))lib=lib.filter(p=>!p.ph);
   const first=d.lib.find(q=>q&&typeof q.id==="string"&&!q.id.startsWith("preset-"));if(first&&lib.some(p=>p.id===first.id))curId=first.id;
-  saveLib();loadCur()}
+  saveLib();loadCur();try{achCheck()}catch(e){}}
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=PRESETS.length?PRESETS.map(p=>({...p})):[{id:uid(),title:"지문 1",text:"",ph:1}];Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-keys3",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-keys3",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-ach",{});store.set("tt-achd1",false);store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 // 내 지문 부정 막기(3.1.5): 같은 글자·묶음만 되풀이한 글이나 낱자(ㄱ, ㅏ)는 포인트를 줄이고, 내 지문 포인트는 하루 300까지
 const MINE_CAP=300;
@@ -1298,7 +1302,7 @@ const runsGet=()=>{const r=store.get("tt-runs",[]);return Array.isArray(r)?r.fil
 function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0)),...(x.k==="390"?{k:"390"}:{})})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
 function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(KBL()==="390"?{k:"390"}:{})}])))}
 const recDate=t=>{const d=new Date(Number(t)+9*3600e3),z=n=>String(n).padStart(2,"0");return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+" "+z(d.getUTCHours())+":"+z(d.getUTCMinutes())};
-function drawRec(){const VK=recK(),R=runsGet().filter(x=>(x.k==="390")===(VK==="390")),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=>(x.k==="390")===(VK==="390")),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
   const sum=$("rec-sum");sum.innerHTML="";const last=R.slice(-10),avg=L=>L.length?Math.round(L.reduce((a,x)=>a+x.s,0)/L.length):0,acc=L=>L.length?Math.round(L.reduce((a,x)=>a+x.a,0)/L.length):0;
   [[R.length+"번","연습 횟수"],[R.length?Math.max(...R.map(x=>x.s)):0,"최고 평균 타수"],[avg(last),"최근 10번 평균 타수"],[acc(last)+"%","최근 10번 정확도"]].forEach(([b,t])=>{const d=el("div");d.append(el("b","",String(b)),el("span","",t));sum.appendChild(d)});
   const ch=$("rec-ch"),P=R.slice(-30);ch.innerHTML="";ch.style.display=P.length<2?"none":"";$("rec-ch-l").hidden=P.length<2;
@@ -1454,8 +1458,34 @@ const fontLoaded={};function loadFont(list){const q=list.filter(f=>!fontLoaded[f
   const l=document.createElement("link");l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?"+q.map(f=>"family="+f.q).join("&")+"&display=swap";document.head.appendChild(l)}
 function applyFont(){const id=store.get("tt-font",""),f=SHOP_FONTS.find(x=>x.id===id);
   if(f&&owned(f.id)){loadFont([f]);document.documentElement.style.setProperty("--tfont",'"'+f.fam+'",'+'var(--body)')}else document.documentElement.style.removeProperty("--tfont")}
-const titleName=id=>{const t=SHOP_TITLES.find(x=>x.id===id);return t?t.name:""};
+const titleName=id=>{const t=SHOP_TITLES.find(x=>x.id===id)||ACH.find(x=>x.id===id);return t?t.name:""};
 const owned=id=>{const v=store.get("tt-inv",[]);return Array.isArray(v)&&v.includes(id)};
+// 업적(3.3.8): 조건을 채우면 tt-ach {id: 얻은 시각}에 남고, 그 이름을 칭호(tt-title)로 달 수 있어요. 한 번 얻으면 기록을 지워도 남아요
+const ACH=[{id:"a-first",name:"첫걸음",desc:"연습 1번 끝내기",goal:1,cnt:R=>R.length},
+  {id:"a-100",name:"꾸준함",desc:"연습 100번 끝내기",goal:100,cnt:R=>R.length},
+  {id:"a-500",name:"500타",desc:"평균 타수 500 이상 · 정확도 95% 이상 · 총 타수 100 이상"},
+  {id:"a-perfect",name:"완벽주의자",desc:"정확도 100%로 10번 끝내기",goal:10,cnt:R=>R.filter(r=>r.a>=100).length},
+  {id:"a-daily1",name:"오늘의 1등",desc:"오늘의 문장 하루 1위"},
+  {id:"a-anthem",name:"애국자",desc:"애국가 1절 끝까지 치기"}];
+function achGet(){const v=store.get("tt-ach",{});return v&&typeof v==="object"&&!Array.isArray(v)?v:{}}
+const achHas=id=>!!achGet()[id];
+const titleOk=id=>owned(id)||(ACH.some(a=>a.id===id)&&achHas(id));
+function achMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const A=achGet();let ch=false;
+  for(const a of ACH){const t=Number(src[a.id]);if(Number.isFinite(t)&&t>0&&(!A[a.id]||t<A[a.id])){A[a.id]=Math.floor(t);ch=true}}if(ch)store.set("tt-ach",A)}
+function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&ACH.some(a=>a.id===id)){A[id]=Date.now();nw.push(ACH.find(a=>a.id===id))}}
+  if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}}return nw}
+// 연습을 마칠 때(f) 또는 기록만으로(f 없음) 판정해요
+function achCheck(f){const R=runsGet(),ids=[];for(const a of ACH)if(a.cnt&&a.cnt(R)>=a.goal)ids.push(a.id);
+  if(f){if(f.spd>=500&&f.acc>=95&&f.strokes>=100)ids.push("a-500");if(f.anthem)ids.push("a-anthem")}return achGrant(ids)}
+try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
+function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
+  ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
+    const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
+    const d=document.createElement("span");d.textContent=a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
+    if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
+      const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"칭호 빼기":"칭호 달기";bt.setAttribute("aria-pressed",String(on));
+      bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
+    el.appendChild(li)});$("ach-n").textContent=n+"/"+ACH.length}
 function getTot(){const t=store.get("tt-tot",null),p=Number(store.get("tt-pt",0))||0;return typeof t==="number"&&t>=p?t:p}
 function shopSkins(){document.querySelectorAll('.skin[data-shop]').forEach(b=>b.hidden=!owned(b.dataset.skin));const r=$("fxbtn");if(r)r.closest(".set-row").hidden=!owned("rainbow");drawFontSet()}
 // 설정 칸 글꼴: 기본 + 상점에서 산 글꼴 중에서 골라요
@@ -1601,7 +1631,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   let lastRank="";
   async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",key=nm+"|"+pt+"|"+egg+"|"+tt;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;
-    try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){if(egg){try{await FS.setDoc(FS.doc(fdb,"rank",uid),{nick:nm,pt:pt,at:Date.now()})}catch(e2){}}}}
+    try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 칭호(tt)를 아직 안 받으면 칭호 빼고, 그래도 안 되면 egg도 빼고
+      const alts=[];if(tt){const w={...v};delete w.tt;alts.push(w)}if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
   rankHook=()=>pushRank();
   // 사진 배경을 계정에 저장: bg/{uid} = {img, at} (본인만 읽고 쓰기)
   const bgRef=i=>i?FS.doc(fdb,"bg",uid,"s",String(i)):FS.doc(fdb,"bg",uid);
@@ -1721,6 +1752,9 @@ async function initCloud(){if(!FB_CONFIG)return;
     try{const today=todayKey(),seen=new Set(store.get("tt-aw",[])),add=[];let won=[];
       for(let i=1;i<=7;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);if(day<PRIZE_FROM)break;if(seen.has(day))continue;
         const R=await dailyRuns(day,3);R.rows.forEach((r,k)=>{if(r.id===me)won.push([day,k])});add.push(day)}
+      if(won.some(([,k])=>k===0)&&me===uid)achGrant(["a-daily1"]);
+      // 업적이 생기기 전에 1위 한 날도 한 번만 찾아봐요
+      if(me===uid&&!achHas("a-daily1")&&!store.get("tt-achd1",false)){for(let i=1;i<=60;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);if(day<PRIZE_FROM)break;const R=await dailyRuns(day,1);if(R.rows[0]&&R.rows[0].id===me){achGrant(["a-daily1"]);break}}if(me===uid)store.set("tt-achd1",true)}
       if(me!==uid||!add.length)return;
       const aw=[...seen,...add].sort().slice(-40);store.set("tt-aw",aw);
       if(won.length){const g=won.reduce((a,[,k])=>a+PRIZE[k],0);addPts(g);
@@ -1831,7 +1865,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       await AU.deleteUser(u)}
     catch(e){go.disabled=false;delMsg(/requires-recent-login/.test(e&&e.code||"")?"다시 로그인한 뒤 시도":"삭제 실패"+(fail?" ("+fail+"곳)":""));return}
     applying=true;try{clearMine()}finally{applying=false}
-    ["tt-rbuntil","tt-wxrain","tt-aw","tt-fbseen-"+me].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+    ["tt-rbuntil","tt-wxrain","tt-aw","tt-achd1","tt-fbseen-"+me].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
     delBox.hidden=true;$("lg-delpw").value="";go.disabled=false;delMsg("");exMsg("");sync("");panel.hidden=true;
     toast("계정 삭제 완료")};
 }
