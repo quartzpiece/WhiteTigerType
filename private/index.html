@@ -192,6 +192,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .pts.up{animation:ptup .6s ease-out}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:var(--surface);color:var(--fg);border:2px solid var(--accent);padding:10px 16px;max-width:calc(100% - 32px);font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 .toast b{color:var(--accent)}
+.qs{margin-left:-.5em} /* 줄 맨 앞 「『의 왼쪽 여백 줄이기(3.4.17): 이 글꼴은 낫표가 칸 오른쪽 반에 그려져요 */
 .ach-toasts{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(320px,calc(100% - 32px));pointer-events:none}.toast.ach{position:static;transform:none;max-width:100%;animation:achIn .3s ease-out}@keyframes achIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.toast.ach{animation:none}}
 @keyframes ptup{0%{transform:scale(1.35)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pts.up{animation:none}}
@@ -289,7 +290,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
-.ach-l{display:grid;gap:4px;list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:7.5em minmax(0,1fr) auto auto;grid-template-areas:"n d t b";gap:4px 14px;align-items:center}.ach-l li b{grid-area:n;font-weight:700}.ach-l li span{color:var(--muted);font-size:.8rem}.ach-l li span:nth-of-type(1){grid-area:d}.ach-l li span:nth-of-type(2){grid-area:t;white-space:nowrap}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{grid-area:b;padding:3px 10px;font-size:.8rem;white-space:nowrap}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n b" "d d" "t t"}}
+.ach-l{display:grid;gap:4px;list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:7.5em minmax(0,1fr) auto auto;grid-template-areas:"n d t b";gap:4px 14px;align-items:center}.ach-l li b{grid-area:n;font-weight:700}.ach-l li>span{color:var(--muted);font-size:.8rem}.ach-l li>span:nth-of-type(1){grid-area:d}.ach-l li>span:nth-of-type(2){grid-area:t;white-space:nowrap}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{grid-area:b;padding:3px 10px;font-size:.8rem;white-space:nowrap}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n b" "d d" "t t"}}
 .rec-main{display:grid;gap:14px;min-width:0}
 .rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
@@ -298,7 +299,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.16</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.17</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1043,7 +1044,7 @@ function drawList(){const box=$("plist");box.innerHTML="";
     if(!f){let bl=[],P={};try{bl=BOOKS.filter(b=>owned(b.id));P=bookP()}catch(e){}if(!bl.length)return;
       const g=document.createElement("div");g.className="pgroup";g.innerHTML="<span>"+name+"</span>";const grid=document.createElement("div");grid.className="pgrid";
       bl.forEach(bk=>{const n=Math.min(P[bk.id]||0,bk.paras.length),b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");
-        b.setAttribute("aria-pressed",String(selBook===bk.id));b.innerHTML="<span>"+esc(bk.title)+"</span> <b>"+n+"/"+bk.paras.length+"</b>";b.title=bk.title+" · "+bk.author+" · "+n+" / "+bk.paras.length+"문단";
+        b.setAttribute("aria-pressed",String(selBook===bk.id));b.innerHTML="<span>"+(/^[「『]/.test(bk.title)?"<span class=\"qs\">"+bk.title[0]+"</span>"+esc(bk.title.slice(1)):esc(bk.title))+"</span> <b>"+n+"/"+bk.paras.length+"</b>";b.title=bk.title+" · "+bk.author+" · "+n+" / "+bk.paras.length+"문단";
         b.onclick=()=>loadBook(bk.id);grid.appendChild(b)});
       g.appendChild(grid);box.appendChild(g);return}
     const items=lib.filter(f),last=gi===groups.length-1;if(!items.length&&!last)return;
@@ -1093,6 +1094,8 @@ stats(0);
 
 function show(id){["setup","practice","done"].forEach(x=>$(x).hidden=x!==id);$("books").hidden=true;const dly=!!(S.src&&S.src.daily);$("randnext").hidden=!S.src||dly||!!S.src.book;$("again").hidden=dly;$("edit").hidden=id==="setup"}
 const isHead=l=>l.trim().startsWith("■");
+// 글 맨 앞이 「 『이면 그 글자만 span.qs로 감싸 왼쪽 여백을 줄여요(3.4.17)
+function qText(el,t){t=String(t);if(/^[「『]/.test(t)){el.innerHTML="<span class=\"qs\">"+t[0]+"</span>"+esc(t.slice(1))}else el.textContent=t}
 function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
 function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
@@ -1103,7 +1106,7 @@ function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   $("lines").innerHTML=S.lines.map(l=>"<div"+(isHead(l)?' data-h="1"':"")+">"+esc(l)+"</div>").join("");
   show("practice");showLine()}
 function showLine(){S.start=0;$("typing").value="";try{h3Reset()}catch(e){}KS.last=0;
-  $("lineno").textContent=(S.src?S.src.title+"  ·  ":"")+(S.i+1)+" / "+S.lines.length+" 줄";
+  qText($("lineno"),(S.src?S.src.title+"  ·  ":"")+(S.i+1)+" / "+S.lines.length+" 줄");
   $("bar").style.width=(S.i/S.lines.length*100)+"%";cubeBar();
   [...$("lines").children].forEach((d,k)=>d.className=(k<S.i?"done":k===S.i?"now":"")+(d.dataset.h?" head":""));
   $("target").classList.toggle("head",isHead(S.lines[S.i]||""));
@@ -1322,7 +1325,7 @@ function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=
     [[0,"start"],[P.length-1,"end"]].forEach(([i,an])=>{const t=mk("text",{x:X(i),y:162,"text-anchor":an});t.textContent=recDate(P[i].at);ch.appendChild(t)})}
   const list=$("rec-list");list.innerHTML="";$("rec-l-l").hidden=!R.length;$("rec-clr").hidden=!R.length;
   if(R.length){const hd=el("li","hd");hd.append(el("span","","날짜"),el("span","","지문"),el("span","s","타수"),el("span","a","정확도"));list.appendChild(hd);
-    R.slice(-50).reverse().forEach(x=>{const li=el("li");li.append(el("span","d",recDate(x.at)),el("span","t",x.t),el("span","s",String(x.s)),el("span","a",x.a+"%"));li.title=x.t+" · "+x.n+"줄";list.appendChild(li)})}
+    R.slice(-50).reverse().forEach(x=>{const li=el("li");li.append(el("span","d",recDate(x.at)),(()=>{const e=el("span","t");qText(e,x.t);return e})(),el("span","s",String(x.s)),el("span","a",x.a+"%"));li.title=x.t+" · "+x.n+"줄";list.appendChild(li)})}
   else{const li=el("li");li.style.display="block";li.textContent="아직 기록 없음 · 연습을 끝까지 마치면 쌓여요";list.appendChild(li)}
   // 키별 속도는 결과 화면에는 안 보이고 여기서만 봐요(기본은 전체 기록)
   KS.view="all";drawKb()}
@@ -1393,11 +1396,11 @@ function bookGo(b,i){if(!owned(b.id))return;i=Math.max(0,Math.min(b.paras.length
   begin({book:b.id,para:i,title:b.title+"  ·  "+(i+1)+" / "+b.paras.length+"문단",text:b.paras[i]})}
 // 문단을 끝내면 저장하고 바로 다음 문단으로
 function bookDone(src,gain){const b=BOOKS.find(x=>x.id===src.book);if(!b){show("done");return}const n=src.para+1;setBookP(b.id,n);
-  if(n<b.paras.length){bookGo(b,n);$("lineno").textContent+="  ·  저장됨"+(gain?"  ·  포인트 +"+gain:"");return}
-  $("result").textContent=b.title+" 필사 완료";$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{achCheck()}catch(e){}show("done")}
+  if(n<b.paras.length){bookGo(b,n);$("lineno").insertAdjacentText("beforeend","  ·  저장됨"+(gain?"  ·  포인트 +"+gain:""));return}
+  qText($("result"),b.title+" 필사 완료");$("result-sub").textContent+="  ·  "+b.paras.length+"문단 모두 침";try{achCheck()}catch(e){}show("done")}
 function drawBooks(){const el=$("book-list"),P=bookP();el.innerHTML="";
   BOOKS.forEach(b=>{const li=document.createElement("li"),n=P[b.id]||0,N=b.paras.length,has=owned(b.id);
-    const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+esc(b.title)+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
+    const t=document.createElement("div");t.className="bt";t.innerHTML="<b>"+(/^[「『]/.test(b.title)?"<span class=\"qs\">"+b.title[0]+"</span>"+esc(b.title.slice(1)):esc(b.title))+"</b><span class=\"hint\">"+esc(b.author)+"</span>";li.appendChild(t);
     const pr=document.createElement("span");pr.className="hint";pr.textContent=n+" / "+N+"문단 ("+Math.floor(n/N*100)+"%)";t.appendChild(pr);
     const bar=document.createElement("div");bar.className="bp";bar.innerHTML="<i style=\"width:"+(n/N*100)+"%\"></i>";li.appendChild(bar);
     const c=document.createElement("div");c.className="bc";
@@ -1501,7 +1504,7 @@ try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤
 function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
   ACH.forEach(a=>{const got=!!A[a.id],li=document.createElement("li");if(got){li.className="got"+(cur===a.id?" on":"");n++}
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
-    const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
+    const d=document.createElement("span");qText(d,(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":""));li.appendChild(d);
     if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
       const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"칭호 빼기":"칭호 달기";bt.setAttribute("aria-pressed",String(on));
       bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
@@ -1523,7 +1526,7 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
   const mk=(list,el,isTheme,isFont,isEtc)=>{el.innerHTML="";list.forEach(it=>{const cnt=it.multi?bgSlots():0,li=document.createElement("li"),has=it.multi?cnt>=it.max:owned(it.id),on=isTheme?skin===it.id:isFont?curF===it.id:cur===it.id;if(on)li.className="on";
     if(isTheme){const w=document.createElement("span");w.className="sw";w.style.background=it.c;li.appendChild(w)}
-    const n=document.createElement("span");n.className="nm";n.textContent=it.name+(it.multi&&cnt?" ("+cnt+"칸)":"");if(isFont){n.style.fontFamily='"'+it.fam+'",var(--body)';n.style.fontSize="1.1rem"}li.appendChild(n);
+    const n=document.createElement("span");n.className="nm";qText(n,it.name+(it.multi&&cnt?" ("+cnt+"칸)":""));if(isFont){n.style.fontFamily='"'+it.fam+'",var(--body)';n.style.fontSize="1.1rem"}li.appendChild(n);
     if(!has){const p=document.createElement("span");p.className="pr";p.textContent=it.pr;li.appendChild(p)}
     const b=document.createElement("button");b.type="button";b.className="btn acct";
     if(!has){b.textContent="구매";b.disabled=(!shopFree&&pt<it.pr)||(it.need&&!owned(it.need));if(it.need&&!owned(it.need))b.title="사진 배경 먼저";b.onclick=()=>buy(it)}
