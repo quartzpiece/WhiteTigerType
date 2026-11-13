@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.11</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.12</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1591,7 +1591,7 @@ const DAILY_ORDER=(()=>{const a=DAILY_POOL.map((_,i)=>i);let x=20261105;for(let 
 function todayKey(){try{return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Seoul"}).format(new Date())}catch(e){const d=new Date(Date.now()+9*3600e3);return d.toISOString().slice(0,10)}}
 let DAILY_CUSTOM=null; // 관리자가 정한 목록 {list, start}
 // 지난 날짜에 실제로 나온 문장(3.4.11): 관리자가 목록을 새로 저장할 때 config.hist {날짜: 문장}에 남겨서, 목록을 바꿔도 지난 날짜 문장이 안 바뀌어요
-let DAILY_HIST={};const DAILY_FIX={}; // DAILY_FIX: 그 전 날짜를 손으로 바로잡을 때
+let DAILY_HIST={};const DAILY_FIX={"2026-11-05": "[이것은 단 한 사람의 독자를 위한 이야기이다.]", "2026-11-06": "무지개를 바라보는 이의 눈동자엔 무지갯빛 세상이 비치기 마련", "2026-11-07": "삶에서 벗어나려 가속하는 그 시간이 오히려 우리를 삶에 더 단단히 붙들어 두던 건 아녔을까.", "2026-11-08": "그대의 아릿한 초록은 나의 초록이 되어 새 서사를 피움의 첫 문장이 되고", "2026-11-09": "이 문장을 쓰는 사람도 있다는 거 아십니까? 네, 그게 접니다.", "2026-11-10": "문장을 쓰는 데에도 상당한 아이디어가 필요하다는 거 아십니까? 그냥 그렇다고요.", "2026-11-11": "만약 이 글을 읽는, 그리고 입력하는 누군가 계신다면, 감사의 말씀을 전하고 싶습니다. 당신의 관심 덕분에 제 노력이 헛되지 않음을 느낍니다.", "2026-11-12": "그런데 오늘의 '문장'인데 왜 한 문장이 아니냐고요? 제 맘입니다. 꼬우면 님이 쓰시던지요"}; // 11/5~11/12는 사용자가 알려 준 문장(3.4.12) // DAILY_FIX: 그 전 날짜를 손으로 바로잡을 때
 const dayNum=day=>Math.floor(Date.parse(day+"T00:00:00Z")/86400000);
 function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[day];if(typeof DAILY_HIST[day]==="string"&&DAILY_HIST[day])return DAILY_HIST[day];
   if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length&&day>=DAILY_CUSTOM.start){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
