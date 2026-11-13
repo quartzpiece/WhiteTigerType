@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1491,7 +1491,7 @@ function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=
     const b=document.createElement("b");b.textContent=a.name;li.appendChild(b);
     const d=document.createElement("span");d.textContent=(!got&&a.hide)?"???":a.desc+(!got&&a.goal>1?" ("+Math.min(a.cnt(R),a.goal)+"/"+a.goal+")":"");li.appendChild(d);
     if(got){const t=document.createElement("span");const dt=new Date(A[a.id]);t.textContent=(dt.getMonth()+1)+"/"+dt.getDate()+" 달성";li.appendChild(t);
-      const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"업적 빼기":"업적 달기";bt.setAttribute("aria-pressed",String(on));
+      const bt=document.createElement("button");bt.type="button";bt.className="btn acct";const on=cur===a.id;bt.textContent=on?"칭호 빼기":"칭호 달기";bt.setAttribute("aria-pressed",String(on));
       bt.onclick=()=>{store.set("tt-title",on?"":a.id);drawAch();try{drawShop()}catch(e){}if(rankHook)rankHook()};li.appendChild(bt)}
     el.appendChild(li)});$("ach-n").textContent=n+"/"+ACH.length}
 function getTot(){const t=store.get("tt-tot",null),p=Number(store.get("tt-pt",0))||0;return typeof t==="number"&&t>=p?t:p}
