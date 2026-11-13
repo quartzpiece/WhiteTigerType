@@ -288,7 +288,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.prog i{transition:width .25s}}
 #login-on{min-width:0}.del-box{margin-top:10px;padding:10px 12px;border:1px solid #E5484D;min-width:0}.del-box .ptitle{flex:1 1 140px}.del-box .hint{margin:0 0 8px}.btn.danger{border-color:#E5484D;color:#E5484D}.btn.danger:hover{background:#E5484D;color:#fff}
 #kbl-row .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.kbl-warn{margin-top:6px;color:var(--accent)}.kb .k.jg b{text-decoration:underline;text-underline-offset:3px}.kb-note{font-size:.8rem}
-.ach-l{display:grid;grid-template-columns:repeat(3,1fr);gap:0;list-style:none;margin:0;padding:0 1px 1px 0}.ach-l li{background:var(--card);border:1px solid var(--line);margin:0 -1px -1px 0;padding:10px 12px;display:grid;gap:4px;align-content:start}.ach-l li b{font-weight:700}.ach-l li span{color:var(--muted);font-size:.78rem}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{justify-self:start;padding:3px 10px;font-size:.8rem;margin-top:2px}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l{grid-template-columns:repeat(2,1fr)}}
+.ach-l{display:grid;gap:4px;list-style:none;margin:0;padding:0}.ach-l li{background:var(--card);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:7.5em minmax(0,1fr) auto auto;grid-template-areas:"n d t b";gap:4px 14px;align-items:center}.ach-l li b{grid-area:n;font-weight:700}.ach-l li span{color:var(--muted);font-size:.8rem}.ach-l li span:nth-of-type(1){grid-area:d}.ach-l li span:nth-of-type(2){grid-area:t;white-space:nowrap}.ach-l li.got b{color:var(--accent)}.ach-l li:not(.got){opacity:.55}.ach-l li .btn{grid-area:b;padding:3px 10px;font-size:.8rem;white-space:nowrap}.ach-l li.on .btn{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}@media (max-width:560px){.ach-l li{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n b" "d d" "t t"}}
 .rec-main{display:grid;gap:14px;min-width:0}
 .rec-k{gap:8px}.rec-k .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 </style>
@@ -297,7 +297,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.7</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.8</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
