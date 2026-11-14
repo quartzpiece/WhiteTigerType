@@ -327,7 +327,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.34</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.35</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -756,7 +756,7 @@ function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   if(!src){const o=PRESETS.find(x=>x.id===curId);if(o&&ta.value.replace(/\s+/g," ").trim()===o.text.replace(/\s+/g," ").trim())S.pid=o.id}
   S.lines=splitLines(src?src.text:ta.value).filter(l=>prep(l).typ.length);if(!S.lines.length){ta.focus();return}
   S.prep=S.lines.map(prep);cubeBegin(S.lines.length);try{if(pianoOn())pnWarm()}catch(e){}KS.run={};KS.last=0;KS.view="run";
-  Object.assign(S,{activeDone:0,t0:0,log:[],doneStrokes:0,okS:0,frozen:null,newBest:false,best:0,i:0,start:0,totalStrokes:0,totalMs:0,typed:0,correct:0});stats(0);
+  Object.assign(S,{at0:Date.now(),activeDone:0,t0:0,log:[],doneStrokes:0,okS:0,frozen:null,newBest:false,best:0,i:0,start:0,totalStrokes:0,totalMs:0,typed:0,correct:0});stats(0);
   $("lines").innerHTML=S.lines.map(l=>"<div"+(isHead(l)?' data-h="1"':"")+">"+esc(l)+"</div>").join("");
   show("practice");showLine()}
 function showLine(){S.start=0;$("typing").value="";try{h3Reset()}catch(e){}KS.last=0;
@@ -846,6 +846,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   addPts(gain);
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   try{pcAdd(S.lines.join("\n"))}catch(e){}
+  try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
   try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem",mine:!S.src&&!isPre(curId)})}catch(e){}
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
@@ -1151,6 +1152,7 @@ const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하�
   {id:"d-month",name:"개근상",desc:"1달간 하루도 빠짐없이 오늘의 문장에 참여하기",ok:()=>ddFull()}, // 3.4.30. 달력 한 달(1일~말일) 모두 참여, 30일 연속 아님
   {id:"p-100",name:"집념의 화신",desc:"한 지문 100번 연습하기",goal:100,cnt:R=>Math.max(pcMax(),runsTitleMax(R))}, // 3.4.32
   {id:"p-both",name:"만능",desc:"두벌식과 세벌식 모두에서 300타 이상 달성하기",ok:()=>{const R=runsGet();return R.some(x=>x.k!=="390"&&x.s>=300)&&R.some(x=>x.k==="390"&&x.s>=300)}}, // 3.4.33. 평균 타수 기준, 세벌식은 390·390(내 입력기) 둘 다
+  {id:"t-cinder",name:"신데렐라",desc:"밤 11시 59분에 시작해서 12시를 넘겨 끝내기",hide:1}, // 3.4.35. 달성 전엔 "???"(사용자 요청). 한국 시간, 연습 시작 23:59 + 끝낸 날짜가 다음 날
   {id:"b-nalgae",name:"날자꾸나",desc:"「날개」 필사 완료하기",book:"book-nalgae"}, // book: 그 책 필사를 끝 문단까지(3.4.13)
   {id:"b-memil",name:"왼손잡이",desc:"「메밀꽃 필 무렵」 필사 완료하기",book:"book-memil"},
   {id:"b-unsu",name:"설렁탕을 사온",desc:"「운수 좋은 날」 필사 완료하기",book:"book-unsu"}, // 3.4.16. 책 제목은 낫표로: 단편은 「」, 책 한 권(단행본)은 『』
