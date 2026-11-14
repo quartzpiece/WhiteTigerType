@@ -48,6 +48,19 @@
 :root[data-skin="cube"] .prog i{background:var(--cbar,var(--cc)) 0 0/var(--pw,100%) 100% no-repeat}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="cube"]{transition:--cc .45s}}
 .skin[data-skin="cube"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;background:linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12}
+/* 글리치 테마(3.4.25): 녹색 포인트, 옅은 주사선, 가끔 화면이 찢어지듯 튀어요(.glitchfx, glTick) */
+:root[data-skin="glitch"]{--bg:#030806; --surface:#0A140E; --card:rgba(10,20,14,.84); --fg:#D6FFE2; --muted:#6E9A7B; --line:#1F3B29;
+  --accent:#39FF7A; --accent-soft:#0B2A16; --ok:#39FF7A; --bad:#030806; --bad-soft:#D6FFE2}
+:root[data-skin="glitch"] h1 .home{text-shadow:1px 0 rgba(255,43,214,.35),-1px 0 rgba(0,240,255,.35)}
+.glitchfx{position:fixed;inset:0;z-index:59;pointer-events:none;overflow:hidden;display:none}
+:root[data-skin="glitch"] .glitchfx{display:block}
+.glitchfx::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 2px,rgba(57,255,122,.035) 2px 3px)}
+.glitchfx i{position:absolute;left:-5%;width:110%;opacity:0;mix-blend-mode:screen}
+:root.gl-on .glitchfx i{opacity:1}
+:root.gl-on[data-skin="glitch"] h1 .home{display:inline-block;transform:translateX(var(--gx,3px)) skewX(var(--gk,0deg));text-shadow:-3px 0 rgba(255,43,214,.85),3px 0 rgba(0,240,255,.85)}
+:root.gl-on[data-skin="glitch"] .target{text-shadow:-2px 0 rgba(255,43,214,.55),2px 0 rgba(0,240,255,.55)}
+.skin[data-skin="glitch"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;
+  background:linear-gradient(#39FF7A,#39FF7A) 0 0/100% 30% no-repeat,linear-gradient(#39FF7A,#39FF7A) 4px 50%/100% 25% no-repeat,linear-gradient(#FF2BD6,#FF2BD6) 0 75%/40% 12% no-repeat,linear-gradient(#39FF7A,#39FF7A) -3px 100%/100% 30% no-repeat}
 .cubefx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 /* 무지개 이스터에그 홀로그램: 화면 전체에 무지갯빛 막이 비치고, 빛줄기가 지나가고, 작은 별이 반짝여요 */
 .holo{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden;display:none;
@@ -297,9 +310,10 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
 <div class="bgart" aria-hidden="true"></div>
 <div class="holo" aria-hidden="true"></div>
+<div class="glitchfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.24</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.25</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -340,6 +354,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="neonpurple" data-shop="1" aria-label="네온 퍼플 테마" style="--sw-point:#B84DFF;--sw-base:#0A0A08" hidden></button>
         <button class="skin" type="button" data-skin="rainbow" data-shop="1" hidden aria-label="무지개 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
         <button class="skin" type="button" data-skin="cube" data-shop="1" hidden aria-label="큐브 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
+        <button class="skin" type="button" data-skin="glitch" data-shop="1" hidden aria-label="글리치 테마" style="--sw-point:transparent;--sw-base:#030806"></button>
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
@@ -1007,7 +1022,7 @@ setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 
 // 상점: 포인트(tt-pt)로 테마·업적 표시를 사요. 산 것은 tt-inv, 단 업적 표시는 tt-title, 받은 포인트 누적은 tt-tot(랭킹 기준)
 // 물건은 아직 없음. 테마는 {id,name,c(색),pr(값)} + CSS·설정 칸 .skin[data-shop] 버튼, 업적 표시는 {id,name,pr}로 넣으면 돼요
-const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{id:"sky",name:"네온 블루 테마",c:"#5BC8F5",pr:500},{id:"rainbow",name:"무지개 테마",c:"conic-gradient(#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A)",pr:1000},{id:"magenta",name:"마젠타 테마",c:"#FF2BD6",pr:500},{id:"cyan",name:"시안 테마",c:"#00F0FF",pr:500},{id:"neonpurple",name:"네온 퍼플 테마",c:"#B84DFF",pr:500},{id:"cube",name:"큐브 테마",c:"linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12",pr:1500}];
+const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{id:"sky",name:"네온 블루 테마",c:"#5BC8F5",pr:500},{id:"rainbow",name:"무지개 테마",c:"conic-gradient(#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A)",pr:1000},{id:"magenta",name:"마젠타 테마",c:"#FF2BD6",pr:500},{id:"cyan",name:"시안 테마",c:"#00F0FF",pr:500},{id:"neonpurple",name:"네온 퍼플 테마",c:"#B84DFF",pr:500},{id:"cube",name:"큐브 테마",c:"linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12",pr:1500},{id:"glitch",name:"글리치 테마",c:"linear-gradient(#39FF7A,#39FF7A) 0 15%/100% 22% no-repeat,linear-gradient(#39FF7A,#39FF7A) 5px 50%/100% 20% no-repeat,linear-gradient(#FF2BD6,#FF2BD6) 0 70%/45% 10% no-repeat,linear-gradient(#39FF7A,#39FF7A) -4px 92%/100% 20% no-repeat,#030806",pr:1000}];
 const SHOP_TITLES=[];
 const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
 
@@ -1073,7 +1088,7 @@ async function bgSet(i,d){bgImg[i]=d;
 // 덮개·창: 사진 배경일 땐 tt-bgdim/tt-cardop, 아니면 테마용 tt-tdim/tt-tcardop(null = 테마 기본)
 const numOr=(v,d)=>{const n=Number(v);return v===null||v===undefined||v===""||!Number.isFinite(n)?d:n};
 const isPhoto=()=>document.documentElement.classList.contains("photo-bg");
-const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"?{dim:0,card:84}:{dim:0,card:100}};
+const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"||k==="glitch"?{dim:0,card:84}:{dim:0,card:100}};
 function applyBg(){const R=document.documentElement;bgPaint();const ph=isPhoto(),df=themeDef();let dim,card;
   if(ph){dim=Math.min(85,Math.max(20,numOr(store.get("tt-bgdim",60),60)));card=Math.min(100,Math.max(0,numOr(store.get("tt-cardop",80),80)));R.classList.add("seethru");R.classList.remove("tdim");R.style.setProperty("--bgdim",String(dim/100));R.style.setProperty("--cardop",card+"%")}
   else{const td=numOr(store.get("tt-tdim",null),null),tc=numOr(store.get("tt-tcardop",null),null);dim=td===null?df.dim:Math.min(85,Math.max(0,td));card=tc===null?df.card:Math.min(100,Math.max(0,tc));
@@ -1145,9 +1160,17 @@ function drawFontSet(){const el=$("set-fonts");if(!el)return;const cur=store.get
     const on=cur===f.id||(!f.id&&!SHOP_FONTS.some(x=>x.id===cur&&owned(x.id)));b.setAttribute("aria-pressed",String(on));
     b.onclick=()=>{store.set("tt-font",f.id);applyFont();drawFontSet();if(!$("shop").hidden)drawShop()};el.appendChild(b)})}
 // 산 테마인데 아직 불러오기 전(로그인 전)이면 기본으로 보여 주되, 고른 테마는 기억해 둬요
+// 글리치 테마(3.4.25): 2.5~7초마다 한 번씩 0.1~0.3초 동안 화면에 가로 띠가 튀고 제목·지금 칠 줄이 색 번짐
+const GL={t:0};
+function glBurst(){const r=document.documentElement,bars=document.querySelectorAll(".glitchfx i"),C=["rgba(57,255,122,.22)","rgba(255,43,214,.18)","rgba(0,240,255,.18)","rgba(57,255,122,.1)"];let k=0,n=2+Math.floor(Math.random()*3);
+  const step=()=>{bars.forEach(b=>{if(Math.random()<.35){b.style.height="0";return}b.style.top=(Math.random()*100)+"%";b.style.height=(2+Math.random()*28)+"px";b.style.background=C[Math.floor(Math.random()*C.length)];b.style.transform="translateX("+((Math.random()-.5)*40)+"px)"});
+    r.style.setProperty("--gx",((Math.random()-.5)*10).toFixed(1)+"px");r.style.setProperty("--gk",((Math.random()-.5)*14).toFixed(1)+"deg");r.classList.add("gl-on");
+    if(++k<n)setTimeout(step,50+Math.random()*60);else setTimeout(()=>r.classList.remove("gl-on"),60+Math.random()*60)};step()}
+function glSync(){clearTimeout(GL.t);document.documentElement.classList.remove("gl-on");if(document.documentElement.dataset.skin!=="glitch")return;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const go=()=>{if(document.documentElement.dataset.skin!=="glitch")return;if(!document.hidden)glBurst();GL.t=setTimeout(go,2500+Math.random()*4500)};GL.t=setTimeout(go,1200+Math.random()*2000)}
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&owned(k)))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
-  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}}
+  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}}
 document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
