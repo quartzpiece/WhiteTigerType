@@ -55,8 +55,11 @@
 .glitchfx{position:fixed;inset:0;z-index:59;pointer-events:none;overflow:hidden;display:none}
 :root[data-skin="glitch"] .glitchfx{display:block}
 .glitchfx::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 2px,rgba(57,255,122,.035) 2px 3px)}
-.glitchfx i{position:absolute;left:-5%;width:110%;opacity:0;mix-blend-mode:screen}
+.glitchfx i{position:absolute;left:-5%;width:110%;opacity:0}
 :root.gl-on .glitchfx i{opacity:1}
+/* 3.4.26: 가로로 긴 직사각형이 튀면서 그 안에 있는 글자·그림의 빨강·파랑이 양옆으로 갈라져요(SVG 필터를 backdrop-filter로) */
+.glitchfx b{position:absolute;display:none;backdrop-filter:url(#glsplit);background:rgba(57,255,122,.05);box-shadow:-2px 0 rgba(255,43,214,.5),2px 0 rgba(0,240,255,.5)}
+:root.gl-on .glitchfx b.on{display:block}
 :root.gl-on[data-skin="glitch"] h1 .home{display:inline-block;transform:translateX(var(--gx,3px)) skewX(var(--gk,0deg));text-shadow:-3px 0 rgba(255,43,214,.85),3px 0 rgba(0,240,255,.85)}
 :root.gl-on[data-skin="glitch"] .target{text-shadow:-2px 0 rgba(255,43,214,.55),2px 0 rgba(0,240,255,.55)}
 .skin[data-skin="glitch"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;
@@ -310,10 +313,10 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
 <div class="bgart" aria-hidden="true"></div>
 <div class="holo" aria-hidden="true"></div>
-<div class="glitchfx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.25</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.26</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1538,14 +1541,16 @@ function drawFontSet(){const el=$("set-fonts");if(!el)return;const cur=store.get
     const on=cur===f.id||(!f.id&&!SHOP_FONTS.some(x=>x.id===cur&&owned(x.id)));b.setAttribute("aria-pressed",String(on));
     b.onclick=()=>{store.set("tt-font",f.id);applyFont();drawFontSet();if(!$("shop").hidden)drawShop()};el.appendChild(b)})}
 // 산 테마인데 아직 불러오기 전(로그인 전)이면 기본으로 보여 주되, 고른 테마는 기억해 둬요
-// 글리치 테마(3.4.25): 2.5~7초마다 한 번씩 0.1~0.3초 동안 화면에 가로 띠가 튀고 제목·지금 칠 줄이 색 번짐
+// 글리치 테마(3.4.25): 6~14초마다(3.4.26) 한 번씩 0.1~0.3초 동안 화면에 가로 띠가 튀고 제목·지금 칠 줄이 색 번짐
 const GL={t:0};
 function glBurst(){const r=document.documentElement,bars=document.querySelectorAll(".glitchfx i"),C=["rgba(57,255,122,.22)","rgba(255,43,214,.18)","rgba(0,240,255,.18)","rgba(57,255,122,.1)"];let k=0,n=2+Math.floor(Math.random()*3);
   const step=()=>{bars.forEach(b=>{if(Math.random()<.35){b.style.height="0";return}b.style.top=(Math.random()*100)+"%";b.style.height=(2+Math.random()*28)+"px";b.style.background=C[Math.floor(Math.random()*C.length)];b.style.transform="translateX("+((Math.random()-.5)*40)+"px)"});
+    const W=innerWidth,H=innerHeight,f=document.querySelectorAll("#glsplit feOffset"),d=4+Math.random()*10;if(f.length===3){f[0].setAttribute("dx",(-d).toFixed(1));f[1].setAttribute("dx",((Math.random()-.5)*8).toFixed(1));f[2].setAttribute("dx",d.toFixed(1))}
+    const T=[...document.querySelectorAll("h1,.target,.stats,.card:not([hidden]) li,.card:not([hidden]) p")].filter(e=>{const q=e.getBoundingClientRect();return q.height>0&&q.bottom>0&&q.top<H});document.querySelectorAll(".glitchfx b").forEach(b=>{const on=Math.random()<.7;b.classList.toggle("on",on);if(!on)return;const w=W*(.15+Math.random()*.45),h=6+Math.random()*30;b.style.width=w+"px";b.style.height=h+"px";let x=Math.random()*(W-w),y=Math.random()*(H-h);if(T.length&&Math.random()<.8){const q=T[Math.floor(Math.random()*T.length)].getBoundingClientRect();y=q.top+Math.random()*Math.max(1,q.height-h/2)-h/4;x=Math.min(W-w,Math.max(0,q.left-w*.3+Math.random()*q.width))}b.style.left=x+"px";b.style.top=y+"px"});
     r.style.setProperty("--gx",((Math.random()-.5)*10).toFixed(1)+"px");r.style.setProperty("--gk",((Math.random()-.5)*14).toFixed(1)+"deg");r.classList.add("gl-on");
     if(++k<n)setTimeout(step,50+Math.random()*60);else setTimeout(()=>r.classList.remove("gl-on"),60+Math.random()*60)};step()}
 function glSync(){clearTimeout(GL.t);document.documentElement.classList.remove("gl-on");if(document.documentElement.dataset.skin!=="glitch")return;if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  const go=()=>{if(document.documentElement.dataset.skin!=="glitch")return;if(!document.hidden)glBurst();GL.t=setTimeout(go,2500+Math.random()*4500)};GL.t=setTimeout(go,1200+Math.random()*2000)}
+  const go=()=>{if(document.documentElement.dataset.skin!=="glitch")return;if(!document.hidden)glBurst();GL.t=setTimeout(go,6000+Math.random()*8000)};GL.t=setTimeout(go,2000+Math.random()*3000)}
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&owned(k)))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
   document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}}
