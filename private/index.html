@@ -299,7 +299,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.23</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.24</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1115,7 +1115,7 @@ function showLine(){S.start=0;$("typing").value="";try{h3Reset()}catch(e){}KS.la
   const now=$("lines").children[S.i];if(now)now.scrollIntoView({block:"nearest"});
   paint();$("typing").focus({preventScroll:true})}
 // 숫자·문장부호·기호는 안 쳐도 돼요: 화면엔 흐리게 보이고 비교에서는 빠져요
-const SKIP=/[\p{P}\p{S}\p{N}]/u;
+const SKIP=/[\p{P}\p{S}\p{N}\p{Script=Han}]/u; // 3.4.24: 한자도 안 쳐도 돼요
 function prep(line){const t=[...line.normalize("NFC")],typ=[],idx=t.map(()=>-1);
   t.forEach((ch,i)=>{if(SKIP.test(ch))return;if(ch===" "&&(!typ.length||typ[typ.length-1].ch===" "))return;typ.push({ch,i})});
   while(typ.length&&typ[typ.length-1].ch===" ")typ.pop();
@@ -1481,7 +1481,7 @@ const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하�
   {id:"b-nalgae",name:"날자꾸나",desc:"「날개」 필사 완료하기",book:"book-nalgae"}, // book: 그 책 필사를 끝 문단까지(3.4.13)
   {id:"b-memil",name:"왼손잡이",desc:"「메밀꽃 필 무렵」 필사 완료하기",book:"book-memil"},
   {id:"b-unsu",name:"설렁탕을 사온",desc:"「운수 좋은 날」 필사 완료하기",book:"book-unsu"}, // 3.4.16. 책 제목은 낫표로: 단편은 「」, 책 한 권(단행본)은 『』
-  {id:"b-manghae",name:"건망증",desc:"「망해」 필사 완료하기",book:"book-manghae"}, // 3.4.22
+  {id:"b-manghae",name:"건망증",desc:"「망해(忘解)」 필사 완료하기",book:"book-manghae"}, // 3.4.22
   {id:"e-rainbow",name:"무지갯빛",desc:"무지갯빛 배경 발견하기",flag:"tt-egg"},
   {id:"e-rain",name:"비내리는",desc:"비 내리는 배경 발견하기",flag:"tt-rain"},
   {id:"e-snow",name:"새하얀",desc:"눈 내리는 배경 발견하기",flag:"tt-snow"}];
