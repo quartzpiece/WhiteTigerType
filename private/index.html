@@ -279,6 +279,17 @@ input.typing:not(:focus)~.mirror i.caret{visibility:hidden}
 .mirror i{font-style:normal;position:relative}
 .mirror i.typo::after{content:"";position:absolute;left:50%;top:-8px;width:6px;height:6px;margin-left:-3px;background:var(--typo);border-radius:50%}
 .target .skip{color:var(--muted);opacity:.55}
+/* 문장 위에 치기(3.4.31): 칠 글자는 회색으로 깔려 있고, 친 글자가 그 자리에 테마색으로 바뀌어요. 입력칸은 숨겨요 */
+:root.ovl #practice{position:relative}:root.ovl .typewrap{position:absolute;left:0;top:0;width:100%;opacity:0;pointer-events:none;border:0;z-index:-1}
+:root.ovl .target{cursor:text}
+.target.ov .c{border-bottom:0}
+.target.ov .rest{color:var(--muted);opacity:.6}
+.target.ov .ok{font-weight:inherit}
+.target.ov .comp{color:var(--fg);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:5px;text-decoration-thickness:2px}
+.target.ov .typo{position:relative}
+.target.ov .typo::after{content:"";position:absolute;left:50%;top:-4px;width:6px;height:6px;margin-left:-3px;background:var(--typo);border-radius:50%}
+.target.ov i.caret{display:inline-block;width:2px;height:1.1em;vertical-align:-.15em;background:var(--accent);margin:0 -1px;position:relative}
+@media (prefers-reduced-motion:no-preference){.target.ov i.caret{animation:blink 1s steps(1) infinite}}
 
 .stat b{color:var(--accent)}
 h1{text-transform:uppercase;border-left:8px solid var(--accent);padding-left:12px}
@@ -316,7 +327,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.30</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.31</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -364,6 +375,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row"><span class="set-l">투명도</span><div class="bg-ctl"><label class="hint" for="bg-dim">덮개</label><input type="range" id="bg-dim" min="0" max="85" step="5" aria-label="덮개 진하기"><label class="hint" for="bg-cardop">창</label><input type="range" id="bg-cardop" min="0" max="100" step="5" aria-label="창 불투명도"><button class="btn acct" id="see-reset" type="button">기본값</button></div></div>
     <div class="set-row" id="bg-row" hidden><span class="set-l">배경 사진</span><div class="bg-ctl"><div class="bg-slots" id="bg-slots"></div><input type="file" id="bg-file" accept="image/*" hidden><button class="btn acct" id="bg-rot" type="button" aria-pressed="true" hidden>문장마다 바꾸기: 켜짐</button><span class="hint" id="bg-msg" aria-live="polite"></span></div></div>
     <div class="set-row" id="kbl-row"><span class="set-l">자판</span><button class="btn acct" id="kbl-2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="kbl-390" type="button" aria-pressed="false">세벌식 390</button><button class="btn acct" id="kbl-390os" type="button" aria-pressed="false">세벌식 390 (내 입력기)</button><span class="hint" id="kbl-msg" hidden>세벌식 사용시 키보드 영문 자판을 이용해주세요.</span><span class="hint" id="kbl-osmsg" hidden>컴퓨터 입력기를 세벌식 390으로 설정</span></div>
+    <div class="set-row" id="ovl-row"><span class="set-l">치는 곳</span><button class="btn acct" id="ovl-0" type="button" aria-pressed="true">입력칸</button><button class="btn acct" id="ovl-1" type="button" aria-pressed="false">문장 위</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
     <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
@@ -1152,6 +1164,16 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
         else cls+=" bad"}
       else if(i===v.length&&!pend)cls+=" cur"}
     html+='<span class="'+cls+'">'+(orig===" "?"&nbsp;":esc(orig))+"</span>"});
+  const ovOn=document.documentElement.classList.contains("ovl");$("target").classList.toggle("ov",ovOn);
+  if(ovOn){const E2=ch=>ch===" "?"&nbsp;":esc(ch);let h="",sn=0,cared=false;
+    P.t.forEach((orig,j)=>{const i=P.idx[j];
+      if(i<0){const passed=v.length>sn||(sn===t.length&&v.length>=t.length);h+='<span class="c '+(passed?"ok":"rest")+'">'+E2(orig)+"</span>";return}
+      sn=i+1;if(i===v.length&&!cared){h+='<i class="caret"></i>';cared=true}
+      if(i<v.length){const lastc=i===v.length-1,wait=lastc&&v[i]!==t[i]&&(S.composing||isPrefix(v[i],t[i])||carriesNext(v[i],t[i],t[i+1]));
+        h+='<span class="c '+(wait?"comp":"ok"+(v[i]!==t[i]?" typo":""))+'">'+E2(v[i])+"</span>"}
+      else h+='<span class="c rest">'+E2(orig)+"</span>"});
+    for(let i=t.length;i<v.length;i++)h+='<span class="c ok'+(v[i]!==" "?" typo":"")+'">'+E2(v[i])+"</span>";
+    if(!cared)h+='<i class="caret"></i>';html=h}
   $("target").innerHTML=html;
   // 친 글자 사이에 원문의 숫자·문장부호를 자동으로 채워 보여 줘요
   const inpEl=$("typing"),raw=[...inpEl.value.normalize("NFC")],pos=[];P.idx.forEach((k2,j)=>{if(k2>=0)pos[k2]=j});
@@ -1389,6 +1411,9 @@ inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
 function applyKbl(){const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
   if(!$("rec").hidden){REC_K=null;recKSet()}}
+function applyOvl(){const on=store.get("tt-ovl",false)===true;document.documentElement.classList.toggle("ovl",on);$("ovl-0").setAttribute("aria-pressed",String(!on));$("ovl-1").setAttribute("aria-pressed",String(on));try{if(!$("practice").hidden&&S.prep&&S.prep[S.i])paint()}catch(e){}}
+$("ovl-0").onclick=()=>{store.set("tt-ovl",false);applyOvl()};$("ovl-1").onclick=()=>{store.set("tt-ovl",true);applyOvl()};applyOvl();
+$("target").addEventListener("click",()=>{if(!$("practice").hidden)$("typing").focus({preventScroll:true})});
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390os").onclick=()=>{try{h3Reset()}catch(e){}store.set("tt-kbl","390os");S.composing=false;KS.run={};applyKbl()};
