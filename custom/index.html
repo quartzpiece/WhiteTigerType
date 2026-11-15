@@ -187,7 +187,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .vs-l li .st.on{color:var(--accent)}
 .vs-l li .btn{padding:2px 8px;font-size:.75rem}
 .vs-txt{color:var(--muted);font-size:.9rem;margin:0}
-.fr-l li .fm{margin-left:8px;color:var(--muted);font-size:.78rem;font-weight:400}
+.nm .fm{margin-left:8px;color:var(--muted);font-size:.78rem;font-weight:400;font-family:var(--body,inherit)}
 .fr-l li .bt{display:flex;gap:4px;justify-content:flex-end}
 .fr-l li .bt .btn.on{border-color:#E5484D;color:#E5484D}
 .fr-l li.none{display:block;color:var(--muted);font-size:.85rem}
@@ -361,7 +361,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.1</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.2</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1465,7 +1465,9 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 닉네임은 rank/{uid}에 있는 지금 닉네임으로 보여 줘요 (바꾸면 모든 랭킹에 바로 적용)
   async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]={n:nick,egg:!!store.get("tt-egg",false),tt:store.get("tt-title","")};return}
     try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]={n:String(v.nick),egg:v.egg===true,tt:typeof v.tt==="string"?v.tt:""}}}catch(e){}}));return m}
-  const nmEl=(mk,o,v)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");addTtl(e,o&&o.tt);return e};
+  const nmEl=(mk,o,v,id)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");addTtl(e,o&&o.tt);addFm(e,id);return e};
+  // 친구 메모(3.5.2): 랭킹에서도 닉네임 오른쪽에 회색 작은 글자로
+  const addFm=(el,id)=>{const m=id&&id!==uid&&fmGet()[id];if(!m)return;const s=document.createElement("span");s.className="fm";s.textContent=m;el.appendChild(s)};
   const addTtl=(el,id)=>{const n=titleName(id||"");if(!n)return;const b=document.createElement("span");b.className="ttl";b.textContent=n;el.prepend(b)};
   const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
   let rTab="pt",rFo=false;try{rFo=localStorage.getItem("tt-rfo")==="1"}catch(e){}$("rank-fo").setAttribute("aria-pressed",String(rFo));
@@ -1475,7 +1477,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();if(rTab==="pt"&&rFo&&uid)return loadRankFr();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
-        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");addTtl(b,me?store.get("tt-title",""):v.tt);
+        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");addTtl(b,me?store.get("tt-title",""):v.tt);addFm(b,d.id);
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
@@ -1490,7 +1492,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
       const rows=[];snap.forEach(d=>{const v=d.data()||{};if(v.spd)rows.push({id:d.id,v})});const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
-        li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",Math.round(Number(v.spd)||0)),mk("ts",fmtT(Number(v.ms)||0)));list.appendChild(li)});
+        li.append(mk("no",n),nmEl(mk,nm[id],v,id),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",Math.round(Number(v.spd)||0)),mk("ts",fmtT(Number(v.ms)||0)));list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):(fo?"나와 친구의 기록이 아직 없어요":"아직 기록 없음")}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   dailyHooks.preset=async(pid,spd,acc,ms)=>{if(!uid||!spd)return;const sub=$("result-sub");
     if(acc<80){sub.textContent+="  ·  정확도 80% 미만, 지문 랭킹 기록 안 함";return}
@@ -1607,7 +1609,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
       const rows=R.rows;const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v,ms,ac,ts})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
-        li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
+        li.append(mk("no",n),nmEl(mk,nm[id],v,id),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent=only?"나와 친구의 기록이 아직 없어요":"아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
   function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
