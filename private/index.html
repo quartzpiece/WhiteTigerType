@@ -195,6 +195,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .vs-bars b i{position:absolute;left:0;top:0;bottom:0;background:var(--muted);transition:width .25s}
 .vs-bars div.me b i{background:var(--accent)}
 .vs-bars em{font-style:normal;text-align:right}
+  :root.vspick .pgroup.bk{display:none} /* 3.4.37: 대전 지문으로 필사는 못 골라요 */
 .vs-pick{border:2px solid var(--accent);padding:8px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .vs-count{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:9rem;color:var(--accent);background:rgba(0,0,0,.35);pointer-events:none}
 .daily-text{font-size:1.25rem;line-height:1.6;margin:0;word-break:keep-all;border-left:5px solid var(--accent);padding-left:14px}
@@ -350,7 +351,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.36</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.4.37</span></h1>
     <div class="hright">
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -1111,7 +1112,7 @@ function drawList(){const box=$("plist");box.innerHTML="";
   groups.forEach(([name,f],gi)=>{
     // 산 필사 책: 누르면 저장해 둔 문단부터 바로 이어서 쳐요
     if(!f){let bl=[],P={};try{bl=BOOKS.filter(b=>owned(b.id));P=bookP()}catch(e){}if(!bl.length)return;
-      const g=document.createElement("div");g.className="pgroup";g.innerHTML="<span>"+name+"</span>";const grid=document.createElement("div");grid.className="pgrid";
+      const g=document.createElement("div");g.className="pgroup bk";g.innerHTML="<span>"+name+"</span>";const grid=document.createElement("div");grid.className="pgrid";
       bl.forEach(bk=>{const n=Math.min(P[bk.id]||0,bk.paras.length),b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed","false");
         b.setAttribute("aria-pressed",String(selBook===bk.id));b.innerHTML="<span>"+qHTML(bk.title)+"</span> <b>"+n+"/"+bk.paras.length+"</b>";b.title=bk.title+" · "+bk.author+" · "+n+" / "+bk.paras.length+"문단";
         b.onclick=()=>loadBook(bk.id);grid.appendChild(b)});
@@ -2009,12 +2010,12 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("vs-start").onclick=()=>{const R=VS.room;if(!R||R.host!==uid)return;FS.updateDoc(vRef(VS.code),{st:"play",at:Date.now()}).catch(()=>vMsg("실패"))};
   $("vs-again").onclick=()=>{const R=VS.room;if(!R||R.host!==uid)return;FS.updateDoc(vRef(VS.code),{st:"wait",r:R.r+1,at:Date.now()}).catch(()=>vMsg("실패"))};
   // 방장 지문 고르기: 기존 지문 목록 화면에서 고르고 "이 지문으로 대전"
-  $("vs-pickbtn").onclick=()=>{vsHooks.picking=true;vsCard.hidden=true;show("setup");$("vs-pick").hidden=false;$("start").dataset.t=$("start").textContent;$("start").textContent="이 지문으로 대전"};
-  const pickEnd=()=>{vsHooks.picking=false;$("vs-pick").hidden=true;if($("start").dataset.t)$("start").textContent=$("start").dataset.t};
+  $("vs-pickbtn").onclick=()=>{vsHooks.picking=true;document.documentElement.classList.add("vspick");if(selBook)try{loadCur()}catch(e){}vsCard.hidden=true;show("setup");$("vs-pick").hidden=false;$("start").dataset.t=$("start").textContent;$("start").textContent="이 지문으로 대전"};
+  const pickEnd=()=>{vsHooks.picking=false;document.documentElement.classList.remove("vspick");$("vs-pick").hidden=true;if($("start").dataset.t)$("start").textContent=$("start").dataset.t};
   $("vs-pick-x").onclick=()=>{pickEnd();openVs()};
   vsHooks.pick=async()=>{const R=VS.room;if(!R||R.host!==uid){pickEnd();return}let text=ta.value.replace(/\r/g,"").slice(0,5000);const title=($("ptitle").value||"지문").slice(0,40);
-    if(!splitLines(text).some(l=>prep(l).typ.length)){ta.focus();return}
-    pickEnd();openVs();try{await FS.updateDoc(vRef(VS.code),{text,title,pre:isPre(curId)||!!selBook,at:Date.now()})}catch(e){vMsg("지문 저장 실패 (규칙 확인)")}};
+    if(selBook)return;if(!splitLines(text).some(l=>prep(l).typ.length)){ta.focus();return}
+    pickEnd();openVs();try{await FS.updateDoc(vRef(VS.code),{text,title,pre:isPre(curId),at:Date.now()})}catch(e){vMsg("지문 저장 실패 (규칙 확인)")}};
   addEventListener("pagehide",()=>{if(VS.code&&uid){try{FS.deleteDoc(vpRef(VS.code,uid))}catch(e){}if(VS.room&&VS.room.host===uid)try{FS.deleteDoc(vRef(VS.code))}catch(e){}}});
   $("daily-back").onclick=()=>{dCard.hidden=true;show("setup")};
   let dDay="";
