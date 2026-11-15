@@ -219,7 +219,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .btn:disabled{opacity:.35;cursor:default}
 .dnav{gap:10px}.dnav .btn{padding:6px 12px}.dnav-d{font-family:var(--display);min-width:6.5em;text-align:center}
 .rsel{font:inherit;color:var(--fg);background:var(--bg);border:2px solid var(--line);padding:8px 10px;border-radius:0;width:100%;min-width:0}
-.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+.rtabs .rfo{margin-left:auto}.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
 #fb-text{min-height:90px}
@@ -361,7 +361,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.0</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -505,7 +505,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card rank" id="rank" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
-    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button><button class="btn acct rtab" id="rtab-fr" type="button" aria-pressed="false">친구</button></div>
+    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button><button class="btn acct rtab rfo" id="rank-fo" type="button" aria-pressed="false" hidden>친구만</button></div>
     <select class="rsel" id="rank-psel" aria-label="지문" hidden></select>
     <div class="row dnav" id="rank-dnav" hidden><button class="btn acct" id="rd-prev" type="button" aria-label="이전 날">◀</button><b class="dnav-d" id="rd-day"></b><button class="btn acct" id="rd-next" type="button" aria-label="다음 날">▶</button><button class="btn acct" id="rd-today" type="button">오늘로</button></div>
     <p class="hint" id="rank-dtext" hidden></p>
@@ -1468,29 +1468,30 @@ async function initCloud(){if(!FB_CONFIG)return;
   const nmEl=(mk,o,v)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");addTtl(e,o&&o.tt);return e};
   const addTtl=(el,id)=>{const n=titleName(id||"");if(!n)return;const b=document.createElement("span");b.className="ttl";b.textContent=n;el.prepend(b)};
   const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
-  let rTab="pt";
-  function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"],["fr","rtab-fr"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
+  let rTab="pt",rFo=false;try{rFo=localStorage.getItem("tt-rfo")==="1"}catch(e){}$("rank-fo").setAttribute("aria-pressed",String(rFo));
+  const frIds=()=>uid?[uid].concat(FR.f.map(x=>x.id)):[],foOn=()=>rFo&&!!uid; // 친구만 보기(3.5.1): 나와 친구 기록만
+  function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
     if(t==="ps"){const o=PRESETS.find(x=>x.id===curId);if(o)psel.value=o.id}loadRank()}
-  async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();if(rTab==="fr")return loadRankFr();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
+  async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();if(rTab==="pt"&&rFo&&uid)return loadRankFr();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");addTtl(b,me?store.get("tt-title",""):v.tt);
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
-  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");$("rtab-fr").onclick=()=>setRTab("fr");
+  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");$("rank-fo").onclick=()=>{rFo=!rFo;try{localStorage.setItem("tt-rfo",rFo?"1":"0")}catch(e){}$("rank-fo").setAttribute("aria-pressed",String(rFo));loadRank()};
   // 지문 랭킹: prank/{지문 id}/runs/{uid} = {nick, spd(평균 타수), acc, ms, at}. 기본 지문 그대로 끝까지, 정확도 80% 이상일 때 내 최고 기록만 남겨요
   const psel=$("rank-psel");PRESETS.forEach(o=>{const op=document.createElement("option");op.value=o.id;op.textContent=o.title;psel.appendChild(op)});
   psel.onchange=loadRank;
   const fmtT=ms=>{const t=Math.round(ms/1000);return Math.floor(t/60)+":"+String(t%60).padStart(2,"0")};
   async function loadRankPs(){$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list daily-l";m.textContent="불러오는 중";
-    try{const q=FS.query(FS.collection(fdb,"prank",psel.value,"runs"),FS.orderBy("spd","desc"),FS.limit(20));const snap=await FS.getDocs(q);list.innerHTML="";let n=0;
+    try{const pid=psel.value,fo=foOn();let snap;if(fo){const D=(await Promise.all(frIds().map(async id=>{try{const d=await FS.getDoc(FS.doc(fdb,"prank",pid,"runs",id));return d.exists()?{id:id,data:()=>d.data()}:null}catch(e){return null}}))).filter(Boolean).sort((a,b)=>(Number(b.data().spd)||0)-(Number(a.data().spd)||0));snap={forEach:f=>D.forEach(f)}}else snap=await FS.getDocs(FS.query(FS.collection(fdb,"prank",pid,"runs"),FS.orderBy("spd","desc"),FS.limit(20)));if(rTab!=="ps")return;list.innerHTML="";let n=0;
       const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
       const rows=[];snap.forEach(d=>{const v=d.data()||{};if(v.spd)rows.push({id:d.id,v})});const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
         li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",Math.round(Number(v.acc)||0)+"%"),mk("pt",Math.round(Number(v.spd)||0)),mk("ts",fmtT(Number(v.ms)||0)));list.appendChild(li)});
-      m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
+      m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):(fo?"나와 친구의 기록이 아직 없어요":"아직 기록 없음")}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   dailyHooks.preset=async(pid,spd,acc,ms)=>{if(!uid||!spd)return;const sub=$("result-sub");
     if(acc<80){sub.textContent+="  ·  정확도 80% 미만, 지문 랭킹 기록 안 함";return}
     const ref=FS.doc(fdb,"prank",pid,"runs",uid);
@@ -1503,7 +1504,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("rd-prev").onclick=()=>{rDay=dShift(rDay||todayKey(),-1);loadRank()};$("rd-next").onclick=()=>{rDay=dShift(rDay||todayKey(),1);loadRank()};$("rd-today").onclick=()=>{rDay=todayKey();loadRank()};
   async function loadRankDaily(){await cfgReady;const today=todayKey();if(!rDay||rDay>today)rDay=today;if(rDay<D_FROM)rDay=D_FROM;const day=rDay,list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l";
     $("rd-day").textContent=day===today?"오늘":day;$("rd-prev").disabled=day<=D_FROM;$("rd-next").disabled=day>=today;$("rd-today").disabled=day>=today;
-    t.hidden=false;t.textContent=dailyText(day);m.textContent="불러오는 중";const n=await fillDaily(list,day);if(day!==rDay)return;
+    t.hidden=false;t.textContent=dailyText(day);m.textContent="불러오는 중";const n=await fillDaily(list,day,foOn()?frIds():null);if(rTab!=="daily")return;if(day!==rDay)return;
     m.textContent=n<0?"랭킹을 불러올 수 없음":(n&&!uid&&day===today?"로그인하면 도전 가능":"")}
   // 오늘의 문장: daily/{날짜}/runs/{uid}. 첫 글자에서 만들고(nick, st, at), 끝나면 ms·acc를 한 번만 더해요
   const dCard=$("daily"),dBtn=$("dailybtn");dBtn.hidden=false;
@@ -1595,18 +1596,19 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 오늘의 문장 순위: 2026-11-11부터는 타수 높은 순(막 치고 넘긴 기록은 정확도가 낮아 타수도 낮아요), 그 전 날짜는 시간 짧은 순 그대로
   // 타수 = 오늘의 문장 타수 × 정확도 ÷ 걸린 시간(분). 저장된 ms·acc로 계산해서 규칙은 안 바꿔도 돼요
   const SPD_FROM="2026-11-11";
-  async function dailyRuns(day,n){const sk=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0),bySpd=day>=SPD_FROM;
-    const snap=await FS.getDocs(FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(bySpd?300:n)));const rows=[];
+  async function dailyRuns(day,n,only){const sk=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0),bySpd=day>=SPD_FROM;
+    const rows=[];let snap;if(only){const D=(await Promise.all(only.map(async id=>{try{const d=await FS.getDoc(FS.doc(fdb,"daily",day,"runs",id));return d.exists()?{id:id,data:()=>d.data()}:null}catch(e){return null}}))).filter(Boolean);snap={forEach:f=>D.forEach(f)}}
+    else snap=await FS.getDocs(FS.query(FS.collection(fdb,"daily",day,"runs"),FS.orderBy("ms","asc"),FS.limit(bySpd?300:n)));
     snap.forEach(d=>{const v=d.data()||{};const ms=Number(v.ms);if(!ms)return;const ac=Math.round(Number(v.acc)||0);rows.push({id:d.id,v,ms,ac,ts:Math.round(sk*ac/100/(ms/60000))})});
-    if(bySpd)rows.sort((a,b)=>b.ts-a.ts||a.ms-b.ms);return {rows:rows.slice(0,n),bySpd}}
-  async function fillDaily(list,day){
-    try{const R=await dailyRuns(day,20);list.innerHTML="";let n=0;
+    if(bySpd)rows.sort((a,b)=>b.ts-a.ts||a.ms-b.ms);else rows.sort((a,b)=>a.ms-b.ms);return {rows:rows.slice(0,n),bySpd}}
+  async function fillDaily(list,day,only){
+    try{const R=await dailyRuns(day,20,only);list.innerHTML="";let n=0;
       const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
       const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","정확도"),mk("","타수"),mk("","시간"));
       const rows=R.rows;const nm=await nickMap(rows.map(r=>r.id));
       rows.forEach(({id,v,ms,ac,ts})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");if(id===uid)li.className="me";
         li.append(mk("no",n),nmEl(mk,nm[id],v),mk("ac",ac+"%"),mk("ts",ts),mk("pt",(ms/1000).toFixed(2)+"초"));list.appendChild(li)});
-      if(!n){const li=document.createElement("li");li.textContent="아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
+      if(!n){const li=document.createElement("li");li.textContent=only?"나와 친구의 기록이 아직 없어요":"아직 기록 없음";li.style.display="block";list.appendChild(li)}return n}catch(e){list.innerHTML="";return -1}}
   // 오늘의 문장 칸을 열면 지문 고르는 칸은 숨기고, 뒤로가기로 돌아가요
   function openDaily(){closePanels("daily");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;dCard.hidden=false;loadDaily()}
   dBtn.onclick=openDaily;
@@ -1743,7 +1745,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 랭킹 친구 탭: 나와 친구를 누적 포인트 순으로
   async function loadRankFr(){$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list daily-l";
     if(!uid){list.innerHTML="";m.textContent="로그인하면 친구와 비교할 수 있어요";return}m.textContent="불러오는 중";
-    const ids=FR.f.map(x=>x.id);await frInfo(ids,true);if(rTab!=="fr")return;list.innerHTML="";
+    const ids=FR.f.map(x=>x.id);await frInfo(ids,true);if(rTab!=="pt"||!foOn())return;list.innerHTML="";
     const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
     const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","업적"),mk("","최고 타수"),mk("","포인트"));list.appendChild(hd);
     const rows=[uid].concat(ids.filter(id=>frV(id).nick)).map(id=>({id,v:frV(id)})).sort((a,b)=>(Number(b.v.pt)||0)-(Number(a.v.pt)||0));
@@ -1767,14 +1769,14 @@ async function initCloud(){if(!FB_CONFIG)return;
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
   AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
-    if(!user){uid=null;nick="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rtab-fr").hidden=true;if(rTab==="fr")rTab="pt";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
+    if(!user){uid=null;nick="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();ddScan();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();ddScan();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
-    if(uid){frBtn.hidden=false;$("rtab-fr").hidden=false;frStart()}
+    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart()}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
