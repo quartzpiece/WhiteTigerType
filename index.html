@@ -187,6 +187,16 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .vs-l li .st.on{color:var(--accent)}
 .vs-l li .btn{padding:2px 8px;font-size:.75rem}
 .vs-txt{color:var(--muted);font-size:.9rem;margin:0}
+.fr-l li .fm{margin-left:8px;color:var(--muted);font-size:.78rem;font-weight:400}
+.fr-l li .bt{display:flex;gap:4px;justify-content:flex-end}
+.fr-l li .bt .btn.on{border-color:#E5484D;color:#E5484D}
+.fr-l li.none{display:block;color:var(--muted);font-size:.85rem}
+.fr-l .fr-ed{grid-column:1/-1;display:flex;gap:6px;align-items:center}.fr-l .fr-ed .ptitle{flex:0 1 12em;min-width:0}
+#fr-q{flex:0 1 14em;min-width:0}
+#frbtn.req{color:var(--accent);border-color:var(--accent);font-weight:700}
+.fr-inv{position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:60;background:var(--surface);color:var(--fg);border:2px solid var(--accent);padding:10px 14px;max-width:calc(100% - 32px);display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+.fr-inv[hidden]{display:none}.fr-inv b{color:var(--accent)}
+@media (max-width:560px){.fr-l li{grid-template-columns:minmax(0,1fr) auto}.fr-l li .bt{grid-column:1/-1}}
 .vs-bars{display:grid;gap:4px;margin-bottom:6px}
 .vs-bars div{display:grid;grid-template-columns:7em minmax(0,1fr) 3.2em;gap:8px;align-items:center;font-size:.8rem;color:var(--muted)}
 .vs-bars div.me{color:var(--accent)}
@@ -351,8 +361,9 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.38</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.4.39</span></h1>
     <div class="hright">
+      <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
       <button class="btn acct" id="recbtn" type="button">기록</button>
@@ -494,13 +505,24 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card rank" id="rank" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
-    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button></div>
+    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button><button class="btn acct rtab" id="rtab-fr" type="button" aria-pressed="false">친구</button></div>
     <select class="rsel" id="rank-psel" aria-label="지문" hidden></select>
     <div class="row dnav" id="rank-dnav" hidden><button class="btn acct" id="rd-prev" type="button" aria-label="이전 날">◀</button><b class="dnav-d" id="rd-day"></b><button class="btn acct" id="rd-next" type="button" aria-label="다음 날">▶</button><button class="btn acct" id="rd-today" type="button">오늘로</button></div>
     <p class="hint" id="rank-dtext" hidden></p>
     <ol class="rank-list" id="rank-list"></ol>
     <p class="hint" id="rank-msg" aria-live="polite"></p>
   </section>
+
+  <section class="card fr" id="fr" hidden>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">친구</b><span class="hint" id="fr-n"></span></div>
+    <div class="row"><input class="ptitle" id="fr-q" maxlength="12" placeholder="닉네임" aria-label="닉네임으로 친구 찾기"><button class="btn" id="fr-find" type="button">찾기</button></div>
+    <ul class="vs-l fr-l" id="fr-found" hidden></ul>
+    <span class="set-l" id="fr-in-l" hidden>받은 요청</span><ul class="vs-l fr-l" id="fr-in" hidden></ul>
+    <span class="set-l" id="fr-out-l" hidden>보낸 요청</span><ul class="vs-l fr-l" id="fr-out" hidden></ul>
+    <span class="set-l">친구 목록</span><ul class="vs-l fr-l" id="fr-list"></ul>
+    <p class="hint" id="fr-msg" aria-live="polite"></p>
+  </section>
+  <div class="fr-inv" id="fr-inv" role="status" hidden></div>
 
   <div class="stats">
     <div class="stat"><b id="s-speed">0</b><span>현재 타수</span></div>
@@ -647,7 +669,7 @@ const isRain=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===RAIN;
 // 피아노 이스터에그: 내 지문으로 이 문장을 끝까지 치면 연습할 때 키마다 피아노 음이 나요
 const PIANO="작은자판을두드리는소리조차삶속에화음을더하고";
 const isPiano=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===PIANO;
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-dd","tt-pc","tt-pcn","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3","tt-ach"].includes(k))cloudHook()}};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-dd","tt-pc","tt-pcn","tt-fm","tt-bst","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3","tt-ach"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
 const JUNG2=new Set([9,10,11,14,15,16,19]),JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);
@@ -902,11 +924,11 @@ function finish(){$("bar").style.width="100%";cubeBar();
 // 내 기록(포인트, 내 지문, 고친 기본 지문): 로그인하면 클라우드에 저장해요
 function myData(){
   const mine=lib.filter(p=>saved[p.id]).map(p=>({id:p.id,title:saved[p.id].title,text:saved[p.id].text})).filter(p=>{if(!p.id.startsWith("preset-"))return true;const o=PRESETS.find(x=>x.id===p.id);return !o||o.title!==p.title||o.text!==p.text});
-  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:store.get("tt-keys",{}),keys3:store.get("tt-keys3",{}),ach:achGet(),dd:ddGet(),pc:pcGet(),pcn:pcnGet()}}
+  return {v:1,pt:store.get("tt-pt",0),lib:NO_PRESETS?mine.concat(hiddenLib):mine,egg:!!store.get("tt-egg",false),bookp:bookP(),mycap:store.get("tt-mycap",{}),snow:!!store.get("tt-snow",false),snowfx:store.get("tt-snowfx",true)!==false,rain:!!store.get("tt-rain",false),piano:!!store.get("tt-piano",false),pianofx:store.get("tt-pianofx",true)!==false,rainfx:store.get("tt-rainfx",true)!==false,aw:store.get("tt-aw",[]),tot:getTot(),inv:store.get("tt-inv",[]),title:store.get("tt-title",""),font:store.get("tt-font",""),cardop:store.get("tt-cardop",80),bgslots:bgSlots(),tdim:numOr(store.get("tt-tdim",null),null),tcardop:numOr(store.get("tt-tcardop",null),null),bgrot:!!store.get("tt-bgrot",true),bgdim:store.get("tt-bgdim",60),runs:runsGet(),keys:store.get("tt-keys",{}),keys3:store.get("tt-keys3",{}),ach:achGet(),dd:ddGet(),pc:pcGet(),pcn:pcnGet(),fm:fmGet(),bst:bstGet()}}
 function applyData(d){
   const pt=Math.max(0,Math.floor(Number(d.pt)||0));store.set("tt-pt",pt);showPts();store.set("tt-egg",d.egg===true);applyHolo();if(eggHook)eggHook();store.set("tt-snow",d.snow===true);store.set("tt-bookp",cleanBookP(d.bookp));{const m=d.mycap,day=todayKey();if(m&&m.d===day)store.set("tt-mycap",{d:day,p:Math.max(mineCap(),Math.max(0,Number(m.p)||0))})}setTimeout(drawList,0);store.set("tt-snowfx",d.snowfx!==false);applySnow();store.set("tt-piano",d.piano===true);store.set("tt-pianofx",d.pianofx!==false);applyPiano();store.set("tt-rain",d.rain===true);store.set("tt-rainfx",d.rainfx!==false);applyRain();store.set("tt-aw",Array.isArray(d.aw)?d.aw.filter(x=>typeof x==="string").slice(-40):[]);
   store.set("tt-tot",Math.max(pt,Math.floor(Number(d.tot)||0)));store.set("tt-inv",Array.isArray(d.inv)?d.inv.filter(x=>typeof x==="string"):[]);
-  achMerge(d.ach);ddMerge(d.dd);pcMerge(d.pc);pcnMerge(d.pcn);store.set("tt-title",typeof d.title==="string"&&titleOk(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));for(const [f,sk,re] of [["keys","tt-keys",/^([A-Z]|Space)$/],["keys3","tt-keys3",/^([A-Z0-9]|Space|[;',./])$/]]){const src=d[f];if(!src||typeof src!=="object"||Array.isArray(src))continue;const K={};for(const k in src){const r=src[k];if(re.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}const cur=store.get(sk,{});if(Object.keys(K).length||!kbCount(cur&&typeof cur==="object"?cur:{}))store.set(sk,K)}shopSkins();setSkin(store.get("tt-skin","basic"));
+  achMerge(d.ach);ddMerge(d.dd);pcMerge(d.pc);pcnMerge(d.pcn);store.set("tt-fm",fmClean(d.fm));store.set("tt-bst",Math.max(bstGet(),Math.min(3000,Math.max(0,Math.round(Number(d.bst)||0)))));store.set("tt-title",typeof d.title==="string"&&titleOk(d.title)?d.title:"");store.set("tt-font",typeof d.font==="string"&&owned(d.font)?d.font:"");applyFont();store.set("tt-bgdim",Math.min(85,Math.max(20,Number(d.bgdim)||60)));store.set("tt-cardop",Number.isFinite(Number(d.cardop))&&d.cardop!==null&&d.cardop!==undefined?Math.min(100,Math.max(0,Number(d.cardop))):80);store.set("tt-bgslots",Math.min(9,Math.max(0,Math.floor(Number(d.bgslots)||0))));store.set("tt-bgrot",d.bgrot!==false);store.set("tt-tdim",numOr(d.tdim,null));store.set("tt-tcardop",numOr(d.tcardop,null));applyBg();if(Array.isArray(d.runs))store.set("tt-runs",runsClean(runsGet().concat(d.runs)));for(const [f,sk,re] of [["keys","tt-keys",/^([A-Z]|Space)$/],["keys3","tt-keys3",/^([A-Z0-9]|Space|[;',./])$/]]){const src=d[f];if(!src||typeof src!=="object"||Array.isArray(src))continue;const K={};for(const k in src){const r=src[k];if(re.test(k)&&Array.isArray(r)&&r.length===2)K[k]=[Math.max(0,Number(r[0])||0),Math.min(400,Math.max(0,Math.round(Number(r[1])||0)))]}const cur=store.get(sk,{});if(Object.keys(K).length||!kbCount(cur&&typeof cur==="object"?cur:{}))store.set(sk,K)}shopSkins();setSkin(store.get("tt-skin","basic"));
   if(NO_PRESETS)hiddenLib=d.lib.filter(q=>q&&hidP(q.id));
   d.lib.forEach(q=>{if(!q||typeof q.id!=="string"||typeof q.text!=="string")return;if(hidP(q.id)||isPre(q.id))return;const t=String(q.title||"");
     const ex=lib.find(p=>p.id===q.id);if(ex){ex.title=t;ex.text=q.text}else lib.push({id:q.id,title:t,text:q.text});saved[q.id]={title:t,text:q.text}});
@@ -916,7 +938,7 @@ function applyData(d){
 // 로그아웃하면 이 기기에서 내 지문·포인트를 지우고 기본 지문만 남겨요
 function clearMine(){lib=lib.filter(p=>p.id.startsWith("preset-"));lib.forEach(p=>{const o=PRESETS.find(x=>x.id===p.id);if(o){p.title=o.title;p.text=o.text}});
   hiddenLib=[];if(!lib.length)lib=PRESETS.length?PRESETS.map(p=>({...p})):[{id:uid(),title:"지문 1",text:"",ph:1}];Object.keys(saved).forEach(k=>delete saved[k]);lib.forEach(p=>{if(!p.ph)saved[p.id]={title:p.title,text:p.text}});
-  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-keys3",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-ach",{});store.set("tt-dd",[]);store.set("tt-ddchk","");store.set("tt-pc",{});store.set("tt-pcn",{});store.set("tt-achd1",false);store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
+  if(!lib.some(p=>p.id===curId))curId=lib[0].id;store.set("tt-pt",0);store.set("tt-egg",false);store.set("tt-holofx",true);store.set("tt-keys",{});store.set("tt-keys3",{});store.set("tt-runs",[]);applyHolo();store.set("tt-bookp",{});store.set("tt-mycap",{});store.set("tt-snow",false);store.set("tt-snowfx",true);applySnow();store.set("tt-rain",false);store.set("tt-rainfx",true);applyRain();store.set("tt-piano",false);store.set("tt-pianofx",true);applyPiano();store.set("tt-aw",[]);store.set("tt-tot",0);store.set("tt-inv",[]);store.set("tt-title","");store.set("tt-ach",{});store.set("tt-dd",[]);store.set("tt-ddchk","");store.set("tt-pc",{});store.set("tt-pcn",{});store.set("tt-fm",{});store.set("tt-bst",0);store.set("tt-achd1",false);store.set("tt-font","");applyFont();try{localStorage.removeItem("tt-bgimg")}catch(e){}idb("clear");bgImg.length=0;store.set("tt-bgslots",0);store.set("tt-bgrot",true);store.set("tt-tdim",null);store.set("tt-tcardop",null);store.set("tt-bgdim",60);store.set("tt-cardop",80);applyBg();shopSkins();{const k=store.get("tt-skin","basic");if(SHOP_THEMES.some(t=>t.id===k)){document.documentElement.removeAttribute("data-skin");document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin==="basic")))}}if(eggHook)eggHook();showPts();saveLib();loadCur()}
 function showPts(){$("pts").textContent="포인트: "+store.get("tt-pt",0)}
 // 내 지문 부정 막기(3.1.5): 같은 글자·묶음만 되풀이한 글이나 낱자(ㄱ, ㅏ)는 포인트를 줄이고, 내 지문 포인트는 하루 300까지
 const MINE_CAP=300;
@@ -1018,7 +1040,7 @@ function drawKb(){const w=$("kbw"),VK=recK(),RUN=KS.runK===VK?KS.run:{},runN=kbC
 // 내 기록: 연습을 끝까지 마칠 때마다 tt-runs에 {at, t(제목), s(평균 타수), a(정확도), n(줄 수)}를 200개까지 쌓아요(로그인하면 클라우드에도)
 const runsGet=()=>{const r=store.get("tt-runs",[]);return Array.isArray(r)?r.filter(x=>x&&Number.isFinite(Number(x.at))&&Number.isFinite(Number(x.s))):[]};
 function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0)),...(x.k==="390"?{k:"390"}:{})})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
-function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(KBL()==="390"?{k:"390"}:{})}])))}
+function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(KBL()==="390"?{k:"390"}:{})}])));{const b=bstGet();if(b>(Number(store.get("tt-bst",0))||0))store.set("tt-bst",b)}}
 const recDate=t=>{const d=new Date(Number(t)+9*3600e3),z=n=>String(n).padStart(2,"0");return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+" "+z(d.getUTCHours())+":"+z(d.getUTCMinutes())};
 function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=>(x.k==="390")===(VK==="390")),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
   const sum=$("rec-sum");sum.innerHTML="";const last=R.slice(-10),avg=L=>L.length?Math.round(L.reduce((a,x)=>a+x.s,0)/L.length):0,acc=L=>L.length?Math.round(L.reduce((a,x)=>a+x.a,0)/L.length):0;
@@ -1222,6 +1244,11 @@ function pcMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;
 function pcAdd(text,title){const A=pcGet(),k=pcKey(text);A[k]=(A[k]||0)+1;const C=pcClean(A);store.set("tt-pc",C);
   // 3.4.38: 지문 제목도 같이(tt-pcn = {글 해시: 제목}, 계정 users 문서 pcn)
   if(title){const N=pcnGet();N[k]=String(title).slice(0,40);for(const x in N)if(!(x in C))delete N[x];store.set("tt-pcn",N)}}
+// 친구 메모(3.4.39): 친구 uid → 10자까지, 나만 봄(users 문서 fm)
+function fmClean(o){const r={};if(o&&typeof o==="object"&&!Array.isArray(o))for(const k in o)if(/^[\w@.-]{4,128}$/.test(k)&&typeof o[k]==="string"&&o[k].trim())r[k]=[...o[k].trim()].slice(0,10).join("");return r}
+const fmGet=()=>fmClean(store.get("tt-fm",{}));
+// 최고 타수(3.4.39, 친구 목록용): 정확도 80% 이상 연습의 평균 타수 중 최고. 기록이 200개를 넘어 밀려도 남게 tt-bst에 따로 둬요
+function bstGet(){let b=Math.max(0,Math.round(Number(store.get("tt-bst",0))||0));runsGet().forEach(x=>{if(x.a>=80&&x.s<3000&&x.s>b)b=x.s});return b}
 const pcnGet=()=>{const v=store.get("tt-pcn",{});return v&&typeof v==="object"&&!Array.isArray(v)?v:{}};
 function pcnMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const N=pcnGet();let ch=false;for(const k in src)if(typeof src[k]==="string"&&!N[k]&&/^[0-9a-z]{2,20}$/.test(k)){N[k]=src[k].slice(0,40);ch=true}if(ch)store.set("tt-pcn",N)}
 // 3.4.38: 내 지문은 안 셈(사용자 요청). 예전에 센 내 지문도 지금 내 지문 목록과 글·제목으로 맞춰서 빼요
@@ -1369,7 +1396,7 @@ function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[d
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
-function closePanels(except){["login","rank","settings","daily","vs","shop","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
+function closePanels(except){["login","rank","fr","settings","daily","vs","shop","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
   if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
 function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
@@ -1417,10 +1444,10 @@ async function initCloud(){if(!FB_CONFIG)return;
     pushRank();pushing=false;if(again){again=false;push()}}
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
-  async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",ac=Object.keys(achGet()).sort(),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",");if(key===lastRank)return;
-    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac; // a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
+  async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",ac=Object.keys(achGet()).sort(),bs=bstGet(),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
+    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
-      const alts=[];if(v.a){const w={...v};delete w.a;alts.push(w)}if(tt){const w={...v};delete w.a;delete w.tt;alts.push(w)}if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
+      const alts=[],strip=(...ks)=>{const w={...v};ks.forEach(k=>delete w[k]);return w};if(v.b)alts.push(strip("b"));if(v.a)alts.push(strip("b","a"));if(tt)alts.push(strip("b","a","tt"));if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
   rankHook=()=>pushRank();
   // 업적별 달성 비율(3.4.19): rank 문서(로그인한 사람마다 하나)를 모두 읽어 a(얻은 업적)를 세요. 5분 동안은 다시 안 읽어요
   let achSt=null,achStAt=0,achStLoading=false;
@@ -1442,16 +1469,16 @@ async function initCloud(){if(!FB_CONFIG)return;
   const addTtl=(el,id)=>{const n=titleName(id||"");if(!n)return;const b=document.createElement("span");b.className="ttl";b.textContent=n;el.prepend(b)};
   const rankCard=$("rank"),rankBtn=$("rankbtn");rankBtn.hidden=false;
   let rTab="pt";
-  function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
+  function setRTab(t){rTab=t;[["pt","rtab-pt"],["daily","rtab-daily"],["ps","rtab-ps"],["fr","rtab-fr"]].forEach(([k,id])=>$(id).setAttribute("aria-pressed",String(t===k)));
     if(t==="ps"){const o=PRESETS.find(x=>x.id===curId);if(o)psel.value=o.id}loadRank()}
-  async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
+  async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();if(rTab==="fr")return loadRankFr();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
         const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?store.get("tt-egg",false):v.egg===true)b.classList.add("egg");addTtl(b,me?store.get("tt-title",""):v.tt);
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
-  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");
+  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");$("rtab-fr").onclick=()=>setRTab("fr");
   // 지문 랭킹: prank/{지문 id}/runs/{uid} = {nick, spd(평균 타수), acc, ms, at}. 기본 지문 그대로 끝까지, 정확도 80% 이상일 때 내 최고 기록만 남겨요
   const psel=$("rank-psel");PRESETS.forEach(o=>{const op=document.createElement("option");op.value=o.id;op.textContent=o.title;psel.appendChild(op)});
   psel.onchange=loadRank;
@@ -1625,11 +1652,12 @@ async function initCloud(){if(!FB_CONFIG)return;
   vsHooks.prog=f=>{if(!VS.code||!VS.room)return;VS.lastF=f;vsBars();const now=Date.now();clearTimeout(VS.pT);const w=()=>{VS.lastW=Date.now();FS.updateDoc(vpRef(VS.code,uid),{f:Math.round(f*1000)/1000,at:Date.now()}).catch(()=>{})};if(now-VS.lastW>800)w();else VS.pT=setTimeout(w,800)};
   vsHooks.finish=(spd,acc)=>{if(!VS.code||!VS.room)return;clearTimeout(VS.pT);const ms=Math.max(1,Math.round(performance.now()-VS.go));VS.lastF=1;
     FS.updateDoc(vpRef(VS.code,uid),{f:1,done:ms,spd:spd,acc:acc,at:Date.now()}).catch(()=>{});setTimeout(openVs,0)};
-  $("vs-make").onclick=async()=>{if(!uid)return;$("vs-make").disabled=true;vMsg("만드는 중");
+  async function vsMake(){if(!uid)return "";$("vs-make").disabled=true;vMsg("만드는 중");
     try{let c="";for(let t=0;t<12&&!c;t++){const x=String(1000+Math.floor(Math.random()*9000)),sn=await FS.getDoc(vRef(x));if(!sn.exists()||!(sn.data().at>Date.now()-6*3600e3))c=x}
-      if(!c){vMsg("다시 눌러 주세요");$("vs-make").disabled=false;return}
+      if(!c){vMsg("다시 눌러 주세요");$("vs-make").disabled=false;return ""}
       const k=Date.now();await FS.setDoc(vRef(c),{host:uid,hn:nick||"",k,st:"wait",r:1,text:"",title:"",pre:false,at:k});
-      await FS.setDoc(vpRef(c,uid),{nick:nick||"",k,j:k,rd:0,pr:0,f:0,done:0,at:k});vMsg("");vsWatch(c)}catch(e){vMsg("만들 수 없음 (규칙 확인)");$("vs-make").disabled=false}};
+      await FS.setDoc(vpRef(c,uid),{nick:nick||"",k,j:k,rd:0,pr:0,f:0,done:0,at:k});vMsg("");vsWatch(c);return c}catch(e){vMsg("만들 수 없음 (규칙 확인)");$("vs-make").disabled=false;return ""}}
+  $("vs-make").onclick=()=>{vsMake()};
   $("vs-join").onclick=async()=>{if(!uid)return;const c=$("vs-code-in").value.replace(/\D/g,"");if(c.length!==4){vMsg("4자리 코드를 넣어 주세요");return}vMsg("들어가는 중");
     try{const sn=await FS.getDoc(vRef(c));if(!sn.exists()||!(sn.data().at>Date.now()-6*3600e3)){vMsg("없는 방이에요");return}const R=sn.data();if(R.st!=="wait"){vMsg("이미 경기 중인 방이에요");return}
       const qs=await FS.getDocs(FS.query(FS.collection(fdb,"vs",c,"p")));let n=0,mine=null;qs.forEach(d=>{const x=d.data();if(x.k===R.k){if(d.id===uid)mine=x;else n++}});if(n>=4&&!mine){vMsg("방이 꽉 찼어요 (최대 4명)");return}
@@ -1647,6 +1675,81 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(selBook)return;if(!splitLines(text).some(l=>prep(l).typ.length)){ta.focus();return}
     pickEnd();openVs();try{await FS.updateDoc(vRef(VS.code),{text,title,pre:isPre(curId),at:Date.now()})}catch(e){vMsg("지문 저장 실패 (규칙 확인)")}};
   addEventListener("pagehide",()=>{if(VS.code&&uid){try{FS.deleteDoc(vpRef(VS.code,uid))}catch(e){}if(VS.room&&VS.room.host===uid)try{FS.deleteDoc(vRef(VS.code))}catch(e){}}});
+  // ── 친구(3.4.39) ── fr/{uid}/f/{친구}={at} 친구 목록, fr/{uid}/in/{보낸 사람}={nick,at} 받은 요청, fr/{uid}/out/{받는 사람}={nick,at} 보낸 요청, fr/{uid}/vi/{보낸 사람}={code,nick,at} 대전 초대
+  // 친구 정보(칭호·닉네임·최고 타수·업적 수·포인트)는 공개 rank/{uid}에서 읽고, 메모는 내 users 문서(fm)에만 둬요
+  const FR={f:[],in:[],out:[],vi:[],un:[],info:{},del:"",edit:""},frCard=$("fr"),frBtn=$("frbtn"),fMsg=t=>{$("fr-msg").textContent=t||""},FR_MAX=30;
+  const frRef=(a,k,b)=>FS.doc(fdb,"fr",a,k,b),isFr=id=>FR.f.some(x=>x.id===id);
+  const frB=(t,c)=>{const b=document.createElement("button");b.type="button";b.className="btn acct"+(c?" "+c:"");b.textContent=t;return b};
+  function frStop(){FR.un.forEach(u=>{try{u()}catch(e){}});FR.un=[];FR.f=[];FR.in=[];FR.out=[];FR.vi=[];FR.info={};FR.del=FR.edit="";frBadge();$("fr-inv").hidden=true}
+  function frStart(){frStop();const me=uid;if(!me)return;
+    const w=(k,fn)=>FR.un.push(FS.onSnapshot(FS.collection(fdb,"fr",me,k),qs=>{if(uid!==me)return;const L=[];qs.forEach(d=>L.push({id:d.id,...(d.data()||{})}));fn(L)},e=>{}));
+    w("f",L=>{FR.f=L;frDraw();frInvShow()});w("in",L=>{FR.in=L;frBadge();frDraw()});w("out",L=>{FR.out=L;frDraw()});w("vi",L=>{FR.vi=L;frInvShow()})}
+  function frBadge(){const n=FR.in.length;frBtn.textContent=n?"친구 "+n:"친구";frBtn.classList.toggle("req",n>0)}
+  async function frInfo(ids,force){const now=Date.now();await Promise.all(ids.filter(id=>id!==uid).map(async id=>{const o=FR.info[id];if(o&&!force&&now-o.t<60000)return;
+    try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));FR.info[id]={t:now,v:d.exists()?(d.data()||{}):null}}catch(e){FR.info[id]={t:now,v:null}}}))}
+  const frV=id=>id===uid?{nick:nick,egg:!!store.get("tt-egg",false),tt:store.get("tt-title",""),pt:Math.floor(getTot()),b:bstGet(),a:Object.keys(achGet())}:((FR.info[id]||{}).v||{});
+  const frNick=(id,fb)=>{const v=frV(id);return v.nick?String(v.nick):(fb||"이름 없음")};
+  // 닉네임 오른쪽에 내 메모(회색 작은 글자)
+  function frName(id,fb){const e=document.createElement("span");e.className="nm";const v=frV(id);e.textContent=frNick(id,fb);if(v.egg===true)e.classList.add("egg");addTtl(e,typeof v.tt==="string"?v.tt:"");
+    const m=id!==uid&&fmGet()[id];if(m){const s=document.createElement("span");s.className="fm";s.textContent=m;e.appendChild(s)}return e}
+  const frSt=t=>{const e=document.createElement("span");e.className="st";e.textContent=t||"";return e};
+  const frLi=(nm,st,bts)=>{const li=document.createElement("li"),bt=document.createElement("span");bt.className="bt";bts.forEach(b=>bt.appendChild(b));li.append(nm,st,bt);return li};
+  const frShow=(lid,ul,L)=>{$(lid).hidden=ul.hidden=!L.length};
+  let frDrawing=0;
+  async function frDraw(){if(frCard.hidden)return;if(!uid){fMsg("로그인해야 할 수 있어요");return}const my=++frDrawing;
+    await frInfo([...new Set([...FR.f,...FR.in,...FR.out].map(x=>x.id))]);if(my!==frDrawing||frCard.hidden)return;
+    const inL=$("fr-in");inL.innerHTML="";FR.in.forEach(x=>{const ok=frB("수락"),no=frB("거절");ok.onclick=()=>frAccept(x.id);no.onclick=()=>frDeny(x.id);inL.appendChild(frLi(frName(x.id,x.nick),frSt(""),[ok,no]))});frShow("fr-in-l",inL,FR.in);
+    const outL=$("fr-out");outL.innerHTML="";FR.out.forEach(x=>{const c=frB("취소");c.onclick=()=>frCancel(x.id);outL.appendChild(frLi(frName(x.id,x.nick),frSt("기다리는 중"),[c]))});frShow("fr-out-l",outL,FR.out);
+    const fl=$("fr-list");fl.innerHTML="";const F=[...FR.f].sort((a,b)=>frNick(a.id).localeCompare(frNick(b.id),"ko"));
+    F.forEach(x=>{const v=frV(x.id),memo=frB("메모"),inv=frB("대전 초대"),del=frB(FR.del===x.id?"정말 삭제":"삭제",FR.del===x.id?"on":"");
+      memo.onclick=()=>{FR.edit=FR.edit===x.id?"":x.id;FR.del="";frDraw()};inv.onclick=()=>frInvite(x.id);
+      del.onclick=()=>{if(FR.del!==x.id){FR.del=x.id;frDraw();return}FR.del="";frRemove(x.id)};
+      const li=frLi(frName(x.id),frSt((v.b?"최고 타수 "+v.b+"  ·  ":"")+"업적 "+(Array.isArray(v.a)?v.a.length:0)),[memo,inv,del]);if(FR.edit===x.id)li.appendChild(frMemoRow(x.id));fl.appendChild(li)});
+    if(!F.length){const li=document.createElement("li");li.className="none";li.textContent="닉네임으로 찾아 친구 요청을 보내요";fl.appendChild(li)}
+    $("fr-n").textContent=F.length+"/"+FR_MAX}
+  function frMemoRow(id){const row=document.createElement("div");row.className="fr-ed";const i=document.createElement("input");i.className="ptitle";i.maxLength=10;i.placeholder="메모 (10자)";i.setAttribute("aria-label","메모");i.value=fmGet()[id]||"";
+    const sv=frB("저장"),cc=frB("취소"),save=()=>{const M=fmGet(),v=[...i.value.replace(/\s+/g," ").trim()].slice(0,10).join("");if(v)M[id]=v;else delete M[id];store.set("tt-fm",M);FR.edit="";frDraw()};
+    sv.onclick=save;cc.onclick=()=>{FR.edit="";frDraw()};i.addEventListener("keydown",e=>{if(e.key==="Enter")save();else if(e.key==="Escape")cc.onclick()});row.append(i,sv,cc);setTimeout(()=>i.focus(),0);return row}
+  async function frSend(id,nk){if(!uid||id===uid)return;if(isFr(id)){fMsg("이미 친구예요");return}if(FR.in.some(x=>x.id===id))return frAccept(id);
+    if(FR.out.some(x=>x.id===id)){fMsg("이미 요청을 보냈어요");return}if(FR.f.length>=FR_MAX){fMsg("친구는 "+FR_MAX+"명까지예요");return}
+    try{const at=Date.now();await FS.setDoc(frRef(id,"in",uid),{nick:nick||"",at});await FS.setDoc(frRef(uid,"out",id),{nick:String(nk||"").slice(0,12),at});fMsg("요청을 보냈어요");$("fr-found").hidden=true;$("fr-q").value=""}catch(e){fMsg("보낼 수 없음 (규칙 확인)")}}
+  // 수락: 내 목록과 상대 목록에 서로를 넣고(상대 쪽은 요청이 남아 있을 때만 규칙이 허락) 요청을 지워요
+  async function frAccept(id){if(FR.f.length>=FR_MAX){fMsg("친구는 "+FR_MAX+"명까지예요");return}
+    try{const at=Date.now();await FS.setDoc(frRef(uid,"f",id),{at});await FS.setDoc(frRef(id,"f",uid),{at});await FS.deleteDoc(frRef(uid,"in",id));FS.deleteDoc(frRef(id,"out",uid)).catch(()=>{});fMsg("친구가 됐어요")}catch(e){fMsg("수락 실패 (규칙 확인)")}}
+  async function frDeny(id){try{await FS.deleteDoc(frRef(uid,"in",id));FS.deleteDoc(frRef(id,"out",uid)).catch(()=>{});fMsg("")}catch(e){fMsg("실패")}}
+  async function frCancel(id){try{await FS.deleteDoc(frRef(id,"in",uid));await FS.deleteDoc(frRef(uid,"out",id));fMsg("")}catch(e){fMsg("실패")}}
+  async function frRemove(id){try{await FS.deleteDoc(frRef(uid,"f",id));FS.deleteDoc(frRef(id,"f",uid)).catch(()=>{});FS.deleteDoc(frRef(id,"vi",uid)).catch(()=>{});FS.deleteDoc(frRef(uid,"vi",id)).catch(()=>{});
+    const M=fmGet();if(M[id]){delete M[id];store.set("tt-fm",M)}fMsg("")}catch(e){fMsg("실패")}}
+  $("fr-find").onclick=async()=>{const q=cleanNick($("fr-q").value),ul=$("fr-found");if(!uid){fMsg("로그인해야 할 수 있어요");return}if(!q){fMsg("닉네임을 적어 주세요");return}fMsg("찾는 중");
+    try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"rank"),FS.where("nick","==",q),FS.limit(10)));const L=[];sn.forEach(d=>{if(d.id!==uid)L.push({id:d.id,v:d.data()||{}})});
+      ul.innerHTML="";L.forEach(({id,v})=>{FR.info[id]={t:Date.now(),v};const f=isFr(id),o=FR.out.some(x=>x.id===id),b=frB(f?"친구":o?"요청 보냄":"친구 요청");b.disabled=f||o;b.onclick=()=>frSend(id,v.nick);
+        ul.appendChild(frLi(frName(id),frSt("포인트 "+Math.floor(Number(v.pt)||0)),[b]))});
+      ul.hidden=!L.length;fMsg(L.length?"":"없는 닉네임이에요 (정확히 적어 주세요)")}catch(e){ul.hidden=true;fMsg("찾을 수 없음")}};
+  $("fr-q").addEventListener("keydown",e=>{if(e.key==="Enter")$("fr-find").click()});
+  frBtn.onclick=()=>{const o=frCard.hidden;closePanels(o?"fr":null);frCard.hidden=!o;if(o){fMsg("");FR.del=FR.edit="";frInfo(FR.f.map(x=>x.id),true).then(frDraw)}};
+  // 대전 초대: 방이 없으면 새로 만들고 그 코드를 친구에게 보내요. 받은 쪽은 화면 위에 10분 동안 "들어가기" 띠가 떠요
+  async function frInvite(id){if(!uid||!isFr(id))return;fMsg("");
+    if(!VS.code){const c=await vsMake();if(!c){fMsg("방을 만들 수 없음");return}}
+    const R=VS.room;if(R&&R.st==="play"){fMsg("경기가 끝난 뒤 초대해 주세요");return}if(vsPlayers().length>=4){fMsg("방이 꽉 찼어요 (최대 4명)");return}
+    try{await FS.setDoc(frRef(id,"vi",uid),{code:VS.code,nick:nick||"",at:Date.now()});toast("<b>"+esc(frNick(id))+"</b>에게 대전 초대를 보냈어요");frCard.hidden=true;openVs()}catch(e){fMsg("초대 실패 (규칙 확인)")}}
+  function frInvShow(){const box=$("fr-inv"),now=Date.now();
+    FR.vi.filter(x=>!(Number(x.at)>now-600000)).forEach(x=>FS.deleteDoc(frRef(uid,"vi",x.id)).catch(()=>{}));
+    const L=FR.vi.filter(x=>Number(x.at)>now-600000&&/^\d{4}$/.test(String(x.code||""))&&isFr(x.id)&&!(VS.code===x.code&&VS.room)).sort((a,b)=>b.at-a.at);
+    if(!L.length){box.hidden=true;return}const x=L[0];box.innerHTML="";const t=document.createElement("span"),b=document.createElement("b");b.textContent=frNick(x.id,x.nick);t.append(b,"의 대전 초대");
+    const go=frB("들어가기"),no=frB("거절"),drop=()=>{box.hidden=true;FR.vi=FR.vi.filter(y=>y.id!==x.id);FS.deleteDoc(frRef(uid,"vi",x.id)).catch(()=>{})};
+    go.onclick=async()=>{drop();if(VS.code&&VS.code!==x.code)await vsLeave(true);openVs();if(VS.code===x.code)return;$("vs-code-in").value=x.code;$("vs-join").click()};
+    no.onclick=()=>{drop();frInvShow()};box.append(t,go,no);box.hidden=false;
+    clearTimeout(FR.invT);FR.invT=setTimeout(frInvShow,Math.max(1000,Number(x.at)+600000-now+50))}
+  // 랭킹 친구 탭: 나와 친구를 누적 포인트 순으로
+  async function loadRankFr(){$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list daily-l";
+    if(!uid){list.innerHTML="";m.textContent="로그인하면 친구와 비교할 수 있어요";return}m.textContent="불러오는 중";
+    const ids=FR.f.map(x=>x.id);await frInfo(ids,true);if(rTab!=="fr")return;list.innerHTML="";
+    const mk=(c,t)=>{const e=document.createElement("span");e.className=c;e.textContent=t;return e};
+    const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","업적"),mk("","최고 타수"),mk("","포인트"));list.appendChild(hd);
+    const rows=[uid].concat(ids.filter(id=>frV(id).nick)).map(id=>({id,v:frV(id)})).sort((a,b)=>(Number(b.v.pt)||0)-(Number(a.v.pt)||0));
+    rows.forEach(({id,v},i)=>{const li=document.createElement("li");if(id===uid)li.className="me";
+      li.append(mk("no",i+1),frName(id),mk("ac",Array.isArray(v.a)?v.a.length:0),mk("ts",v.b?Math.round(Number(v.b)):"-"),mk("pt",Math.floor(Number(v.pt)||0)));list.appendChild(li)});
+    m.textContent=ids.length?"":"친구를 추가하면 여기서 함께 볼 수 있어요"}
   $("daily-back").onclick=()=>{dCard.hidden=true;show("setup")};
   let dDay="";
   $("daily-go").onclick=async()=>{if(!uid)return;const day=todayKey();$("daily-go").disabled=true;
@@ -1664,13 +1767,14 @@ async function initCloud(){if(!FB_CONFIG)return;
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
   AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
-    if(!user){uid=null;nick="";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
+    if(!user){uid=null;nick="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rtab-fr").hidden=true;if(rTab==="fr")rTab="pt";$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();ddScan();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();ddScan();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
+    if(uid){frBtn.hidden=false;$("rtab-fr").hidden=false;frStart()}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
@@ -1682,7 +1786,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     nick=n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
   $("lg-out").onclick=async()=>{clearTimeout(pushT);try{if(vsHooks.leave)await vsHooks.leave(true)}catch(e){}if(uid)await push();uid=null;lastRank="";await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
   // 내 데이터 내보내기·계정 삭제 (3.2.16, 개인정보보호법 열람·삭제 요구 대비)
-  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9
+  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나)
   const exMsg=t=>$("lg-exmsg").textContent=t||"",delMsg=t=>$("lg-delmsg").textContent=t||"";
   const allDays=()=>{const out=[],today=todayKey();for(let d=D_FROM;d<=today;d=dShift(d,1))out.push(d);return out};
   const allPids=()=>[...new Set([...(Array.isArray(PID_ALL)?PID_ALL:[]),...PRESETS.map(o=>o.id)])];
@@ -1694,13 +1798,14 @@ async function initCloud(){if(!FB_CONFIG)return;
     await Promise.all(pids.map(async p=>{const v=await get(FS.doc(fdb,"prank",p,"runs",me));if(v)out.prank[p]=v}));
     try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",me),FS.limit(500)));sn.forEach(d=>out.fb.push({_id:d.id,...(d.data()||{})}))}catch(e){}
     await Promise.all([0,1,2,3,4,5,6,7,8,9].map(async i=>{const v=await get(i?FS.doc(fdb,"bg",me,"s",String(i)):FS.doc(fdb,"bg",me));if(v)out.bg[i]=v}));
+    out.fr={};for(const k of ["f","in","out","vi"]){out.fr[k]={};try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"fr",me,k)));sn.forEach(d=>{out.fr[k][d.id]=d.data()||{}})}catch(e){}}
     return out}
   $("lg-export").onclick=async()=>{const u=auth.currentUser;if(!u)return;const b=$("lg-export");b.disabled=true;exMsg("모으는 중");
     try{if(uid){clearTimeout(pushT);await push()}const id=u.email.split("@")[0],docs=await myDocs(u.uid),dev={};
       for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!/^ttc?-/.test(k))continue;const v=localStorage.getItem(k);try{dev[k]=JSON.parse(v)}catch(e){dev[k]=v}}
       const data={site:"백호 타자",url:"https://quartzpiece.github.io/WhiteTigerType/",exportedAt:new Date().toISOString(),
         account:{id:id,nick:nick||id,created:u.metadata&&u.metadata.creationTime||null,lastLogin:u.metadata&&u.metadata.lastSignInTime||null},
-        cloud:{"users (계정 데이터: 포인트·산 물건·내 지문·기록·설정)":docs.users,"rank (포인트 랭킹)":docs.rank,"daily (오늘의 문장 기록)":docs.daily,"prank (지문 랭킹 기록)":docs.prank,"fb (보낸 건의와 답장)":docs.fb,"bg (사진 배경)":docs.bg},
+        cloud:{"users (계정 데이터: 포인트·산 물건·내 지문·기록·설정)":docs.users,"rank (포인트 랭킹)":docs.rank,"daily (오늘의 문장 기록)":docs.daily,"prank (지문 랭킹 기록)":docs.prank,"fb (보낸 건의와 답장)":docs.fb,"bg (사진 배경)":docs.bg,"fr (친구 목록·받은 요청·보낸 요청·대전 초대)":docs.fr},
         device:dev,note:"비밀번호는 암호화되어 저장되어 내보낼 수 없음. 날씨용 위치는 저장하지 않음."};
       const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");
       a.href=URL.createObjectURL(blob);a.download="baekho-typing-"+id+"-"+todayKey()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);exMsg("내보내기 완료")}
@@ -1723,6 +1828,8 @@ async function initCloud(){if(!FB_CONFIG)return;
       for(const p of Object.keys(docs.prank))await del(FS.doc(fdb,"prank",p,"runs",me));
       for(const f of docs.fb)await del(FS.doc(fdb,"fb",f._id));
       for(const i of Object.keys(docs.bg))await del(+i?FS.doc(fdb,"bg",me,"s",String(i)):FS.doc(fdb,"bg",me));
+      // 친구(3.4.39): 내 목록·요청을 지우고, 상대 쪽에 남은 나도 지워요
+      for(const k of ["f","in","out","vi"])for(const id of Object.keys(docs.fr[k]||{})){await del(FS.doc(fdb,"fr",me,k,id));if(k==="f")await del(FS.doc(fdb,"fr",id,"f",me));else if(k==="in")await del(FS.doc(fdb,"fr",id,"out",me));else if(k==="out")await del(FS.doc(fdb,"fr",id,"in",me))}
       await del(FS.doc(fdb,"users",me));
       if(fail){go.disabled=false;delMsg("일부 삭제 실패("+fail+"곳). 다시 누르면 남은 것만 지움");return}
       await AU.deleteUser(u)}
