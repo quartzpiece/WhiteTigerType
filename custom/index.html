@@ -187,6 +187,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .vs-l li .st.on{color:var(--accent)}
 .vs-l li .btn{padding:2px 8px;font-size:.75rem}
 .vs-txt{color:var(--muted);font-size:.9rem;margin:0}
+.fb-bug[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:700}
 .nm .fm{margin-left:8px;color:var(--muted);font-size:.78rem;font-weight:400;font-family:var(--body,inherit)}
 .fr-l li .bt{display:flex;gap:4px;justify-content:flex-end}
 .fr-l li .bt .btn.on{border-color:#E5484D;color:#E5484D}
@@ -361,7 +362,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.10</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.11</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1238,7 +1239,8 @@ const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하�
   {id:"b-10",name:"집념의 광인",desc:"한 책 10번 필사 완료하기",goal:10,cnt:()=>bkBest().n,lab:()=>bkBest().t}, // 3.5.5: 모든 문단을 실제로 쳐야 1번(bkMark)
   {id:"p-both",name:"만능",desc:"두벌식과 세벌식 모두에서 300타 이상 달성하기",ok:()=>{const R=runsGet();return R.some(x=>x.k!=="390"&&x.s>=300)&&R.some(x=>x.k==="390"&&x.s>=300)}}, // 3.4.33. 평균 타수 기준, 세벌식은 390·390(내 입력기) 둘 다
   {id:"t-cinder",name:"신데렐라",desc:"밤 11시 59분에 시작해서 12시를 넘겨 끝내기",hide:1},
-  {id:"e-fb",name:"불만스런",desc:"건의 1회 보내기",hide:1}, // 3.5.10: 건의를 보내면(예전에 보낸 건의도 로그인 때 확인) // 3.4.35. 달성 전엔 "???"(사용자 요청). 한국 시간, 연습 시작 23:59 + 끝낸 날짜가 다음 날
+  {id:"e-fb",name:"불만스런",desc:"건의 1회 보내기",hide:1}, // 3.5.10: 건의를 보내면(예전에 보낸 건의도 로그인 때 확인)
+  {id:"e-bug",name:"벌레잡이",desc:"건의로 버그 1회 신고하기",hide:1}, // 3.5.11: 관리자가 건의함에서 "버그"로 표시한 건의(fb.bug=true)가 있으면 // 3.4.35. 달성 전엔 "???"(사용자 요청). 한국 시간, 연습 시작 23:59 + 끝낸 날짜가 다음 날
   {id:"b-nalgae",name:"날자꾸나",desc:"「날개」 필사 완료하기",book:"book-nalgae"}, // book: 그 책 필사를 끝 문단까지(3.4.13)
   {id:"b-memil",name:"왼손잡이",desc:"「메밀꽃 필 무렵」 필사 완료하기",book:"book-memil"},
   {id:"b-unsu",name:"설렁탕을 사온",desc:"「운수 좋은 날」 필사 완료하기",book:"book-unsu"}, // 3.4.16. 책 제목은 낫표로: 단편은 「」, 책 한 권(단행본)은 『』
@@ -1568,7 +1570,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 내 건의: 내가 보낸 건의와 제작자 답장만 보여요. 새 답장이 있으면 설정 버튼에 점이 떠요(설정을 열어 보면 사라져요)
   let mineSeq=0;
   async function loadMine(seen){const u=auth.currentUser,w=$("fb-mine-w"),list=$("fb-mine"),my=++mineSeq;if(!u){w.hidden=true;list.innerHTML="";$("setbtn").classList.remove("has-new");return}
-    try{const snap=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",u.uid),FS.limit(30)));if(my!==mineSeq)return;const rows=[];snap.forEach(d=>rows.push(d.data()||{}));rows.sort((a,b)=>(Number(b.at)||0)-(Number(a.at)||0));
+    try{const snap=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",u.uid),FS.limit(30)));if(my!==mineSeq)return;const rows=[];snap.forEach(d=>rows.push(d.data()||{}));rows.sort((a,b)=>(Number(b.at)||0)-(Number(a.at)||0));if(uid===u.uid){try{if(rows.length)achGrant(["e-fb"]);if(rows.some(r=>r.bug===true))achGrant(["e-bug"])}catch(e){}}
       list.innerHTML="";w.hidden=!rows.length;let top=0;
       rows.slice(0,20).forEach(v=>{const li=el("li"),h=el("div","fb-h");h.append(el("span","",fbTime(v.at)),el("span","",v.re?"답장 옴":"답장 기다리는 중"));li.append(h,el("div","fb-t",String(v.text||"")));
         if(v.re){li.append(fbReply(v));top=Math.max(top,Number(v.reAt)||0)}list.appendChild(li)});
@@ -1589,8 +1591,11 @@ async function initCloud(){if(!FB_CONFIG)return;
         x.onclick=async()=>{if(x.dataset.arm!=="1"){x.dataset.arm="1";x.textContent="한 번 더";return}x.disabled=true;try{await FS.deleteDoc(FS.doc(fdb,"fb",d.id));li.remove();if(!list.children.length){const e=document.createElement("li");e.textContent="건의 없음";list.appendChild(e)}}catch(e){x.disabled=false;x.textContent="실패"}};
         h.append(nm,idv,tm,x);const tx=document.createElement("div");tx.className="fb-t";tx.textContent=String(v.text||"");li.append(h,tx);
         // 답장: 건의 하나에 답 하나. 다시 쓰면 고쳐지고, 지우면 사라져요
-        const ref=FS.doc(fdb,"fb",d.id);let cur=v.re?String(v.re):"",curAt=Number(v.reAt)||0;const box=el("div"),btns=el("div","fb-btns");
-        const draw=()=>{box.innerHTML="";if(cur)box.append(fbReply({re:cur,reAt:curAt}));btns.innerHTML="";const b=el("button","btn acct",cur?"답장 고치기":"답장");b.type="button";b.onclick=edit;btns.append(b)};
+        const ref=FS.doc(fdb,"fb",d.id);let cur=v.re?String(v.re):"",curAt=Number(v.reAt)||0,bug=v.bug===true;const box=el("div"),btns=el("div","fb-btns");
+        // 버그 표시(3.5.11): 켜면 보낸 사람이 다음 로그인(또는 설정 열 때) 숨은 업적 "벌레잡이"를 받아요
+        const bugBtn=()=>{const g=el("button","btn acct fb-bug",bug?"버그 ✓":"버그");g.type="button";g.setAttribute("aria-pressed",String(bug));g.title="버그 신고로 표시 (보낸 사람에게 업적 벌레잡이)";
+          g.onclick=async()=>{g.disabled=true;try{await FS.updateDoc(ref,{bug:!bug});bug=!bug;draw()}catch(e){g.disabled=false;g.textContent="실패 (규칙 확인)"}};return g};
+        const draw=()=>{box.innerHTML="";if(cur)box.append(fbReply({re:cur,reAt:curAt}));btns.innerHTML="";const b=el("button","btn acct",cur?"답장 고치기":"답장");b.type="button";b.onclick=edit;btns.append(b,bugBtn())};
         const edit=()=>{btns.innerHTML="";box.innerHTML="";const ed=el("div","fb-ed"),ta2=el("textarea");ta2.maxLength=500;ta2.value=cur;ta2.setAttribute("aria-label","답장 내용");ta2.placeholder="답장 내용";
           const row=el("div","fb-btns"),ok=el("button","btn primary","보내기"),no=el("button","btn acct","취소"),m=el("span","hint");ok.type=no.type="button";row.append(ok,no);
           if(cur){const del=el("button","btn acct","답장 지우기");del.type="button";del.onclick=async()=>{if(del.dataset.arm!=="1"){del.dataset.arm="1";del.textContent="한 번 더";return}del.disabled=true;try{const at=Date.now();await FS.updateDoc(ref,{re:"",reAt:at});cur="";curAt=at;draw()}catch(e){del.disabled=false;m.textContent="실패 (규칙 확인)"}};row.append(del)}
@@ -1792,7 +1797,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     await loadCfg();dDay=day;dCard.hidden=true;begin({title:"오늘의 문장 · "+day,text:dailyText(day),daily:true})};
   dailyHooks.start=async()=>{if(!uid||!dDay)return;const day=dDay;try{await FS.setDoc(runRef(day),{nick:nick||"",st:1,at:Date.now()});ddMerge([day]);achCheck()}catch(e){}};
   // 불만스런(3.5.10): 예전에 보낸 건의가 있으면 로그인 때 업적을 줘요
-  async function fbAch(){const me=uid;if(!me||achHas("e-fb"))return;try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",me),FS.limit(1)));if(me===uid&&sn.size)achGrant(["e-fb"])}catch(e){}}
+  async function fbAch(){const me=uid;if(!me||(achHas("e-fb")&&achHas("e-bug")))return;try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"fb"),FS.where("uid","==",me),FS.limit(100)));if(me!==uid)return;if(sn.size)achGrant(["e-fb"]);let bug=false;sn.forEach(d=>{if((d.data()||{}).bug===true)bug=true});if(bug)achGrant(["e-bug"])}catch(e){}} // 벌레잡이(3.5.11)도 같이
   // 개근상(3.4.30): 예전에 참여한 날도 찾아 둬요(지난달 1일부터, 하루에 한 번)
   async function ddScan(){if(!uid)return;const me=uid,today=todayKey();if(store.get("tt-ddchk","")===today)return;const S=new Set(ddGet()),add=[];let d=dShift(today.slice(0,7)+"-01",-1);d=d.slice(0,7)+"-01";if(d<D_FROM)d=D_FROM;
     try{for(;d<=today;d=dShift(d,1)){if(S.has(d))continue;const sn=await FS.getDoc(FS.doc(fdb,"daily",d,"runs",me));if(me!==uid)return;if(sn.exists())add.push(d)}}catch(e){return}
