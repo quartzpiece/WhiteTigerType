@@ -361,7 +361,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.2</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.3</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1816,6 +1816,14 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(/too-many-requests/.test(c))return "잠시 후 다시";if(/network/.test(c))return "연결 오류";return "오류: "+c};
   let uid=null,applying=false,pushT=0,pushing=false,again=false,nick="",pendNick="";
   const cleanNick=v=>[...String(v||"").replace(/\s+/g," ").trim()].slice(0,12).join("");
+  // 닉네임 중복 막기(3.5.3): nick/{키}={uid,at}로 먼저 차지해요(규칙: 없을 때만 만들기, 본인만 지우기). 키는 대소문자·띄어쓰기 무시.
+  // 아직 차지하지 않은 예전 사용자도 있어서 rank에 같은 닉네임이 있는지도 봐요
+  const nickKey=n=>"n_"+encodeURIComponent(String(n||"").toLowerCase().replace(/\s+/g,""));
+  async function nickTaken(n,me){try{const d=await FS.getDoc(FS.doc(fdb,"nick",nickKey(n)));if(d.exists()&&(d.data()||{}).uid!==me)return true}catch(e){}
+    try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"rank"),FS.where("nick","==",n),FS.limit(5)));let t=false;sn.forEach(d=>{if(d.id!==me)t=true});if(t)return true}catch(e){}return false}
+  async function nickClaim(n,me){try{const ref=FS.doc(fdb,"nick",nickKey(n)),d=await FS.getDoc(ref);if(d.exists())return (d.data()||{}).uid===me;await FS.setDoc(ref,{uid:me,at:Date.now()});return true}catch(e){return null}} // true 내 것, false 남의 것, null 확인 못 함
+  async function nickFree(n,me){if(!n||!me)return;try{const ref=FS.doc(fdb,"nick",nickKey(n)),d=await FS.getDoc(ref);if(d.exists()&&(d.data()||{}).uid===me)await FS.deleteDoc(ref)}catch(e){}}
+  async function nickCheck(){const me=uid,n=nick;if(!me||!n)return;const r=await nickClaim(n,me);if(r===false&&uid===me)toast("닉네임이 다른 사람과 겹쳐요. 로그인 칸에서 새 닉네임으로 바꿔 주세요")}
   const showNick=id=>{const n=nick||id;acct.textContent=n;acct.classList.toggle("egg",!!store.get("tt-egg",false));$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
     try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
@@ -2156,19 +2164,22 @@ async function initCloud(){if(!FB_CONFIG)return;
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();ddScan();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();ddScan();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
-    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart()}
+    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart();nickCheck()}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
   $("lg-up").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}if(pw.length<6){msg("비밀번호 6자 이상");return}
     pendNick=cleanNick($("lg-nick").value);if(!pendNick){msg("닉네임을 정해 주세요");return}
+    msg("확인 중");if(await nickTaken(pendNick,null)){msg("이미 있는 닉네임");return}
     msg("가입 중");fresh=true;try{await AU.createUserWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value="";$("lg-nick").value=""}catch(e){fresh=false;msg(errText(e))}};
   $("lg-pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("lg-in").click()});
-  $("lg-nickset").onclick=async()=>{const n=cleanNick($("lg-nick2").value);if(!n||!uid){sync("닉네임을 적어 주세요");return}
+  $("lg-nickset").onclick=async()=>{const n=cleanNick($("lg-nick2").value);if(!n||!uid){sync("닉네임을 적어 주세요");return}const me=uid,old=nick;if(n===old){sync("지금 닉네임이에요");return}
+    sync("확인 중");if(await nickTaken(n,me)){sync("이미 있는 닉네임");return}const r=await nickClaim(n,me);if(r===false){sync("이미 있는 닉네임");return}if(uid!==me)return;
+    if(nickKey(old)!==nickKey(n))nickFree(old,me);
     nick=n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
   $("lg-out").onclick=async()=>{clearTimeout(pushT);try{if(vsHooks.leave)await vsHooks.leave(true)}catch(e){}if(uid)await push();uid=null;lastRank="";await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
   // 내 데이터 내보내기·계정 삭제 (3.2.16, 개인정보보호법 열람·삭제 요구 대비)
-  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나)
+  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나), nick/{키}(uid가 나)
   const exMsg=t=>$("lg-exmsg").textContent=t||"",delMsg=t=>$("lg-delmsg").textContent=t||"";
   const allDays=()=>{const out=[],today=todayKey();for(let d=D_FROM;d<=today;d=dShift(d,1))out.push(d);return out};
   const allPids=()=>[...new Set([...(Array.isArray(PID_ALL)?PID_ALL:[]),...PRESETS.map(o=>o.id)])];
@@ -2212,6 +2223,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       for(const i of Object.keys(docs.bg))await del(+i?FS.doc(fdb,"bg",me,"s",String(i)):FS.doc(fdb,"bg",me));
       // 친구(3.4.39): 내 목록·요청을 지우고, 상대 쪽에 남은 나도 지워요
       for(const k of ["f","in","out","vi"])for(const id of Object.keys(docs.fr[k]||{})){await del(FS.doc(fdb,"fr",me,k,id));if(k==="f")await del(FS.doc(fdb,"fr",id,"f",me));else if(k==="in")await del(FS.doc(fdb,"fr",id,"out",me));else if(k==="out")await del(FS.doc(fdb,"fr",id,"in",me))}
+      await nickFree(nick,me);
       await del(FS.doc(fdb,"users",me));
       if(fail){go.disabled=false;delMsg("일부 삭제 실패("+fail+"곳). 다시 누르면 남은 것만 지움");return}
       await AU.deleteUser(u)}
