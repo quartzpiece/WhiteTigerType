@@ -362,7 +362,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.15</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.16</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1195,7 +1195,7 @@ function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;
 
 function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   if(!src){const o=PRESETS.find(x=>x.id===curId);if(o&&ta.value.replace(/\s+/g," ").trim()===o.text.replace(/\s+/g," ").trim())S.pid=o.id}
-  S.lines=splitLines(src?src.text:ta.value).filter(l=>prep(l).typ.length);if(!S.lines.length){ta.focus();return}
+  S.lines=splitLines(src?src.text:ta.value).filter(l=>prep(l).typ.length);if(!S.lines.length){ta.focus();return}S.tk=null;S.tl=[];try{if(srvHooks.start)srvHooks.start(S.lines)}catch(e){}
   S.prep=S.lines.map(prep);cubeBegin(S.lines.length);try{if(pianoOn())pnWarm()}catch(e){}KS.run={};KS.runE={};KS.en=false;KS.last=0;KS.view="run";
   Object.assign(S,{at0:Date.now(),activeDone:0,t0:0,log:[],doneStrokes:0,okS:0,frozen:null,newBest:false,best:0,i:0,start:0,totalStrokes:0,totalMs:0,typed:0,correct:0});stats(0);
   $("lines").innerHTML=S.lines.map(l=>"<div"+(isHead(l)?' data-h="1"':"")+">"+esc(l)+"</div>").join("");
@@ -1268,7 +1268,7 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
 function submit(){const now=performance.now();if(now-S.last<120)return;S.last=now;S.live=[0,0];
   const v=typedNow(),t=S.prep[S.i].typ;while(v.length&&v[v.length-1]===" ")v.pop();if(!v.length)return;
   let ok=0,okS=0;t.forEach((ch,i)=>{if(v[i]===ch){ok++;okS+=strokes(ch)}});
-  S.typed+=Math.max(t.length,v.length);S.correct+=ok;
+  S.typed+=Math.max(t.length,v.length);S.correct+=ok;if(S.tl)S.tl[S.i]=v.join("");
   const ms=S.start?now-S.start:0;let sp=0;
   if(ms>300){S.totalStrokes+=okS;S.totalMs+=ms;sp=okS/(ms/60000)}
   const lineAcc=ok/Math.max(t.length,v.length);
@@ -1292,6 +1292,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   const total=S.doneStrokes;let gain=Math.floor(total/10),note="";
   if((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
+  try{if(srvHooks.run)srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre"})}catch(e){}
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   try{if(!((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)))pcAdd(S.lines.join("\n"),(S.src&&S.src.title)||$("ptitle").value||"지문")}catch(e){}
   try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
@@ -1803,6 +1804,8 @@ const dayNum=day=>Math.floor(Date.parse(day+"T00:00:00Z")/86400000);
 function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[day];if(typeof DAILY_HIST[day]==="string"&&DAILY_HIST[day])return DAILY_HIST[day];
   if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length&&day>=DAILY_CUSTOM.start){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
+// 서버(3.5.16): 포인트 랭킹은 클라우드플레어 워커 서버가 계산해요. 연습 시작 때 시작 표를 받고, 끝나면 친 글을 보내요
+const srvHooks={start:null,run:null};
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
 function closePanels(except){["login","rank","fr","settings","daily","vs","shop","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
@@ -1861,7 +1864,20 @@ async function initCloud(){if(!FB_CONFIG)return;
     pushRank();pushing=false;if(again){again=false;push()}}
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
-  async function pushRank(){if(!uid)return;const pt=Math.floor(getTot()),nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",ac=Object.keys(achGet()).sort(),bs=bstGet(),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
+  // 서버(3.5.16): SRV.tot = 서버가 정한 누적 포인트(pts/{uid}.tot). 랭킹 pt는 이 값만 쓸 수 있어요(규칙)
+  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null};
+  async function api(p,b){const u=auth.currentUser;if(!u)return null;try{const tk=await u.getIdToken(),r=await fetch(API+p,{method:"POST",headers:{authorization:"Bearer "+tk,"content-type":"application/json"},body:JSON.stringify(b||{})}),j=await r.json();return r.ok?j:null}catch(e){return null}}
+  async function srvInit(){const me=uid;if(!me)return;let t=null;
+    try{const d=await FS.getDoc(FS.doc(fdb,"pts",me));if(d.exists())t=Math.max(0,Math.floor(Number((d.data()||{}).tot)||0))}catch(e){}
+    if(t===null){const j=await api("/init",{aw:store.get("tt-aw",[])});if(j&&Number.isFinite(j.tot))t=j.tot}
+    if(t===null)try{const d=await FS.getDoc(FS.doc(fdb,"rank",me));t=d.exists()?Math.max(0,Math.floor(Number((d.data()||{}).pt)||0)):0}catch(e){} /* 서버가 안 되면 랭킹 포인트는 그대로 두고 닉네임 등만 올려요 */
+    if(me!==uid||t===null)return;SRV.tot=t;lastRank="";pushRank();srvPrize()}
+  function srvPrize(){if(!uid||SRV.tot===null)return;const me=uid;
+    cfgReady.then(()=>{const sk={},today=todayKey();for(let i=1;i<=7;i++){const day=new Date((dayNum(today)-i)*86400000).toISOString().slice(0,10);try{sk[day]=prep(dailyText(day)).typ.reduce((a,ch)=>a+strokes(ch),0)}catch(e){}}
+      return api("/prize",{sk})}).then(j=>{if(j&&Number.isFinite(j.tot)&&me===uid&&j.tot!==SRV.tot){SRV.tot=j.tot;pushRank()}}).catch(()=>{})}
+  srvHooks.start=lines=>{if(!uid||!auth.currentUser)return;const L=lines;api("/start",{lines:L}).then(j=>{if(j&&j.tk&&S.lines===L)S.tk=j.tk})};
+  srvHooks.run=o=>{const tk=S.tk;S.tk=null;if(!uid||!tk)return;const me=uid;api("/run",{tk,...o}).then(j=>{if(j&&Number.isFinite(j.tot)&&me===uid){SRV.tot=j.tot;pushRank()}})};
+  async function pushRank(){if(!uid||SRV.tot===null)return;const pt=SRV.tot,nm=nick||"",egg=!!store.get("tt-egg",false),tt=titleName(store.get("tt-title",""))?store.get("tt-title",""):"",ac=Object.keys(achGet()).sort(),bs=bstGet(),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
       const alts=[],strip=(...ks)=>{const w={...v};ks.forEach(k=>delete w[k]);return w};if(v.b)alts.push(strip("b"));if(v.a)alts.push(strip("b","a"));if(tt)alts.push(strip("b","a","tt"));if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
@@ -2006,7 +2022,7 @@ async function initCloud(){if(!FB_CONFIG)return;
         toast(won.map(([d,k])=>esc(d.slice(5))+" 오늘의 문장 "+(k+1)+"위 <b>+"+PRIZE[k]+"</b>").join("<br>"))}
     }catch(e){}finally{awarding=false}}
   // 사이트를 켜 둔 채 밤 12시가 지나도 받게, 1분마다 날짜가 바뀌었는지 봐요
-  let awDay=todayKey();setInterval(()=>{const t=todayKey();if(t!==awDay){awDay=t;awardDaily()}},60000);
+  let awDay=todayKey();setInterval(()=>{const t=todayKey();if(t!==awDay){awDay=t;awardDaily();srvPrize()}},60000);
   const runRef=day=>FS.doc(fdb,"daily",day,"runs",uid);
   async function loadDaily(){await cfgReady;const day=todayKey(),txt=dailyText(day);$("daily-date").textContent=day;$("daily-text").textContent=txt;
     const go=$("daily-go"),m=$("daily-msg");go.disabled=true;m.textContent="확인 중";
@@ -2111,7 +2127,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   function frBadge(){const n=FR.in.length;frBtn.textContent=n?"친구 "+n:"친구";frBtn.classList.toggle("req",n>0)}
   async function frInfo(ids,force){const now=Date.now();await Promise.all(ids.filter(id=>id!==uid).map(async id=>{const o=FR.info[id];if(o&&!force&&now-o.t<60000)return;
     try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));FR.info[id]={t:now,v:d.exists()?(d.data()||{}):null}}catch(e){FR.info[id]={t:now,v:null}}}))}
-  const frV=id=>id===uid?{nick:nick,egg:!!store.get("tt-egg",false),tt:store.get("tt-title",""),pt:Math.floor(getTot()),b:bstGet(),a:Object.keys(achGet())}:((FR.info[id]||{}).v||{});
+  const frV=id=>id===uid?{nick:nick,egg:!!store.get("tt-egg",false),tt:store.get("tt-title",""),pt:SRV.tot!==null?SRV.tot:Math.floor(getTot()),b:bstGet(),a:Object.keys(achGet())}:((FR.info[id]||{}).v||{});
   const frNick=(id,fb)=>{const v=frV(id);return v.nick?String(v.nick):(fb||"이름 없음")};
   // 닉네임 오른쪽에 내 메모(회색 작은 글자)
   function frName(id,fb){const e=document.createElement("span");e.className="nm";const v=frV(id);e.textContent=frNick(id,fb);if(v.egg===true)e.classList.add("egg");addTtl(e,typeof v.tt==="string"?v.tt:"");
@@ -2193,14 +2209,14 @@ async function initCloud(){if(!FB_CONFIG)return;
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
   AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
-    if(!user){uid=null;nick="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
+    if(!user){uid=null;nick="";SRV.tot=null;try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
     try{const snap=await FS.getDoc(FS.doc(fdb,"users",user.uid));
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();ddScan();fbAch();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();ddScan();fbAch();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
-    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart();nickCheck()}
+    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart();nickCheck();srvInit()}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
@@ -2215,7 +2231,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     nick=n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
   $("lg-out").onclick=async()=>{clearTimeout(pushT);try{if(vsHooks.leave)await vsHooks.leave(true)}catch(e){}if(uid)await push();uid=null;lastRank="";await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
   // 내 데이터 내보내기·계정 삭제 (3.2.16, 개인정보보호법 열람·삭제 요구 대비)
-  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나), nick/{키}(uid가 나)
+  // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, pts/{uid}(서버 누적 포인트), fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나), nick/{키}(uid가 나)
   const exMsg=t=>$("lg-exmsg").textContent=t||"",delMsg=t=>$("lg-delmsg").textContent=t||"";
   const allDays=()=>{const out=[],today=todayKey();for(let d=D_FROM;d<=today;d=dShift(d,1))out.push(d);return out};
   const allPids=()=>[...new Set([...(Array.isArray(PID_ALL)?PID_ALL:[]),...PRESETS.map(o=>o.id)])];
@@ -2260,7 +2276,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       // 친구(3.4.39): 내 목록·요청을 지우고, 상대 쪽에 남은 나도 지워요
       for(const k of ["f","in","out","vi"])for(const id of Object.keys(docs.fr[k]||{})){await del(FS.doc(fdb,"fr",me,k,id));if(k==="f")await del(FS.doc(fdb,"fr",id,"f",me));else if(k==="in")await del(FS.doc(fdb,"fr",id,"out",me));else if(k==="out")await del(FS.doc(fdb,"fr",id,"in",me))}
       await nickFree(nick,me);
-      await del(FS.doc(fdb,"users",me));
+      await del(FS.doc(fdb,"pts",me));await del(FS.doc(fdb,"users",me));
       if(fail){go.disabled=false;delMsg("일부 삭제 실패("+fail+"곳). 다시 누르면 남은 것만 지움");return}
       await AU.deleteUser(u)}
     catch(e){go.disabled=false;delMsg(/requires-recent-login/.test(e&&e.code||"")?"다시 로그인한 뒤 시도":"삭제 실패"+(fail?" ("+fail+"곳)":""));return}
