@@ -224,6 +224,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
 #fb-text{min-height:90px}
+.mg-u{display:grid;gap:8px;border:1px solid var(--line);padding:10px}.mg-u .row{flex-wrap:wrap}.mg-ach{display:flex;flex-wrap:wrap;gap:6px}.mg-ach button{font-size:12px}
 .fb-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .fb-list li{border:1px solid var(--line);background:var(--bg);padding:10px 12px;display:grid;gap:6px}
 .fb-list .fb-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;color:var(--muted);font-size:.85rem}
@@ -362,7 +363,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.20</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.21</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -435,6 +436,11 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="admin-box" id="fb-admin" hidden>
       <div class="row" style="justify-content:space-between"><span class="set-l">건의함 (관리자)</span><button class="btn acct" id="fb-re" type="button">새로고침</button></div>
       <ol class="fb-list" id="fb-list"></ol>
+    </div>
+    <div class="admin-box" id="mg-admin" hidden>
+      <span class="set-l">사용자 관리 (관리자)</span>
+      <div class="row"><input class="ptitle" id="mg-q" aria-label="찾을 닉네임" placeholder="닉네임 또는 uid" maxlength="40"><button class="btn acct" id="mg-find" type="button">찾기</button><span class="hint" id="mg-msg" aria-live="polite"></span></div>
+      <div id="mg-out"></div>
     </div>
     <p class="hint" style="margin:12px 0 0"><a href="https://quartzpiece.github.io/WhiteTigerType/about/" style="color:inherit">사이트 소개·사용법</a></p>
   </section>
@@ -1730,15 +1736,14 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(j.ach&&typeof j.ach==="object"){const old=achGet(),A={};ACH.forEach(a=>{if(Number(j.ach[a.id])>0)A[a.id]=Number(j.ach[a.id])});const nw=ACH.filter(a=>A[a.id]&&!old[a.id]);store.set("tt-ach",A);SRV.al=Array.isArray(j.al)?j.al.slice():Object.keys(j.ach).sort();if(nw.length&&!achQuiet)achToast(nw);try{if(!$("rec").hidden)drawAch()}catch(e){}}
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook()}}
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
-    if(typeof j.nick==="string")SRV.nick=j.nick;
+    if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
     try{const d=await FS.getDoc(FS.doc(fdb,"pts",me));if(d.exists()){const v=d.data()||{};if(v._m===2)j=v}}catch(e){}
     if(!j){const r=await api("/init",{aw:store.get("tt-aw",[])});if(r&&!r.err&&Number.isFinite(r.tot))j=r}
     if(me!==uid)return;
     if(j){ /* 3.5.19: 닉네임은 서버가 정해요(랭킹 규칙이 pts.nick과 같은지 봐요) */
-      if(nick&&j.nick!==nick){const r=await api("/nick",{nick});if(me!==uid)return;if(r&&!r.err&&typeof r.nick==="string")j.nick=r.nick;else if(r&&r.code===409)toast("닉네임이 다른 사람과 겹쳐요. 로그인 칸에서 새 닉네임으로 바꿔 주세요")}
-      if(typeof j.nick==="string"&&j.nick&&j.nick!==nick){nick=j.nick;showNick(auth.currentUser.email.split("@")[0]);cloudHook()}
+      if(nick&&!j.nick){const r=await api("/nick",{nick});if(me!==uid)return;if(r&&!r.err&&typeof r.nick==="string")j.nick=r.nick;else if(r&&r.code===409)toast("닉네임이 다른 사람과 겹쳐요. 로그인 칸에서 새 닉네임으로 바꿔 주세요")}
       srvApply(j);srvPrize();return}
     /* 서버가 안 되면 랭킹 문서는 닉네임만 바꿔요(나머지는 그대로여야 규칙이 받아요) */
     try{const d=await FS.getDoc(FS.doc(fdb,"rank",me));SRV.frozen=d.exists()?(d.data()||{}):{pt:0};SRV.tot=Math.floor(Number(SRV.frozen.pt)||0);lastRank="";pushRank()}catch(e){}}
@@ -1755,6 +1760,21 @@ async function initCloud(){if(!FB_CONFIG)return;
     api("/buy",{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
+  // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
+  {const mgMsg=t=>{$("mg-msg").textContent=t||""},mgOut=$("mg-out"),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+    const two=(b,t,fn)=>{b.onclick=()=>{if(b.dataset.ok!=="1"){b.dataset.ok="1";const o=b.textContent;b.textContent=t;setTimeout(()=>{b.dataset.ok="";b.textContent=o},3000);return}b.dataset.ok="";fn()}};
+    const act=async(o,box)=>{mgMsg("처리 중");const j=await api("/admin",o);if(!j){mgMsg("서버 연결 실패");return}if(j.err){mgMsg(j.err);return}mgMsg("완료");if(box&&j.uid)box.replaceWith(card(j))};
+    function card(u){const box=el("div","mg-u");
+      const h=el("div","row");h.append(el("b",null,u.nick||"(닉네임 없음)"),el("span","hint",(u.pt||0)+"포인트"+(u.ban?" · 차단됨":"")+(u.rank?"":" · 랭킹 없음")),el("span","hint",u.uid));box.append(h);
+      const r1=el("div","row"),ni=el("input","ptitle");ni.maxLength=12;ni.placeholder="새 닉네임";ni.setAttribute("aria-label","새 닉네임");const nb=el("button","btn acct","닉네임 바꾸기");nb.type="button";
+      nb.onclick=()=>{const n=ni.value.trim();if(!n){mgMsg("새 닉네임을 적어 주세요");return}act({act:"nick",uid:u.uid,nick:n},box)};r1.append(ni,nb);box.append(r1);
+      const ac=el("div","mg-ach");if(!u.al.length)ac.append(el("span","hint","업적 없음"));
+      u.al.forEach(id=>{const a=ACH.find(x=>x.id===id),b=el("button","btn acct",(a?a.name:id)+" ×");b.type="button";b.title="업적 회수";two(b,"회수?",()=>act({act:"unach",uid:u.uid,id},box));ac.append(b)});box.append(ac);
+      const r2=el("div","row"),bb=el("button","btn acct",u.ban?"차단 풀기":"차단");bb.type="button";two(bb,u.ban?"풀까요?":"차단할까요?",()=>act({act:u.ban?"unban":"ban",uid:u.uid},box));r2.append(bb);box.append(r2);
+      return box}
+    $("mg-find").onclick=async()=>{const q=$("mg-q").value.trim();if(!q){mgMsg("닉네임을 적어 주세요");return}mgMsg("찾는 중");mgOut.innerHTML="";const j=await api("/admin",{act:"find",q});
+      if(!j){mgMsg("서버 연결 실패");return}if(j.err){mgMsg(j.err);return}mgMsg(j.list.length?"":"없어요");j.list.forEach(u=>mgOut.append(card(u)))};
+    $("mg-q").addEventListener("keydown",e=>{if(e.key==="Enter")$("mg-find").click()})}
   async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=F?(typeof F.nick==="string"?F.nick:(nick||"")):(SRV.nick||nick||""),egg=F?F.egg===true:!!SRV.egg,tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
@@ -2085,7 +2105,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;if(!$("shop").hidden)drawShop();
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();
     if(!user){uid=null;nick="";SRV.tot=null;try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
