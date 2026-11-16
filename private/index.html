@@ -362,7 +362,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.17</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.18</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1287,7 +1287,9 @@ function burst(){if(document.documentElement.dataset.skin!=="rainbow"||!fxOn()||
   ring.animate([{transform:"scale(1)",opacity:1},{transform:"scale(1.025,1.15)",opacity:1,offset:.35},{transform:"scale(1.06,1.4)",opacity:0}],{duration:750,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=()=>ring.remove()}
 function finish(){$("bar").style.width="100%";cubeBar();
   S.frozen=speeds(performance.now());const avg=S.frozen[1],acc=S.typed?Math.round(S.correct/S.typed*100):100;
-  stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";try{runAdd(avg,acc);kbSave()}catch(e){}
+  // 3.5.18: 내 지문이 0점 기준(반복 글·낱자 등)에 걸리면 업적·최고 타수에 안 쳐요
+  const junk=((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))&&mineQ(S.lines.join("")).q===0;S.junk=junk;
+  stats();$("result").textContent="평균 타수: "+avg+"  ·  정확도: "+acc+"%";try{runAdd(avg,acc,junk);kbSave()}catch(e){}
   // 연습을 마치면 총 타수의 1할(10%, 소수점 버림)만큼 포인트를 줘요
   const total=S.doneStrokes;let gain=Math.floor(total/10),note="";
   if((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
@@ -1295,8 +1297,8 @@ function finish(){$("bar").style.width="100%";cubeBar();
   try{if(srvHooks.run)S.runP=srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre",ms:Math.max(1,Math.round(S.activeDone)),kb:KBL(),...(S.pid?{pid:S.pid}:{}),...(S.src&&S.src.book?{book:{id:S.src.book,para:S.src.para}}:{})})}catch(e){}
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   try{if(!((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)))pcAdd(S.lines.join("\n"),(S.src&&S.src.title)||$("ptitle").value||"지문")}catch(e){}
-  try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
-  try{const nw=achCheck({spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem",mine:!S.src&&!isPre(curId)})}catch(e){}
+  if(!junk)try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
+  try{const nw=achCheck(junk?undefined:{spd:avg,acc,strokes:total,anthem:!S.src&&curId==="preset-anthem",mine:!S.src&&!isPre(curId)})}catch(e){}
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.vs&&vsHooks.finish)try{vsHooks.finish(avg,acc)}catch(e){}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
@@ -1428,10 +1430,10 @@ function drawKb(){const w=$("kbw"),VK=recK(),EN=VK==="en",RUN=EN?KS.runE:KS.runK
 }
 // 내 기록: 연습을 끝까지 마칠 때마다 tt-runs에 {at, t(제목), s(평균 타수), a(정확도), n(줄 수)}를 200개까지 쌓아요(로그인하면 클라우드에도)
 const runsGet=()=>{const r=store.get("tt-runs",[]);return Array.isArray(r)?r.filter(x=>x&&Number.isFinite(Number(x.at))&&Number.isFinite(Number(x.s))):[]};
-function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0)),...(x.k==="390"||x.k==="en"?{k:x.k}:{})})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
+function runsClean(L){const m=new Map();L.forEach(x=>{if(!x||!Number.isFinite(Number(x.at)))return;m.set(Number(x.at),{at:Number(x.at),t:String(x.t||"").slice(0,60),s:Math.max(0,Math.round(Number(x.s)||0)),a:Math.min(100,Math.max(0,Math.round(Number(x.a)||0))),n:Math.max(0,Math.round(Number(x.n)||0)),...(x.k==="390"||x.k==="en"?{k:x.k}:{}),...(x.z?{z:1}:{})})});return [...m.values()].sort((a,b)=>a.at-b.at).slice(-200)}
 /* 영어 지문(3.5.15): 알파벳이 한글보다 많으면 영타 기록 */
 const runEn=()=>{const t=(S.lines||[]).join("");return (t.match(/[A-Za-z]/g)||[]).length>(t.match(/[가-힣ㄱ-ㅎㅏ-ㅣ]/g)||[]).length};
-function runAdd(s,a){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(runEn()?{k:"en"}:KBL()==="390"?{k:"390"}:{})}])));{const b=bstGet();if(b>(Number(store.get("tt-bst",0))||0))store.set("tt-bst",b)}}
+function runAdd(s,a,z){const t=(S.src&&S.src.title)||$("ptitle").value||"지문";store.set("tt-runs",runsClean(runsGet().concat([{at:Date.now(),t,s,a,n:S.lines.length,...(runEn()?{k:"en"}:KBL()==="390"?{k:"390"}:{}),...(z?{z:1}:{})}])));{const b=bstGet();if(b>(Number(store.get("tt-bst",0))||0))store.set("tt-bst",b)}}
 const recDate=t=>{const d=new Date(Number(t)+9*3600e3),z=n=>String(n).padStart(2,"0");return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+" "+z(d.getUTCHours())+":"+z(d.getUTCMinutes())};
 function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=>(x.k||"2")===VK),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
   const sum=$("rec-sum");sum.innerHTML="";const last=R.slice(-10),avg=L=>L.length?Math.round(L.reduce((a,x)=>a+x.s,0)/L.length):0,acc=L=>L.length?Math.round(L.reduce((a,x)=>a+x.a,0)/L.length):0;
@@ -1621,7 +1623,7 @@ const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하�
   {id:"d-month",name:"개근상",desc:"1달간 하루도 빠짐없이 오늘의 문장에 참여하기",ok:()=>ddFull()}, // 3.4.30. 달력 한 달(1일~말일) 모두 참여, 30일 연속 아님
   {id:"p-100",name:"집념의 화신",desc:"한 지문 100번 연습하기",goal:100,cnt:R=>pcBest(R).n,lab:R=>pcBest(R).t}, // 3.4.32
   {id:"b-10",name:"집념의 광인",desc:"한 책 10번 필사 완료하기",goal:10,cnt:()=>bkBest().n,lab:()=>bkBest().t}, // 3.5.5: 모든 문단을 실제로 쳐야 1번(bkMark)
-  {id:"p-both",name:"만능",desc:"두벌식과 세벌식 모두에서 300타 이상 달성하기",ok:()=>{const R=runsGet();return R.some(x=>!x.k&&x.s>=300)&&R.some(x=>x.k==="390"&&x.s>=300)}}, // 3.4.33. 평균 타수 기준, 세벌식은 390·390(내 입력기) 둘 다
+  {id:"p-both",name:"만능",desc:"두벌식과 세벌식 모두에서 300타 이상 달성하기",ok:()=>{const R=runsGet();return R.some(x=>!x.k&&!x.z&&x.s>=300)&&R.some(x=>x.k==="390"&&!x.z&&x.s>=300)}}, // 3.4.33. 평균 타수 기준, 세벌식은 390·390(내 입력기) 둘 다
   {id:"t-cinder",name:"신데렐라",desc:"밤 11시 59분에 시작해서 12시를 넘겨 끝내기",hide:1}, // 3.4.35. 달성 전엔 "???"(사용자 요청). 한국 시간, 연습 시작 23:59 + 끝낸 날짜가 다음 날
   {id:"e-fb",name:"불만스런",desc:"건의 1회 보내기",hide:1}, // 3.5.10: 건의를 보내면(예전에 보낸 건의도 로그인 때 확인)
   {id:"e-bug",name:"벌레잡이",desc:"건의로 버그 1회 신고하기",hide:1}, // 3.5.11: 관리자가 건의함에서 "버그"로 표시한 건의(fb.bug=true)가 있으면
@@ -1659,7 +1661,7 @@ function pcAdd(text,title){const A=pcGet(),k=pcKey(text);A[k]=(A[k]||0)+1;const 
 function fmClean(o){const r={};if(o&&typeof o==="object"&&!Array.isArray(o))for(const k in o)if(/^[\w@.-]{4,128}$/.test(k)&&typeof o[k]==="string"&&o[k].trim())r[k]=[...o[k].trim()].slice(0,10).join("");return r}
 const fmGet=()=>fmClean(store.get("tt-fm",{}));
 // 최고 타수(3.4.39, 친구 목록용): 정확도 80% 이상 연습의 평균 타수 중 최고. 기록이 200개를 넘어 밀려도 남게 tt-bst에 따로 둬요
-function bstGet(){let b=Math.max(0,Math.round(Number(store.get("tt-bst",0))||0));runsGet().forEach(x=>{if(x.a>=80&&x.s<3000&&x.s>b)b=x.s});return b}
+function bstGet(){let b=Math.max(0,Math.round(Number(store.get("tt-bst",0))||0));runsGet().forEach(x=>{if(!x.z&&x.a>=80&&x.s<3000&&x.s>b)b=x.s});return b}
 const pcnGet=()=>{const v=store.get("tt-pcn",{});return v&&typeof v==="object"&&!Array.isArray(v)?v:{}};
 function pcnMerge(src){if(!src||typeof src!=="object"||Array.isArray(src))return;const N=pcnGet();let ch=false;for(const k in src)if(typeof src[k]==="string"&&!N[k]&&/^[0-9a-z]{2,20}$/.test(k)){N[k]=src[k].slice(0,40);ch=true}if(ch)store.set("tt-pcn",N)}
 // 3.4.38: 내 지문은 안 셈(사용자 요청). 예전에 센 내 지문도 지금 내 지문 목록과 글·제목으로 맞춰서 빼요
