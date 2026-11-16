@@ -362,7 +362,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.18</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.19</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1294,7 +1294,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   const total=S.doneStrokes;let gain=Math.floor(total/10),note="";
   if((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
-  try{if(srvHooks.run)S.runP=srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre",ms:Math.max(1,Math.round(S.activeDone)),kb:KBL(),...(S.pid?{pid:S.pid}:{}),...(S.src&&S.src.book?{book:{id:S.src.book,para:S.src.para}}:{})})}catch(e){}
+  try{if(srvHooks.run)S.runP=srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre",ms:Math.max(1,Math.round(S.activeDone)),kb:KBL(),...(S.pid?{pid:S.pid}:{}),...(S.src&&S.src.book?{book:{id:S.src.book,para:S.src.para}}:{}),...(S.src&&S.src.vs&&vsHooks.code&&vsHooks.code()?{vs:vsHooks.code()}:{})})}catch(e){}
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   try{if(!((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)))pcAdd(S.lines.join("\n"),(S.src&&S.src.title)||$("ptitle").value||"지문")}catch(e){}
   if(!junk)try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
@@ -1859,9 +1859,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   const nickKey=n=>"n_"+encodeURIComponent(String(n||"").toLowerCase().replace(/\s+/g,""));
   async function nickTaken(n,me){try{const d=await FS.getDoc(FS.doc(fdb,"nick",nickKey(n)));if(d.exists()&&(d.data()||{}).uid!==me)return true}catch(e){}
     try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"rank"),FS.where("nick","==",n),FS.limit(5)));let t=false;sn.forEach(d=>{if(d.id!==me)t=true});if(t)return true}catch(e){}return false}
-  async function nickClaim(n,me){try{const ref=FS.doc(fdb,"nick",nickKey(n)),d=await FS.getDoc(ref);if(d.exists())return (d.data()||{}).uid===me;await FS.setDoc(ref,{uid:me,at:Date.now()});return true}catch(e){return null}} // true 내 것, false 남의 것, null 확인 못 함
   async function nickFree(n,me){if(!n||!me)return;try{const ref=FS.doc(fdb,"nick",nickKey(n)),d=await FS.getDoc(ref);if(d.exists()&&(d.data()||{}).uid===me)await FS.deleteDoc(ref)}catch(e){}}
-  async function nickCheck(){const me=uid,n=nick;if(!me||!n)return;const r=await nickClaim(n,me);if(r===false&&uid===me)toast("닉네임이 다른 사람과 겹쳐요. 로그인 칸에서 새 닉네임으로 바꿔 주세요")}
   const showNick=id=>{const n=nick||id;acct.textContent=n;acct.classList.toggle("egg",!!store.get("tt-egg",false));$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
     try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
@@ -1869,7 +1867,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
   // 서버(3.5.16~): 포인트·상점·업적은 워커 서버(pts/{uid})가 정해요. 랭킹 문서는 서버 값(SRV)만 쓸 수 있어요(규칙)
-  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null};
+  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null};
   async function api(p,b){const u=auth.currentUser;if(!u)return null;try{const tk=await u.getIdToken(),r=await fetch(API+p,{method:"POST",headers:{authorization:"Bearer "+tk,"content-type":"application/json"},body:JSON.stringify(b||{})});let j=null;try{j=await r.json()}catch(e){}return r.ok?j:{err:(j&&j.err)||"서버 오류",code:r.status}}catch(e){return null}}
   // 서버가 준 값을 사이트에 반영: 포인트·산 것·업적(서버가 준 것만 남아요)
   function srvApply(j){if(!j||j.err)return;if(Number.isFinite(j.tot)){SRV.tot=j.tot;SRV.frozen=null;store.set("tt-tot",j.tot)}
@@ -1879,12 +1877,16 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(j.ach&&typeof j.ach==="object"){const old=achGet(),A={};ACH.forEach(a=>{if(Number(j.ach[a.id])>0)A[a.id]=Number(j.ach[a.id])});const nw=ACH.filter(a=>A[a.id]&&!old[a.id]);store.set("tt-ach",A);SRV.al=Array.isArray(j.al)?j.al.slice():Object.keys(j.ach).sort();if(nw.length&&!achQuiet)achToast(nw);try{if(!$("rec").hidden)drawAch()}catch(e){}}
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook()}}
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
+    if(typeof j.nick==="string")SRV.nick=j.nick;
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
     try{const d=await FS.getDoc(FS.doc(fdb,"pts",me));if(d.exists()){const v=d.data()||{};if(v._m===2)j=v}}catch(e){}
     if(!j){const r=await api("/init",{aw:store.get("tt-aw",[])});if(r&&!r.err&&Number.isFinite(r.tot))j=r}
     if(me!==uid)return;
-    if(j){srvApply(j);srvPrize();return}
+    if(j){ /* 3.5.19: 닉네임은 서버가 정해요(랭킹 규칙이 pts.nick과 같은지 봐요) */
+      if(nick&&j.nick!==nick){const r=await api("/nick",{nick});if(me!==uid)return;if(r&&!r.err&&typeof r.nick==="string")j.nick=r.nick;else if(r&&r.code===409)toast("닉네임이 다른 사람과 겹쳐요. 로그인 칸에서 새 닉네임으로 바꿔 주세요")}
+      if(typeof j.nick==="string"&&j.nick&&j.nick!==nick){nick=j.nick;showNick(auth.currentUser.email.split("@")[0]);cloudHook()}
+      srvApply(j);srvPrize();return}
     /* 서버가 안 되면 랭킹 문서는 닉네임만 바꿔요(나머지는 그대로여야 규칙이 받아요) */
     try{const d=await FS.getDoc(FS.doc(fdb,"rank",me));SRV.frozen=d.exists()?(d.data()||{}):{pt:0};SRV.tot=Math.floor(Number(SRV.frozen.pt)||0);lastRank="";pushRank()}catch(e){}}
   function srvPrize(){if(!uid||SRV.tot===null||SRV.frozen)return;const me=uid;
@@ -1900,7 +1902,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     api("/buy",{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
-  async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=nick||"",egg=F?F.egg===true:!!SRV.egg,tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
+  async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=F?(typeof F.nick==="string"?F.nick:(nick||"")):(SRV.nick||nick||""),egg=F?F.egg===true:!!SRV.egg,tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
       const alts=[],strip=(...ks)=>{const w={...v};ks.forEach(k=>delete w[k]);return w};if(v.b)alts.push(strip("b"));if(v.a)alts.push(strip("b","a"));if(tt)alts.push(strip("b","a","tt"));if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
@@ -2110,7 +2112,8 @@ async function initCloud(){if(!FB_CONFIG)return;
     const step=()=>{n--;if(n>0){ov.textContent=n;setTimeout(step,1000)}else{ov.remove();VS.go=performance.now();begin({title:"대전 · "+(R.title||"지문"),text:R.text,vs:true,pre:!!R.pre});vsBars()}};setTimeout(step,1000)}
   vsHooks.prog=f=>{if(!VS.code||!VS.room)return;VS.lastF=f;vsBars();const now=Date.now();clearTimeout(VS.pT);const w=()=>{VS.lastW=Date.now();FS.updateDoc(vpRef(VS.code,uid),{f:Math.round(f*1000)/1000,at:Date.now()}).catch(()=>{})};if(now-VS.lastW>800)w();else VS.pT=setTimeout(w,800)};
   vsHooks.finish=(spd,acc)=>{if(!VS.code||!VS.room)return;clearTimeout(VS.pT);const ms=Math.max(1,Math.round(performance.now()-VS.go));VS.lastF=1;
-    FS.updateDoc(vpRef(VS.code,uid),{f:1,done:ms,spd:spd,acc:acc,at:Date.now()}).catch(()=>{});setTimeout(openVs,0)};
+    FS.updateDoc(vpRef(VS.code,uid),{f:1,at:Date.now()}).catch(()=>{});setTimeout(openVs,0)}; /* 3.5.19: 걸린 시간·타수·정확도는 서버가 써요(/run의 vs) */
+  vsHooks.code=()=>VS.code||"";
   async function vsMake(){if(!uid)return "";$("vs-make").disabled=true;vMsg("만드는 중");
     try{let c="";for(let t=0;t<12&&!c;t++){const x=String(1000+Math.floor(Math.random()*9000)),sn=await FS.getDoc(vRef(x));if(!sn.exists()||!(sn.data().at>Date.now()-6*3600e3))c=x}
       if(!c){vMsg("다시 눌러 주세요");$("vs-make").disabled=false;return ""}
@@ -2124,7 +2127,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   $("vs-code-in").addEventListener("keydown",e=>{if(e.key==="Enter")$("vs-join").click()});
   $("vs-leave").onclick=()=>vsLeave(false);vsHooks.leave=vsLeave;
   $("vs-ready").onclick=()=>{const R=VS.room;if(!R)return;const me=vsPlayers().find(x=>x.id===uid);FS.updateDoc(vpRef(VS.code,uid),{rd:me&&me.rd===R.r?0:R.r,at:Date.now()}).catch(()=>vMsg("실패"))};
-  $("vs-start").onclick=()=>{const R=VS.room;if(!R||R.host!==uid)return;FS.updateDoc(vRef(VS.code),{st:"play",at:Date.now()}).catch(()=>vMsg("실패"))};
+  $("vs-start").onclick=()=>{const R=VS.room;if(!R||R.host!==uid)return;api("/vsgo",{code:VS.code}).then(j=>{if(!j||j.err)vMsg((j&&j.err)||"서버 연결 실패")})}; /* 3.5.19: 시작 시각은 서버가 적어요 */
   $("vs-again").onclick=()=>{const R=VS.room;if(!R||R.host!==uid)return;FS.updateDoc(vRef(VS.code),{st:"wait",r:R.r+1,at:Date.now()}).catch(()=>vMsg("실패"))};
   // 방장 지문 고르기: 기존 지문 목록 화면에서 고르고 "이 지문으로 대전"
   $("vs-pickbtn").onclick=()=>{vsHooks.picking=true;document.documentElement.classList.add("vspick");if(selBook)try{loadCur()}catch(e){}vsCard.hidden=true;show("setup");$("vs-pick").hidden=false;$("start").dataset.t=$("start").textContent;$("start").textContent="이 지문으로 대전"};
@@ -2237,7 +2240,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       if(snap.exists()&&!fresh){nick=cleanNick(snap.data().nick)||id;showNick(id);achQuiet=new Set(Object.keys(achGet()));applying=true;try{clearMine();applyData(snap.data())}finally{applying=false;achQuiet=null}uid=user.uid;sync("불러오기 완료");pushRank();{const sa=snap.data().ach||{};if(Object.keys(achGet()).some(k=>!sa[k]))cloudHook()} /* 불러오면서 새로 얻은 업적도 계정에 저장(3.4.19) */awardDaily();ddScan();fbAch();bgHook.load()}
       else{uid=user.uid;fresh=false;await push();awardDaily();ddScan();fbAch();bgHook.pushAll()}
     }catch(e){uid=user.uid;sync("불러오기 실패")}
-    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart();nickCheck();srvInit()}
+    if(uid){frBtn.hidden=false;$("rank-fo").hidden=false;frStart();srvInit()}
     panel.hidden=true});
   $("lg-in").onclick=async()=>{const id=getId(),pw=$("lg-pw").value;if(!id){msg("아이디는 영문 소문자·숫자·_ 3~20자");return}
     msg("확인 중");try{await AU.signInWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value=""}catch(e){msg(errText(e))}};
@@ -2247,9 +2250,8 @@ async function initCloud(){if(!FB_CONFIG)return;
     msg("가입 중");fresh=true;try{await AU.createUserWithEmailAndPassword(auth,mail(id),pw);$("lg-pw").value="";$("lg-nick").value=""}catch(e){fresh=false;msg(errText(e))}};
   $("lg-pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("lg-in").click()});
   $("lg-nickset").onclick=async()=>{const n=cleanNick($("lg-nick2").value);if(!n||!uid){sync("닉네임을 적어 주세요");return}const me=uid,old=nick;if(n===old){sync("지금 닉네임이에요");return}
-    sync("확인 중");if(await nickTaken(n,me)){sync("이미 있는 닉네임");return}const r=await nickClaim(n,me);if(r===false){sync("이미 있는 닉네임");return}if(uid!==me)return;
-    if(nickKey(old)!==nickKey(n))nickFree(old,me);
-    nick=n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
+    sync("확인 중");if(await nickTaken(n,me)){sync("이미 있는 닉네임");return}const r=await api("/nick",{nick:n});if(uid!==me)return;if(!r){sync("서버 연결 실패");return}if(r.err){sync(r.code===409?"이미 있는 닉네임":r.err);return} /* 3.5.19: 서버가 차지하고 예전 닉네임은 풀어 줘요 */
+    srvApply(r);nick=r.nick||n;lastRank="";showNick(auth.currentUser.email.split("@")[0]);$("lg-nick2").value="";clearTimeout(pushT);await push()};
   $("lg-out").onclick=async()=>{clearTimeout(pushT);try{if(vsHooks.leave)await vsHooks.leave(true)}catch(e){}if(uid)await push();uid=null;lastRank="";await AU.signOut(auth);applying=true;try{clearMine()}finally{applying=false}sync("");panel.hidden=true};
   // 내 데이터 내보내기·계정 삭제 (3.2.16, 개인정보보호법 열람·삭제 요구 대비)
   // 계정에 묶인 곳: users/{uid}, rank/{uid}, daily/{날짜}/runs/{uid}, prank/{지문}/runs/{uid}, fb(uid가 나), bg/{uid}, bg/{uid}/s/1~9, pts/{uid}(서버 누적 포인트), fr/{uid}/f·in·out·vi(+상대 쪽 f·in·out의 나), nick/{키}(uid가 나)
