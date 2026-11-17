@@ -364,7 +364,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.23</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.24</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -670,18 +670,7 @@ function cbTick(now){if(!CB.run)return;requestAnimationFrame(cbTick);if(document
       const st=q.st.find(t=>t.n[a]===s);if(!st)continue;const C=CUBE_RGB[st.c],g=.35+.65*lt+.25*u;
       ctx.fillStyle="rgb("+C.map(x=>Math.min(255,Math.round(x*g))).join(",")+")";const sp2=quad(hs);ctx.beginPath();sp2.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill()}}}
 let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
-// 이스터에그: 내 지문으로 이 문장을 끝까지 치면 닉네임이 테마 색으로 강조돼요
-const EGG="무지개를바라보는이의눈동자엔무지갯빛세상이비치기마련";
-const isEgg=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===EGG;
-// 눈꽃 이스터에그: 내 지문으로 이 문장을 끝까지 치면 배경에 눈이 내려요(창 뒤로만)
-const SNOW="스스로얼어붙으며온기를선물하는눈꽃처럼";
-const isSnow=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===SNOW;
-// 비 이스터에그: 내 지문으로 이 문장을 끝까지 치면 배경에 비가 내려요(창 뒤로만)
-const RAIN="이제는하나둘검은안개에서벗어나바람을맞으며유영하고";
-const isRain=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===RAIN;
-// 피아노 이스터에그: 내 지문으로 이 문장을 끝까지 치면 연습할 때 키마다 피아노 음이 나요
-const PIANO="작은자판을두드리는소리조차삶속에화음을더하고";
-const isPiano=t=>t.normalize("NFC").replace(/[^가-힣A-Za-z0-9]/g,"")===PIANO;
+// 이스터에그(무지갯빛·눈·비·피아노): 3.5.24부터 서버가 판정해요(글은 서버에만 있어요). 사이트는 서버가 준 값(pts.egg, pts.eg)만 따라요
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-dd","tt-pc","tt-pcn","tt-fm","tt-bst","tt-bkr","tt-bkc","tt-bkm","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-keys","tt-keys3","tt-keyse","tt-ach"].includes(k))cloudHook()}};
 
 // 타수: 실제로 누르는 자판 수 (한글은 자모 단위, 겹모음·겹받침은 2타)
@@ -1168,10 +1157,6 @@ function finish(){$("bar").style.width="100%";cubeBar();
   if(S.src&&S.src.book){bookDone(S.src,gain);return}
   if(S.src&&S.src.vs&&vsHooks.finish)try{vsHooks.finish(avg,acc)}catch(e){}
   if(S.src&&S.src.daily){const ms=Math.max(1,Math.round(S.activeDone));$("result").textContent="오늘의 문장: "+(ms/1000).toFixed(2)+"초  ·  정확도: "+acc+"%";if(dailyHooks.finish)dailyHooks.finish(ms,acc)}
-  else if(!S.src&&!String(curId).startsWith("preset-")&&isRain(S.lines.join(""))&&!store.get("tt-rain",false)){store.set("tt-rain",true);store.set("tt-rainfx",true);applyRain();$("result-sub").textContent+="  ·  ☂"}
-  else if(!S.src&&!String(curId).startsWith("preset-")&&isPiano(S.lines.join(""))&&!store.get("tt-piano",false)){store.set("tt-piano",true);store.set("tt-pianofx",true);applyPiano();$("result-sub").textContent+="  ·  ♪"}
-  else if(!S.src&&!String(curId).startsWith("preset-")&&isSnow(S.lines.join(""))&&!store.get("tt-snow",false)){store.set("tt-snow",true);store.set("tt-snowfx",true);applySnow();$("result-sub").textContent+="  ·  ❄"}
-  else if(!S.src&&!String(curId).startsWith("preset-")&&isEgg(S.lines.join(""))&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook();$("result-sub").textContent+="  ·  ✦"}
   else if(S.pid&&dailyHooks.preset)dailyHooks.preset(S.pid,avg,acc,Math.max(1,Math.round(S.activeDone)));
   try{achCheck()}catch(e){}
   show("done")}
@@ -1751,7 +1736,8 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(Array.isArray(j.inv)){SRV.inv=j.inv.slice();store.set("tt-inv",j.inv.slice())}
     if(Number.isFinite(j.bgs))store.set("tt-bgslots",j.bgs);
     if(j.ach&&typeof j.ach==="object"){const old=achGet(),A={};ACH.forEach(a=>{if(Number(j.ach[a.id])>0)A[a.id]=Number(j.ach[a.id])});const nw=ACH.filter(a=>A[a.id]&&!old[a.id]);store.set("tt-ach",A);SRV.al=Array.isArray(j.al)?j.al.slice():Object.keys(j.ach).sort();if(nw.length&&!achQuiet)achToast(nw);try{if(!$("rec").hidden)drawAch()}catch(e){}}
-    if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook()}}
+    if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg!==(store.get("tt-egg",false)===true)){store.set("tt-egg",j.egg);applyHolo();if(eggHook)eggHook()}}
+    if(j.eg&&typeof j.eg==="object")[["snow",applySnow],["rain",applyRain],["piano",applyPiano]].forEach(([k,fn])=>{const v=j.eg[k]===true;if(v!==(store.get("tt-"+k,false)===true)){store.set("tt-"+k,v);if(v)store.set("tt-"+k+"fx",true);try{fn()}catch(e){}}}); /* 3.5.24 이스터에그는 서버 값만 */
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
     if(Number.isFinite(j.tk))SRV.tk=j.tk;
     if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
@@ -1773,7 +1759,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.start=()=>{if(!uid||!auth.currentUser)return;const L=S.lines,day=S.src&&S.src.daily?dDay:"";
     S.tkP=api("/start",{lines:L,nick:nick||"",...(day?{daily:day}:{})}).then(j=>{if(day&&j&&!j.err){ddMerge([day]);try{achCheck()}catch(e){}}return j&&!j.err?j:null})};
   srvHooks.run=o=>{const P=S.tkP;S.tkP=null;if(!uid||!P)return Promise.resolve(null);const me=uid;
-    return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid)srvApply(j);return j})};
+    return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid){srvApply(j);
+      if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
   srvHooks.buy=it=>{if(!srvOn())return false;const m=$("shop-msg");m.textContent="구매 중";
     api("/buy",{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
