@@ -155,6 +155,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rank-h{font-family:var(--display);font-weight:400;font-size:1.25rem}
 .shop{display:grid;gap:12px}
 .shop-empty{margin:0;padding:28px 10px;text-align:center;border:1px dashed var(--line);color:var(--muted)}
+.gc{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.gc-res{margin:0;min-height:1.6em;font-weight:700;color:var(--accent)}.gc-res.roll{opacity:.6}
 .shop-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
 .shop-list li{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--bg);padding:8px 10px}
 .shop-list .sw{width:18px;height:18px;flex:none}
@@ -363,7 +364,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.21</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.22</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -506,6 +507,11 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <ul class="shop-list" id="shop-books"></ul>
     <span class="set-l" id="shop-tt-l">업적</span>
     <ul class="shop-list" id="shop-titles"></ul>
+    <div class="gc" id="shop-gc" hidden>
+      <span class="set-l">뽑기<span class="hint" id="gc-test"> · 시험 중 (제작자만 보여요)</span></span>
+      <div class="row"><b id="gc-tk">티켓 0장</b><button class="btn acct" id="gc-buy" type="button">티켓 사기</button><button class="btn primary" id="gc-go" type="button">뽑기</button></div>
+      <p class="gc-res" id="gc-res" aria-live="polite"></p>
+    </div>
     <p class="shop-empty" id="shop-empty">준비 중</p>
     <p class="hint" id="shop-msg" aria-live="polite"></p>
   </section>
@@ -795,6 +801,7 @@ $("pdel").onclick=()=>{if(selBook||isPre(curId))return;if(!delArmed){delArmed=tr
   if(lib.length>1){delete saved[curId];lib=lib.filter(p=>p.id!==curId);curId=lib[0].id}else{lib[0].text="";lib[0].title="지문 1";saved[lib[0].id]={title:"지문 1",text:""}}
   saveLib();loadCur()};
 loadCur();if(added)saveLib();
+
 
 // 시간은 줄을 치는 동안만 흘러요 (줄을 끝내고 다음 줄 첫 글자를 칠 때까지는 멈춤)
 // 현재 타수: 최근 10초(아직 10초가 안 됐으면 시작부터) 동안의 타수/분
@@ -1140,6 +1147,10 @@ setInterval(()=>{if(!$("practice").hidden&&S.t0)stats()},250);
 // 물건은 아직 없음. 테마는 {id,name,c(색),pr(값)} + CSS·설정 칸 .skin[data-shop] 버튼, 업적 표시는 {id,name,pr}로 넣으면 돼요
 const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{id:"sky",name:"네온 블루 테마",c:"#5BC8F5",pr:500},{id:"rainbow",name:"무지개 테마",c:"conic-gradient(#FF5A5A,#FFB13D,#FFE53D,#4BE08A,#4FC3F7,#7A8CFF,#C77DFF,#FF5A5A)",pr:1000},{id:"magenta",name:"마젠타 테마",c:"#FF2BD6",pr:500},{id:"cyan",name:"시안 테마",c:"#00F0FF",pr:500},{id:"neonpurple",name:"네온 퍼플 테마",c:"#B84DFF",pr:500},{id:"cube",name:"큐브 테마",c:"linear-gradient(#FF4A4A,#FF4A4A) 0 0/30% 30% no-repeat,linear-gradient(#F2F2F2,#F2F2F2) 50% 0/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 100% 0/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 0 50%/30% 30% no-repeat,linear-gradient(#FFD21F,#FFD21F) 50% 50%/30% 30% no-repeat,linear-gradient(#FF8A1F,#FF8A1F) 100% 50%/30% 30% no-repeat,linear-gradient(#3D8BFF,#3D8BFF) 0 100%/30% 30% no-repeat,linear-gradient(#FF4A4A,#FF4A4A) 50% 100%/30% 30% no-repeat,linear-gradient(#22C55E,#22C55E) 100% 100%/30% 30% no-repeat,#0B0D12",pr:1500},{id:"glitch",name:"글리치 테마",c:"linear-gradient(#39FF7A,#39FF7A) 0 15%/100% 22% no-repeat,linear-gradient(#39FF7A,#39FF7A) 5px 50%/100% 20% no-repeat,linear-gradient(#FF2BD6,#FF2BD6) 0 70%/45% 10% no-repeat,linear-gradient(#39FF7A,#39FF7A) -4px 92%/100% 20% no-repeat,#030806",pr:1000}];
 const SHOP_TITLES=[];
+// 뽑기(3.5.22): 티켓은 상점에서 사고(서버 pts.tk), 뽑기는 서버가 GACHA 목록에서 골라요. sale:false 동안은 제작자 계정에서만 보이고 살 수 있어요
+// GACHA 항목: {id:"g-…",name:"보이는 이름",w:뽑힐 무게,item:"상점 물건 id"} 또는 {id,name,w,pt:쓸 수 있는 포인트}. 이미 가진 물건은 빼고 뽑아요
+const TICKET={id:"ticket",name:"뽑기 티켓",pr:100,sale:false};
+const GACHA=[];
 const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
 
 // 필사: 책(저작권이 끝난 작품)을 문단마다 끊어서 치고, 몇 번째 문단까지 쳤는지 기억해요. 상점에서 권당 300포인트
@@ -1365,7 +1376,13 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     else{b.textContent=on?"빼기":"달기";b.onclick=()=>{store.set("tt-title",on?"":it.id);drawShop();if(rankHook)rankHook()}}
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_ETC,$("shop-etc"),false,false,true);mk(BOOKS.map(b=>({id:b.id,name:b.title+(b.author?" · "+b.author:""),pr:b.pr,book:1})),$("shop-books"),false,false,true);mk(SHOP_TITLES,$("shop-titles"),false);
-  [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length)}
+  [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha()}
+function drawGacha(){const on=TICKET.sale||shopFree;$("shop-gc").hidden=!on;if(!on)return;$("gc-test").hidden=TICKET.sale;
+  const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk();$("gc-tk").textContent="티켓 "+tk+"장";$("gc-buy").textContent="티켓 사기 ("+(shopFree?0:TICKET.pr)+")";$("gc-buy").disabled=!shopFree&&pt<TICKET.pr;$("gc-go").disabled=tk<1}
+$("gc-buy").onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};
+$("gc-go").onclick=async()=>{if(!srvHooks.gacha){$("shop-msg").textContent="로그인해야 뽑을 수 있어요";return}const r=$("gc-res"),b=$("gc-go");b.disabled=true;r.classList.add("roll");r.textContent="뽑는 중…";
+  const j=await srvHooks.gacha();r.classList.remove("roll");if(!j||j.err){r.textContent=(j&&j.err)||"서버 연결 실패";drawGacha();return}
+  const pz=j.prize||{};r.textContent="결과: "+(pz.name||pz.id||"?");drawList();applyBg();drawShop()};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
   store.set("tt-tot",getTot());if(it.multi)store.set("tt-bgslots",bgSlots()+1);else store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
@@ -1437,7 +1454,7 @@ function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[d
   if(DAILY_CUSTOM&&DAILY_CUSTOM.list.length&&day>=DAILY_CUSTOM.start){const L=DAILY_CUSTOM.list,k=n-dayNum(DAILY_CUSTOM.start);return L[((k%L.length)+L.length)%L.length]}
   return DAILY_POOL[DAILY_ORDER[((n%DAILY_POOL.length)+DAILY_POOL.length)%DAILY_POOL.length]]}
 // 서버(3.5.16): 포인트 랭킹은 클라우드플레어 워커 서버가 계산해요. 연습 시작 때 시작 표를 받고, 끝나면 친 글을 보내요
-const srvHooks={start:null,run:null,buy:null,wx:null,fb:null};
+const srvHooks={start:null,run:null,buy:null,wx:null,fb:null,gacha:null,tk:()=>0};
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
 function closePanels(except){["login","rank","fr","settings","daily","vs","shop","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
@@ -1495,7 +1512,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
   // 서버(3.5.16~): 포인트·상점·업적은 워커 서버(pts/{uid})가 정해요. 랭킹 문서는 서버 값(SRV)만 쓸 수 있어요(규칙)
-  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null};
+  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null,tk:0};
   async function api(p,b){const u=auth.currentUser;if(!u)return null;try{const tk=await u.getIdToken(),r=await fetch(API+p,{method:"POST",headers:{authorization:"Bearer "+tk,"content-type":"application/json"},body:JSON.stringify(b||{})});let j=null;try{j=await r.json()}catch(e){}return r.ok?j:{err:(j&&j.err)||"서버 오류",code:r.status}}catch(e){return null}}
   // 서버가 준 값을 사이트에 반영: 포인트·산 것·업적(서버가 준 것만 남아요)
   function srvApply(j){if(!j||j.err)return;if(Number.isFinite(j.tot)){SRV.tot=j.tot;SRV.frozen=null;store.set("tt-tot",j.tot)}
@@ -1505,6 +1522,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(j.ach&&typeof j.ach==="object"){const old=achGet(),A={};ACH.forEach(a=>{if(Number(j.ach[a.id])>0)A[a.id]=Number(j.ach[a.id])});const nw=ACH.filter(a=>A[a.id]&&!old[a.id]);store.set("tt-ach",A);SRV.al=Array.isArray(j.al)?j.al.slice():Object.keys(j.ach).sort();if(nw.length&&!achQuiet)achToast(nw);try{if(!$("rec").hidden)drawAch()}catch(e){}}
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg&&!store.get("tt-egg",false)){store.set("tt-egg",true);applyHolo();if(eggHook)eggHook()}}
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
+    if(Number.isFinite(j.tk))SRV.tk=j.tk;
     if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
@@ -1528,6 +1546,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.buy=it=>{if(!srvOn())return false;const m=$("shop-msg");m.textContent="구매 중";
     api("/buy",{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
+  srvHooks.tk=()=>srvOn()?SRV.tk:0;
+  srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 뽑을 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
   {const mgMsg=t=>{$("mg-msg").textContent=t||""},mgOut=$("mg-out"),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
