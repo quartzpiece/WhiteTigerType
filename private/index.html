@@ -170,7 +170,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .tkfx.go .tkfx-s{animation:tkSp .65s .3s ease-out forwards}
 .tkfx-p{font-family:var(--display);font-size:2.2rem;font-weight:700;color:var(--accent);opacity:0;text-align:center;padding:0 16px}
 .tkfx.show .tkfx-p{animation:tkPop .45s cubic-bezier(.2,1.6,.4,1) forwards}
-.tkfx.lose .tkfx-r,.tkfx.lose .tkfx-s{display:none}.tkfx.lose .tkfx-p{font-size:1.3rem;color:var(--muted,var(--fg));opacity:0}.tkfx.lose.show .tkfx-p{animation:tkFade .3s ease-out forwards}
+.tkfx.lose .tkfx-s{display:none}.tkfx.lose .tkfx-r{border-color:#8A8A85}.tkfx.lose .tkfx-p{color:var(--muted,var(--fg));opacity:0}.tkfx.lose.show .tkfx-p{animation:tkFade .3s ease-out forwards}
 @keyframes tkFade{to{opacity:.75}}
 .gc-res.pop{animation:tkPop .45s cubic-bezier(.2,1.6,.4,1);transform-origin:left center}
 .shop-list .pr.tkdrop{display:inline-block;animation:tkDrop .45s ease-out}
@@ -1845,8 +1845,9 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.run=o=>{const P=S.tkP;S.tkP=null;if(!uid||!P)return Promise.resolve(null);const me=uid;
     return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid){srvApply(j);
       if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
-  srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");m.textContent="구매 중";
-    api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+(n>1?" "+n+"장":"")+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
+  let buying=false; // 구매 요청이 끝나기 전에 또 누르면 무시해요(겹치면 서버에서 실패할 수 있어서)
+  srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
+    api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.tk=()=>srvOn()?SRV.tk:0;
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
