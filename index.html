@@ -388,7 +388,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.29</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.30</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1409,7 +1409,7 @@ const tkOn=()=>TICKET.sale||shopFree;
 function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!on;if(!on){if(!$("inv").hidden)drawInv();return}$("gc-test").hidden=TICKET.sale;
   const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk(),u=$("shop-tk");u.innerHTML="";const li=document.createElement("li");
   const n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
-  const pr=document.createElement("span");pr.className="pr";pr.textContent=shopFree?0:TICKET.pr;li.appendChild(pr);
+  const pr=document.createElement("span");pr.className="pr";pr.textContent=TICKET.pr;li.appendChild(pr);
   const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-buy";b.textContent="구매";b.disabled=!shopFree&&pt<TICKET.pr;
   b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.appendChild(b);u.appendChild(li);
   if(!$("inv").hidden)drawInv()}
