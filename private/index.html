@@ -364,7 +364,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.24</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.25</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -382,6 +382,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <div class="row"><input class="ptitle" id="lg-id" aria-label="아이디" placeholder="아이디 (영문·숫자 3~20자)" autocomplete="username" autocapitalize="off" spellcheck="false"><input class="ptitle" id="lg-pw" type="password" aria-label="비밀번호" placeholder="비밀번호 (6자 이상)" autocomplete="current-password"></div>
       <div class="row" style="margin-top:10px"><input class="ptitle" id="lg-nick" aria-label="닉네임" placeholder="닉네임 (가입할 때, 12자까지)" maxlength="12" autocomplete="nickname"></div>
       <div class="row" style="margin-top:10px"><button class="btn primary" id="lg-in" type="button">로그인</button><button class="btn" id="lg-up" type="button">가입</button><span class="hint" id="lg-msg" aria-live="polite"></span></div>
+      <p class="hint" style="margin:10px 0 0">로그인하면 친 지문·입력·기록이 서버로 가고, 내 지문은 계정에 저장돼요. 로그인 안 하면 이 기기에만 남아요.</p>
     </div>
     <div id="login-on" hidden>
       <div class="row"><span id="lg-who"></span><span class="hint" id="lg-idv"></span><button class="btn" id="lg-out" type="button">로그아웃</button><span class="hint" id="lg-sync" aria-live="polite"></span></div>
@@ -416,7 +417,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="set-row" id="ovl-row"><span class="set-l">치는 곳</span><button class="btn acct" id="ovl-0" type="button" aria-pressed="true">입력칸</button><button class="btn acct" id="ovl-1" type="button" aria-pressed="false">문장 위</button></div>
     <div class="set-row"><span class="set-l">글꼴</span><div class="fonts" id="set-fonts" role="group" aria-label="글꼴"></div></div>
     <div class="set-row"><span class="set-l">효과</span><button class="btn acct" id="fxbtn" type="button" aria-pressed="true">무지개 테마 문장 완료 효과: 켜짐</button><button class="btn acct" id="fxkbtn" type="button" aria-pressed="false">무지개 테마 한 타 효과: 꺼짐</button></div>
-    <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint" id="wx-msg" aria-live="polite"></span></div>
+    <div class="set-row" id="wx-row"><span class="set-l">날씨</span><button class="btn acct" id="wxbtn" type="button" aria-pressed="false">우리 동네 날씨: 꺼짐</button><span class="hint">켜면 대략 위치가 Open-Meteo와 사이트 서버로 가요</span><span class="hint" id="wx-msg" aria-live="polite"></span></div>
     <div class="set-row" id="holo-row" hidden><span class="set-l">무지개</span><button class="btn acct" id="holobtn" type="button" aria-pressed="true">무지개 반짝임: 켜짐</button></div>
     <div class="set-row" id="rain-row" hidden><span class="set-l">비</span><button class="btn acct" id="rainbtn" type="button" aria-pressed="true">배경 비: 켜짐</button></div>
     <div class="set-row" id="snow-row" hidden><span class="set-l">눈</span><button class="btn acct" id="snowbtn" type="button" aria-pressed="true">배경 눈: 켜짐</button></div>
@@ -540,7 +541,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   <div class="stats">
     <div class="stat"><b id="s-speed">0</b><span>현재 타수</span></div>
     <div class="stat"><b id="s-avg">0</b><span>평균 타수</span></div>
-    <div class="stat"><b id="s-acc">100%</b><span>정확도</span></div>
+    <div class="stat"><b id="s-acc">—</b><span>정확도</span></div>
     <div class="stat"><b id="s-best">0</b><span>최고 타수</span></div>
   </div>
 
@@ -1036,7 +1037,7 @@ function speeds(now){if(S.frozen)return S.frozen;if(!S.t0)return[0,0];const el=c
   const c=totalNow();return[Math.max(0,Math.round((c-base)/((now-w)/60000))),Math.max(0,Math.round(c/(el/60000)))]}
 function stats(){const sp=speeds(performance.now());$("s-speed").textContent=sp[0];$("s-avg").textContent=sp[1];
   const L=S.live||[0,0],T=S.typed+L[0],C=S.correct+L[1];
-  $("s-acc").textContent=T?Math.round(C/T*100)+"%":"100%";
+  $("s-acc").textContent=T?Math.round(C/T*100)+"%":"—";
   $("s-best").textContent=S.best}
 stats(0);
 
