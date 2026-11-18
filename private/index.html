@@ -424,7 +424,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.36</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.37</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -469,8 +469,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="rainbow" data-shop="1" hidden aria-label="무지개 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
         <button class="skin" type="button" data-skin="cube" data-shop="1" hidden aria-label="큐브 테마" style="--sw-point:transparent;--sw-base:#0A0A08"></button>
         <button class="skin" type="button" data-skin="glitch" data-shop="1" hidden aria-label="글리치 테마" style="--sw-point:transparent;--sw-base:#030806"></button>
-        <button class="skin" type="button" data-skin="stars" data-sp="1" hidden aria-label="별자리 테마" style="--sw-point:transparent;--sw-base:#060914"></button>
-        <button class="skin" type="button" data-skin="gold" data-sp="1" hidden aria-label="금박 테마" style="--sw-point:transparent;--sw-base:#0B0906"></button>
+        <button class="skin" type="button" data-skin="stars" data-sp="1" hidden aria-label="특별 테마: 별자리" style="--sw-point:transparent;--sw-base:#060914"></button>
+        <button class="skin" type="button" data-skin="gold" data-sp="1" hidden aria-label="특별 테마: 금박" style="--sw-point:transparent;--sw-base:#0B0906"></button>
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
@@ -748,7 +748,7 @@ function cbTick(now){if(!CB.run)return;requestAnimationFrame(cbTick);if(document
       ctx.fillStyle="rgb("+C.map(x=>Math.min(255,Math.round(x*g))).join(",")+")";const sp2=quad(hs);ctx.beginPath();sp2.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill()}}}
 let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 특별 테마(3.5.32): 상점에는 없고 제작자 계정에서만 보여요(설정·인벤토리)
-const SP_THEMES=[{id:"stars",name:"별자리 테마"},{id:"gold",name:"금박 테마"}];
+const SP_THEMES=[{id:"stars",name:"특별 테마: 별자리"},{id:"gold",name:"특별 테마: 금박"}];
 const spOk=k=>SP_THEMES.some(t=>t.id===k)&&(shopFree||owned(k)); // 3.5.36 티켓으로 얻으면 누구나
 // 별자리 테마(3.5.34): 실제 별자리(적경 시, 적위 도, 등급)와 선. 지문 줄 수에 맞춰 별자리를 여러 개 고르고, 한 줄에 별 하나씩 켜요.
 // 별자리 하나를 다 켜면 선을 잇고 작게 줄여 빈 곳으로 옮기고, 지문을 다 치면 이름이 나와요
@@ -1573,7 +1573,7 @@ const TICKET={id:"ticket",name:"티켓",pr:100,sale:false};
 // hold = 아직 없는 상품(이름만 보이고 서버 pts.pz에 세어 둠, 나중에 만들면 줄 것), cc = 닉네임 색상 변경권(서버 pts.cc, 쓰는 기능은 아직)
 // 3.5.36 확률(사용자 지정): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%(별자리·금박 각 0.5%, 하나 가지면 다른 하나가 1%), 특별 폰트 1%, 색상 변경권 16%, 불운·행운의 징표 각 0.5%, 1~75포인트 각 1%
 // grp: 묶음 무게를 아직 안 가진 것끼리 나눠요. 묶음을 다 가지면 그 무게는 랜덤 포인트(rp) 빼고 남은 상품이 제 무게대로 나눠 가져요(서버가 계산)
-const GACHA=[{id:"pt1000",name:"1000포인트",w:1,pt:1000},{id:"nick1",name:"닉네임 변경권",w:5,nc:1},{id:"sp-stars",name:"별자리 테마",w:.5,sp:"stars",grp:"sp-theme"},{id:"sp-gold",name:"금박 테마",w:.5,sp:"gold",grp:"sp-theme"},
+const GACHA=[{id:"pt1000",name:"1000포인트",w:1,pt:1000},{id:"nick1",name:"닉네임 변경권",w:5,nc:1},{id:"sp-stars",name:"특별 테마: 별자리",w:.5,sp:"stars",grp:"sp-theme"},{id:"sp-gold",name:"특별 테마: 금박",w:.5,sp:"gold",grp:"sp-theme"},
   {id:"sp-pcpeace",name:"평창평화체 라이트",w:1,sp:"f-pcpeace",grp:"sp-font"},{id:"ncolor1",name:"닉네임 색상 변경권",w:16,cc:1},{id:"ul1",name:"불운의 징표",w:.5,ul:1},{id:"lk1",name:"행운의 징표",w:.5,lk:1},
   ...Array.from({length:75},(x,i)=>({id:"rp"+(i+1),name:(i+1)+"포인트",w:1,pt:i+1,rp:1}))];
 // 3.5.26 닉네임 변경권: 상점 1000포인트(여러 장 가능), 닉네임을 바꿀 때 1장씩 써요(서버 pts.nc)
@@ -1699,6 +1699,7 @@ const ACH=[{id:"p-mine",name:"커스텀",desc:"내 지문 1회 연습 완료하�
   {id:"b-10",name:"집념의 광인",desc:"한 책 10번 필사 완료하기",goal:10,cnt:()=>bkBest().n,lab:()=>bkBest().t}, // 3.5.5: 모든 문단을 실제로 쳐야 1번(bkMark)
   {id:"p-both",name:"만능",desc:"두벌식과 세벌식 모두에서 300타 이상 달성하기",ok:()=>{const R=runsGet();return R.some(x=>!x.k&&!x.z&&x.s>=300)&&R.some(x=>x.k==="390"&&!x.z&&x.s>=300)}}, // 3.4.33. 평균 타수 기준, 세벌식은 390·390(내 입력기) 둘 다
   {id:"t-cinder",name:"신데렐라",desc:"밤 11시 59분에 시작해서 12시를 넘겨 끝내기",hide:1}, // 3.4.35. 달성 전엔 "???"(사용자 요청). 한국 시간, 연습 시작 23:59 + 끝낸 날짜가 다음 날
+  {id:"g-lucky",name:"천부신조",desc:"???"},{id:"g-stars",name:"은하수를 여행하는",desc:"???"},{id:"g-gold",name:"재벌 3세",desc:"???"}, // 3.5.37 티켓으로 행운의 징표, 특별 테마 별자리·금박을 얻으면(서버 /gacha가 줘요). 설명은 사용자가 정한 "???"
   {id:"e-fb",name:"불만스런",desc:"건의 1회 보내기",hide:1}, // 3.5.10: 건의를 보내면(예전에 보낸 건의도 로그인 때 확인)
   {id:"e-bug",name:"벌레잡이",desc:"건의로 버그 1회 신고하기",hide:1}, // 3.5.11: 관리자가 건의함에서 "버그"로 표시한 건의(fb.bug=true)가 있으면
   {id:"e-42",name:"궁극의 해답",desc:"한번에 정확히 42포인트 얻기",hide:1,hint:"힌트: 제 꿈은 우주선을 히치하이킹해서 은하수를 여행하는 것입니다."}, /* 3.5.14 hint: 달성 전 ??? 대신 보일 글 */ // 3.5.12: addPts로 한 번에 42가 들어올 때(연습·필사 문단·상금 모두)
@@ -1720,7 +1721,8 @@ function achGrant(ids){const A=achGet(),nw=[];for(const id of ids){if(!A[id]&&AC
   if(nw.length){store.set("tt-ach",A);try{if(!$("rec").hidden)drawAch()}catch(e){}{const q=achQuiet?nw.filter(a=>!achQuiet.has(a.id)):nw;if(q.length)achToast(q)}if(rankHook)try{rankHook()}catch(e){}}return nw}
 // 업적을 얻으면 오른쪽 아래에 5초 동안 알려요(3.4.14)
 const achShown=new Set();
-function achToast(nw){nw=nw.filter(a=>!achShown.has(a.id));nw.forEach(a=>achShown.add(a.id));if(!nw.length)return;try{let box=document.querySelector(".ach-toasts");if(!box){box=document.createElement("div");box.className="ach-toasts";document.body.appendChild(box)}
+let achHold=null; // 3.5.37 티켓을 여는 동안 얻은 업적 알림은 결과가 나온 뒤에 띄워요
+function achToast(nw){if(achHold){achHold.push(...nw);return}nw=nw.filter(a=>!achShown.has(a.id));nw.forEach(a=>achShown.add(a.id));if(!nw.length)return;try{let box=document.querySelector(".ach-toasts");if(!box){box=document.createElement("div");box.className="ach-toasts";document.body.appendChild(box)}
   for(const a of nw){const t=document.createElement("div");t.className="toast ach";t.setAttribute("role","status");t.innerHTML="업적 달성 <b>"+esc(a.name)+"</b>";box.appendChild(t);setTimeout(()=>t.remove(),5000)}}catch(e){}}
 // 연습을 마칠 때(f) 또는 기록만으로(f 없음) 판정해요
 // 지문별 끝까지 친 횟수(3.4.32, 집념의 화신): tt-pc = {글 해시: 횟수}, 계정 users 문서 pc. 예전 기록은 제목별 기록 수로 같이 봐요
@@ -1872,10 +1874,10 @@ async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그�
   // 티켓을 여는 동안은 화면 전체 터치·클릭을 막아요(끝나면 풀어요)
   const blk=document.createElement("div");blk.className="tkblock";blk.setAttribute("aria-hidden","true");const stopEv=e=>{e.preventDefault();e.stopPropagation()};["pointerdown","click","touchstart","contextmenu"].forEach(t=>blk.addEventListener(t,stopEv,{passive:false}));document.body.appendChild(blk);
   try{
-  const fx=tkFx(),[j]=await Promise.all([srvHooks.gacha(),wait(900)]);
+  achHold=[];const fx=tkFx(),[j]=await Promise.all([srvHooks.gacha(),wait(900)]);
   if(!j||j.err){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
   const pz=j.prize||{},nm=pz.name||pz.id||"?";drawInv();const done=fx.burst(nm,!!pz.none||pz.id==="none"||!!pz.rp); /* 3.5.36 랜덤 포인트는 꽝 이펙트 */try{shopSkins();applyFont()}catch(e){}await wait(420); // 결과는 이펙트에서만 보여 줘요(아래 "결과:" 줄은 뺌)
-  drawList();applyBg();drawShop();await done}finally{blk.remove()}}
+  drawList();applyBg();drawShop();await done}finally{blk.remove();const q=achHold||[];achHold=null;if(q.length)achToast(q)}}
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
