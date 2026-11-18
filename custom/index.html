@@ -439,7 +439,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.6.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.6.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -602,6 +602,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <ul class="shop-list" id="inv-ft"></ul>
     <span class="set-l" id="inv-bg-l">배경 사진</span>
     <ul class="shop-list" id="inv-bg"></ul>
+    <span class="set-l" id="inv-nx-l">닉네임 효과</span>
+    <ul class="shop-list" id="inv-nx"></ul>
     <span class="set-l" id="inv-etc-l">기타</span>
     <ul class="shop-list" id="inv-etc"></ul>
     <p class="shop-empty" id="inv-empty" hidden>비어 있음</p>
@@ -1642,13 +1644,14 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   const bg=$("inv-bg");bg.innerHTML="";if(owned("bgphoto")){const n=bgSlots();bg.appendChild(li("사진 배경"+(n?" (+"+n+"칸)":""),null,"설정에서 쓰기",()=>{$("inv").hidden=true;$("setbtn").click()}))}
   const et=$("inv-etc");et.innerHTML="";const nc=srvHooks.nc?srvHooks.nc():0;if(srvHooks.on&&srvHooks.on()&&!shopFree||nc>0){/* 로그인하면 0장이어도 보여요(제작자는 공짜라 있을 때만) */const c=document.createElement("span");c.className="pr";c.textContent=nc+"장";et.appendChild(li(NICKPASS.name,c,"쓰기",nc<1?null:()=>{$("inv").hidden=true;$("acct").click();setTimeout(()=>{try{$("lg-nick2").focus()}catch(e){}},50)}))}
   const cc=srvHooks.cc?srvHooks.cc():0;if(cc>0){const c=document.createElement("span");c.className="pr";c.textContent=cc+"장";et.appendChild(li("닉네임 색상 변경권",c,"사용",useColor))}
-  if(store.get("tt-egg",false)===true){const on=eggNick(),l=li("무지개 닉네임",null,on?"빼기":"달기",async()=>{if(!srvHooks.eggoff)return;const j=await srvHooks.eggoff(on);if(!j||j.err){$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";return}store.set("tt-eggoff",on);if(eggHook)eggHook();if(srvHooks.rank)srvHooks.rank();if(rankHook)rankHook();drawInv()},on);et.appendChild(l)}
+  const nx=$("inv-nx");nx.innerHTML=""; /* 3.6.4 닉네임 효과는 따로(무지개도 여기) */
+  if(store.get("tt-egg",false)===true){const on=eggNick(),l=li("무지개",null,on?"빼기":"달기",async()=>{if(!srvHooks.eggoff)return;const j=await srvHooks.eggoff(on);if(!j||j.err){$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";return}store.set("tt-eggoff",on);if(eggHook)eggHook();if(srvHooks.rank)srvHooks.rank();if(rankHook)rankHook();drawInv()},on);nx.appendChild(l)}
   {const col=srvHooks.col?srvHooks.col():"";if(colOk(col)){const c=document.createElement("span");c.className="sw";c.style.background=col;const l=li("지금 닉네임 색 "+col.toUpperCase(),null,"기본으로",null);l.insertBefore(c,l.firstChild);l.querySelector("button").hidden=true;et.appendChild(l)}}
   { /* 3.6.1 닉네임 효과: 가진 것(제작자는 모두) 중 하나를 달고 빼요. 이름 칸에 그 효과를 미리 보여 줘요 */const cur=srvHooks.nfx?srvHooks.nfx():"";
     NFX.filter(x=>shopFree||owned(x.id)).forEach(x=>{const on=cur===x.id,l=li(x.name,null,on?"빼기":"달기",async()=>{if(!srvHooks.setNfx)return;const bt=l.querySelector("button");bt.disabled=true;const j=await srvHooks.setNfx(on?"":x.id);if(j&&j.err)$("gc-res").textContent=j.err;drawInv()},on);
-      const nm=l.querySelector(".nm");nm.textContent="";const pv=document.createElement("span");pv.className="nfx-pv";pv.textContent=(srvHooks.on&&srvHooks.on()?$("acct").textContent:"")||"닉네임";paintNick(pv,srvHooks.col?srvHooks.col():"",x.id);nm.append(x.name.replace("닉네임 효과: ","")+" ",pv);et.appendChild(l)})}
-  [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
-  $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||et.children.length)}
+      const nm=l.querySelector(".nm");nm.textContent="";const pv=document.createElement("span");pv.className="nfx-pv";pv.textContent=(srvHooks.on&&srvHooks.on()?$("acct").textContent:"")||"닉네임";paintNick(pv,srvHooks.col?srvHooks.col():"",x.id);nm.append(x.name.replace("닉네임 효과: ","")+" ",pv);nx.appendChild(l)})}
+  [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-nx-l",nx],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
+  $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||nx.children.length||et.children.length)}
 // 닉네임 색상 변경권 쓰기: 서버가 RGB를 아무 값으로 정해 줘요
 async function useColor(){if(!srvHooks.ncolor){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";
   // 꽝과 같은 이펙트(조각 없이 고리만)를 바뀐 색으로, 글자는 내 닉네임. 도는 동안 화면 클릭·터치는 막아요
