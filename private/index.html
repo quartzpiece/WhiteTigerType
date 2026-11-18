@@ -174,7 +174,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .tkfx.show .tkfx-p{animation:tkPop .45s cubic-bezier(.2,1.6,.4,1) forwards}
 .tkfx.lose .tkfx-s{display:none}.tkfx.lose .tkfx-r{border-color:#8A8A85}.tkfx.lose .tkfx-p{color:var(--muted,var(--fg));opacity:0}.tkfx.lose.show .tkfx-p{animation:tkFade .3s ease-out forwards}
 @keyframes tkFade{to{opacity:.75}}
-.tkfx.colr .tkfx-r{border-color:var(--fxc)}.tkfx.colr .tkfx-p{color:var(--fxc)}.tkfx.colr.show .tkfx-p{animation:tkFade1 .3s ease-out forwards}.tkfx.colr .tkfx-t{border-color:var(--fxc);color:var(--fxc);box-shadow:none}.tkfx.colr .tkfx-t::before{border-color:var(--fxc)}
+.tkfx.colr .tkfx-r{border-color:var(--fxc)}.tkfx.colr .tkfx-p{color:var(--fxc)}.tkfx.colr.show .tkfx-p{animation:tkFade1 .3s ease-out forwards}.tkfx.colr .tkfx-t{width:196px;padding-right:40px;box-sizing:border-box;border-color:var(--fxt,var(--accent));color:var(--fxt,var(--accent));box-shadow:none}.tkfx.colr .tkfx-t::before{border-color:var(--fxt,var(--accent))}
 @keyframes tkFade1{to{opacity:1}}
 .gc-res.pop{animation:tkPop .45s cubic-bezier(.2,1.6,.4,1);transform-origin:left center}
 .shop-list .pr.tkdrop{display:inline-block;animation:tkDrop .45s ease-out}
@@ -396,7 +396,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.30</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.31</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1698,11 +1698,11 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
 async function useColor(){if(!srvHooks.ncolor){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";
   // 꽝과 같은 이펙트(조각 없이 고리만)를 바뀐 색으로, 글자는 내 닉네임. 도는 동안 화면 클릭·터치는 막아요
   const blk=document.createElement("div");blk.className="tkblock";blk.setAttribute("aria-hidden","true");const stopEv=e=>{e.preventDefault();e.stopPropagation()};["pointerdown","click","touchstart","contextmenu"].forEach(t=>blk.addEventListener(t,stopEv,{passive:false}));document.body.appendChild(blk);
-  try{const [j]=await Promise.all([srvHooks.ncolor(),wait(0)]);if(!j||j.err){r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
-    const fx=tkFx("색상 변경권",j.col);await wait(900);drawInv();await fx.burst(($("acct").textContent||"").trim()||"닉네임",true);if(rankHook)rankHook()}finally{blk.remove()}}
+  try{const old=srvHooks.col?srvHooks.col():"",[j]=await Promise.all([srvHooks.ncolor(),wait(0)]);if(!j||j.err){r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
+    const fx=tkFx("색상 변경권",j.col,old);await wait(900);drawInv();await fx.burst(($("acct").textContent||"").trim()||"닉네임",true);if(rankHook)rankHook()}finally{blk.remove()}}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-function tkFx(label,col){const dv=(c,x)=>{const e=document.createElement("div");e.className=c;if(x!=null)e.textContent=x;return e};const box=$("inv"),old=box.querySelector(".tkfx");if(old)old.remove();
-  const f=dv("tkfx");if(col){f.classList.add("lose","colr");f.style.setProperty("--fxc",col)}f.setAttribute("aria-hidden","true");f.append(dv("tkfx-r"));
+function tkFx(label,col,prev){const dv=(c,x)=>{const e=document.createElement("div");e.className=c;if(x!=null)e.textContent=x;return e};const box=$("inv"),old=box.querySelector(".tkfx");if(old)old.remove();
+  const f=dv("tkfx");if(col){f.classList.add("lose","colr");f.style.setProperty("--fxc",col);if(colOk(prev))f.style.setProperty("--fxt",prev)} /* 티켓 모양은 예전 닉네임 색, 터질 때 고리·글자는 새 색 */f.setAttribute("aria-hidden","true");f.append(dv("tkfx-r"));
   for(let i=0;i<12;i++){const a=i/12*Math.PI*2+Math.random()*.4,d=90+Math.random()*70,sp=dv("tkfx-s");sp.style.setProperty("--dx",Math.round(Math.cos(a)*d)+"px");sp.style.setProperty("--dy",Math.round(Math.sin(a)*d)+"px");f.append(sp)}
   const t=dv("tkfx-t",label||TICKET.name),p=dv("tkfx-p");f.append(t,p);box.append(f);
   return {async burst(name,lose){if(lose)f.classList.add("lose");f.classList.add("go");await wait(420);p.textContent=name;f.classList.add("show");await wait(lose?700:1300);f.classList.add("out");await wait(350);f.remove()},
