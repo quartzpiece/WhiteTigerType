@@ -423,7 +423,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.33</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.34</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -749,25 +749,81 @@ let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,sh
 // 특별 테마(3.5.32): 상점에는 없고 제작자 계정에서만 보여요(설정·인벤토리)
 const SP_THEMES=[{id:"stars",name:"별자리 테마"},{id:"gold",name:"금박 테마"}];
 const spOk=k=>shopFree&&SP_THEMES.some(t=>t.id===k);
-// 별자리 테마: 지문 줄 수만큼(최대 36개) 별자리 모양으로 희미한 별을 놓고, 줄을 끝낼 때마다 하나씩 켜요. 다 치면 별끼리 선이 차례로 이어져요
-const ST={cv:null,ctx:null,run:false,W:0,H:0,dpr:1,bg:[],pts:[],n:0,ln:0,jn:false,join:0,last:0,shoot:null,nextShoot:0};
+// 별자리 테마(3.5.34): 실제 별자리(적경 시, 적위 도, 등급)와 선. 지문 줄 수에 맞춰 별자리를 여러 개 고르고, 한 줄에 별 하나씩 켜요.
+// 별자리 하나를 다 켜면 선을 잇고 작게 줄여 빈 곳으로 옮기고, 지문을 다 치면 이름이 나와요
+const CONS=[
+ ["북두칠성",[[11.06,61.75,1.8],[11.03,56.38,2.4],[11.9,53.69,2.4],[12.26,57.03,3.3],[12.9,55.96,1.8],[13.4,54.93,2.2],[13.79,49.31,1.9]],[[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]]],
+ ["카시오페이아자리",[[.15,59.15,2.3],[.68,56.54,2.2],[.95,60.72,2.4],[1.43,60.24,2.7],[1.91,63.67,3.4]],[[0,1],[1,2],[2,3],[3,4]]],
+ ["오리온자리",[[5.59,9.93,3.4],[5.92,7.41,.5],[5.42,6.35,1.6],[5.68,-1.94,1.8],[5.6,-1.2,1.7],[5.53,-.3,2.2],[5.8,-9.67,2.1],[5.24,-8.2,.1]],[[0,1],[0,2],[1,2],[1,3],[2,5],[3,4],[4,5],[3,6],[5,7]]],
+ ["사자자리",[[10.14,11.97,1.4],[10.12,16.76,3.5],[10.33,19.84,2.1],[10.28,23.42,3.4],[9.88,26.01,3.9],[9.76,23.77,3],[11.24,20.52,2.6],[11.82,14.57,2.1],[11.24,15.43,3.3]],[[0,1],[1,2],[2,3],[3,4],[4,5],[2,6],[6,7],[7,8],[8,0]]],
+ ["거문고자리",[[18.62,38.78,0],[18.74,39.67,4.6],[18.75,37.61,4.3],[18.91,36.9,4.3],[18.98,32.69,3.2],[18.83,33.36,3.5]],[[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[5,2]]],
+ ["백조자리",[[20.69,45.28,1.3],[20.37,40.26,2.2],[19.94,35.08,3.9],[19.51,27.96,3.1],[19.75,45.13,2.9],[19.28,53.37,3.8],[20.77,33.97,2.5],[21.22,30.23,3.2]],[[0,1],[1,2],[2,3],[1,4],[4,5],[1,6],[6,7]]],
+ ["독수리자리",[[19.09,13.86,3],[19.77,10.61,2.7],[19.85,8.87,.8],[19.92,6.41,3.7],[19.42,3.11,3.4],[19.1,-4.88,3.4],[20.19,-.82,3.2]],[[0,1],[1,2],[2,3],[2,4],[4,5],[3,6]]],
+ ["북쪽왕관자리",[[15.55,31.36,4.1],[15.46,29.11,3.7],[15.58,26.71,2.2],[15.71,26.3,3.8],[15.83,26.07,4.6],[15.96,26.88,4.2],[16.02,29.85,4.9]],[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]]],
+ ["돌고래자리",[[20.55,11.3,4],[20.63,14.6,3.6],[20.66,15.91,3.8],[20.78,16.12,4.3],[20.73,15.07,4.4]],[[0,1],[1,2],[2,3],[3,4],[4,1]]],
+ ["화살자리",[[19.68,17.48,4.4],[19.67,18.01,4.4],[19.79,18.53,3.8],[19.98,19.49,3.5]],[[0,2],[1,2],[2,3]]],
+ ["삼각형자리",[[1.88,29.58,3.4],[2.16,34.99,3],[2.29,33.85,4]],[[0,1],[1,2],[2,0]]],
+ ["작은개자리",[[7.45,8.29,2.9],[7.66,5.22,.4]],[[0,1]]],
+ ["큰개자리",[[6.38,-17.96,2],[6.75,-16.72,-1.5],[6.9,-12.04,4.1],[7.06,-15.63,4.1],[7.14,-26.39,1.8],[6.98,-28.97,1.5],[6.34,-30.06,3],[7.4,-29.3,2.4]],[[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[4,7]]],
+ ["쌍둥이자리",[[7.58,31.89,1.6],[6.73,25.13,3],[6.38,22.51,2.9],[7.76,28.03,1.1],[7.74,24.4,3.6],[7.34,21.98,3.5],[7.07,20.57,3.9],[6.63,16.4,1.9],[6.75,12.9,3.4]],[[0,1],[1,2],[0,3],[3,4],[3,5],[5,6],[6,7],[7,8]]],
+ ["황소자리",[[4.01,12.49,3.5],[4.33,15.63,3.7],[4.48,15.87,3.4],[4.6,16.51,.9],[5.63,21.14,3],[4.38,17.54,3.8],[4.48,19.18,3.5],[5.44,28.61,1.7]],[[0,1],[1,2],[2,3],[3,4],[1,5],[5,6],[6,7]]],
+ ["전갈자리",[[16.09,-19.81,2.6],[16.01,-22.62,2.3],[15.98,-26.11,2.9],[16.35,-25.59,2.9],[16.49,-26.43,1],[16.6,-28.22,2.8],[16.84,-34.29,2.3],[16.86,-38.05,3],[16.9,-42.36,3.6],[17.2,-43.24,3.3],[17.62,-43,1.9],[17.79,-40.13,3],[17.71,-39.03,2.4],[17.56,-37.1,1.6]],[[0,1],[1,2],[1,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,12],[12,13]]],
+ ["궁수자리",[[18.1,-30.42,3],[18.35,-29.83,2.7],[18.4,-34.38,1.8],[18.47,-25.42,2.8],[18.76,-26.99,3.2],[18.92,-26.3,2.1],[19.12,-27.67,3.3],[19.04,-29.88,2.6]],[[0,1],[1,2],[0,2],[1,3],[3,4],[1,4],[4,5],[5,6],[6,7],[7,4],[7,2]]],
+ ["페가수스자리",[[21.74,9.88,2.4],[22.17,6.2,3.5],[22.69,10.83,3.4],[23.08,15.21,2.5],[.22,15.18,2.8],[.14,29.09,2.1],[23.06,28.08,2.4],[22.72,30.22,2.9]],[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3],[6,7]]],
+ ["목동자리",[[14.69,13.73,3.8],[13.91,18.4,2.7],[14.26,19.18,-.1],[14.75,27.07,2.4],[15.26,33.31,3.5],[15.03,40.39,3.5],[14.53,38.31,3],[14.53,30.37,3.6]],[[0,2],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,2]]],
+ ["양자리",[[1.89,19.29,3.9],[1.91,20.81,2.6],[2.12,23.46,2],[2.83,27.26,3.6]],[[0,1],[1,2],[2,3]]],
+ ["세페우스자리",[[22.18,58.2,3.4],[21.31,62.59,2.5],[21.48,70.56,3.2],[23.66,77.63,3.2],[22.83,66.2,3.5]],[[0,1],[1,2],[2,3],[3,4],[4,0],[2,4]]],
+ ["작은곰자리",[[2.53,89.26,2],[17.54,86.59,4.4],[16.77,82.04,4.2],[15.73,77.79,4.3],[14.85,74.16,2.1],[15.35,71.83,3],[16.29,75.76,5]],[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3]]]];
+// 하늘 좌표를 그 별자리 가운데에 맞닿은 평면에 옮겨요(북쪽 위, 동쪽 왼쪽). 가장 긴 쪽이 1이 되게 맞춰요
+function stProj(S){const V=S.map(([ra,de])=>{const a=ra*Math.PI/12,d=de*Math.PI/180;return [Math.cos(d)*Math.cos(a),Math.cos(d)*Math.sin(a),Math.sin(d)]});
+  let c=[0,0,0];V.forEach(v=>{c[0]+=v[0];c[1]+=v[1];c[2]+=v[2]});const l=Math.hypot(...c);c=c.map(x=>x/l);
+  let e=[-c[1],c[0],0];const le=Math.hypot(...e)||1;e=e.map(x=>x/le);const n=[c[1]*e[2]-c[2]*e[1],c[2]*e[0]-c[0]*e[2],c[0]*e[1]-c[1]*e[0]];
+  const P=V.map(v=>{const k=v[0]*c[0]+v[1]*c[1]+v[2]*c[2];return [-(v[0]*e[0]+v[1]*e[1]+v[2]*e[2])/k,-(v[0]*n[0]+v[1]*n[1]+v[2]*n[2])/k]});
+  const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),D=Math.max(x1-x0,y1-y0)||1;
+  return {P:P.map((p,i)=>({x:(p[0]-(x0+x1)/2)/D,y:(p[1]-(y0+y1)/2)/D,m:Math.max(.6,Math.min(1.45,1.3-.17*S[i][2])),lit:-1})),w:(x1-x0)/D,h:(y1-y0)/D}}
+const ST={cv:null,ctx:null,run:false,W:0,H:0,dpr:1,bg:[],cons:[],n:0,ln:0,fin:-1,shoot:null,nextShoot:0,idle:false};
 const stOn=()=>document.documentElement.dataset.skin==="stars";
-function stMake(n){const K=Math.max(1,Math.min(n,36)),P=[],d=K<=4?.3:K<=10?.2:K<=20?.15:.115,md=d*.6;
-  for(let k=0;k<K;k++){let q=null;
-    for(let t=0;t<60&&!q;t++){if(!k){q={x:.25+Math.random()*.5,y:.25+Math.random()*.5,par:-1,a:Math.random()*Math.PI*2};break}
-      const par=k<3||Math.random()<.75?k-1:Math.floor(Math.random()*k),p=P[par],a=p.a+(Math.random()-.5)*(t<30?1.7:Math.PI*2),r=d*(.75+Math.random()*.5),x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r;
-      if(x<.04||x>.96||y<.04||y>.96||P.some(o=>Math.hypot(o.x-x,o.y-y)<md))continue;q={x,y,par,a}}
-    if(!q){let x,y,t=0;do{x=.05+Math.random()*.9;y=.05+Math.random()*.9}while(++t<80&&P.some(o=>Math.hypot(o.x-x,o.y-y)<md*.8));let par=0,bd=9;P.forEach((o,i)=>{const h=Math.hypot(o.x-x,o.y-y);if(h<bd){bd=h;par=i}});q={x,y,par,a:Math.random()*Math.PI*2}}
-    q.m=.75+Math.random()*.55;q.lit=-1;P.push(q)}
-  return P}
-function stBegin(n){ST.pts=stMake(n);ST.n=Math.max(1,n);ST.ln=0;ST.jn=false}
-function stStep(last){ST.ln++;const now=performance.now()/1000,want=Math.floor(ST.ln*ST.pts.length/ST.n);ST.pts.forEach((p,i)=>{if(i<want&&p.lit<0)p.lit=now});if(last&&!ST.jn){ST.jn=true;ST.join=now+.5}}
-function stSize(){const c=ST.cv;if(!c)return;ST.dpr=Math.min(2,window.devicePixelRatio||1);ST.W=innerWidth;ST.H=innerHeight;c.width=Math.round(ST.W*ST.dpr);c.height=Math.round(ST.H*ST.dpr);
+// 줄 수에 맞게 고르기: 남은 줄 수와 별 수가 딱 맞는 걸 먼저, 아니면 남은 게 2줄 이상 되게(1줄이 남으면 별 2개짜리로 끝내요)
+function stPick(n){const L=[];let r=Math.max(1,n),used=new Set();
+  while(r>0){let pool=CONS.map((c,i)=>i).filter(i=>!used.has(i));if(!pool.length){used=new Set();pool=CONS.map((c,i)=>i)}
+    const k=i=>CONS[i][1].length,ex=pool.filter(i=>k(i)===r),ok=pool.filter(i=>k(i)<=r-2&&(r>=14||k(i)>=Math.min(5,r-2)));
+    let i=ex.length&&(r<14||Math.random()<.3)?ex[Math.random()*ex.length|0]:ok.length?ok[Math.random()*ok.length|0]:pool.filter(i=>k(i)<=r).sort((a,b)=>k(b)-k(a))[0];
+    if(i==null)i=CONS.findIndex(c=>c[1].length===2);used.add(i);L.push(i);r-=k(i)}
+  return L}
+function stMk(i){const c=CONS[i],p=stProj(c[1]);return {name:c[0],E:c[2],P:p.P,w:p.w,h:p.h,done:-1,slot:null,ms:70}}
+function stBegin(n){ST.idle=false;ST.n=Math.max(1,n);ST.ln=0;ST.fin=-1;ST.cons=stPick(n).map(stMk)}
+function stStep(last){if(ST.idle)return;ST.ln++;const now=performance.now()/1000;let k=0;
+  for(const c of ST.cons){let all=true;for(const p of c.P){if(p.lit<0&&(k<ST.ln||last))p.lit=now+(k<ST.ln?0:.08*(k-ST.ln+1));if(p.lit<0)all=false;k++}
+    if(all&&c.done<0){c.done=now;stSlot(c)}}
+  if(last){ST.fin=now;setTimeout(stReslot,80)}}
+// 다 치면 화면이 끝 화면으로 바뀌니 빈 곳을 다시 찾아 옮겨요(좁은 화면은 치는 동안 빈 곳이 거의 없어요)
+function stReslot(){if(!stOn())return;const now=performance.now()/1000;ST.cons.forEach(c=>{c.old=c.slot?{fx:c.slot.fx,fy:c.slot.fy}:null;c.slot=null});ST.cons.forEach(c=>{if(c.done>=0){stSlot(c);c.rt=now}})}
+// 줄인 별자리를 둘 빈 곳: 화면 안에서 위쪽 칸·창·큰 별자리 자리·먼저 둔 별자리와 안 겹치는 곳(없으면 먼저 둔 것만 피해요)
+function stBox(){const W=ST.W,H=ST.H,gut=(W-820)/2;if(gut>=200){const bw=gut*.82,bh=Math.min(H*.62,bw*1.5);return {x:W-gut/2-bw/2,y:H*.5-bh/2,w:bw,h:bh}}return {x:W*.07,y:H*.24,w:W*.86,h:H*.62}}
+function stSlot(c){const W=ST.W,H=ST.H,ms=Math.max(54,Math.min(100,Math.min(W,H)*.13))*(.6+.4*Math.min(1,c.P.length/7)),w=c.w*ms+24,h=c.h*ms+40;c.ms=ms;
+  const R=[...document.querySelectorAll(".wrap > header,.wrap .card:not([hidden]),.wrap .stats")].map(e=>e.getBoundingClientRect()).filter(r=>r.height>0).map(r=>({x:r.left-8,y:r.top-8,w:r.width+16,h:r.height+16}));
+  const M=ST.cons.filter(o=>o!==c&&o.slot).map(o=>({x:o.slot.fx*W-(o.w*o.ms+24)/2,y:o.slot.fy*H-(o.h*o.ms+24)/2,w:o.w*o.ms+24,h:o.h*o.ms+40})),B=stBox(),hit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
+  for(const avoid of [R.concat(M,[B]),R.concat(M),M]){for(let t=0;t<160;t++){const x=8+Math.random()*Math.max(1,W-16-w),y=8+Math.random()*Math.max(1,H-90-h),a={x,y,w,h};if(!avoid.some(b=>hit(a,b))){c.slot={fx:(x+w/2)/W,fy:(y+(h-16)/2)/H};return}}}
+  c.slot={fx:Math.random(),fy:Math.random()}}
+function stSize(){const c=ST.cv;if(!c)return;try{ST.ff=getComputedStyle(document.body).fontFamily}catch(e){}ST.dpr=Math.min(2,window.devicePixelRatio||1);ST.W=innerWidth;ST.H=innerHeight;c.width=Math.round(ST.W*ST.dpr);c.height=Math.round(ST.H*ST.dpr);
   const N=Math.min(240,Math.round(ST.W*ST.H/7000));ST.bg=[];for(let k=0;k<N;k++)ST.bg.push({x:Math.random()*ST.W,y:Math.random()*ST.H,r:.35+Math.pow(Math.random(),3)*1.1,ph:Math.random()*7,sp:.6+Math.random()*1.8,b:Math.random()<.18})}
-function stSync(){if(stOn()){if(!ST.pts.length){ST.pts=stMake(7);ST.n=7;ST.ln=7;ST.pts.forEach(p=>p.lit=-9);ST.jn=true;ST.join=-99}
+function stSync(){if(stOn()){if(!ST.cons.length){const c=stMk(0);c.P.forEach(p=>p.lit=-9);c.done=-99;ST.cons=[c];ST.idle=true;ST.fin=-99}
     if(!ST.cv){const c=document.createElement("canvas");c.className="starfx";c.setAttribute("aria-hidden","true");const b=document.querySelector(".bgart");if(b)b.after(c);else document.body.prepend(c);ST.cv=c;ST.ctx=c.getContext("2d");addEventListener("resize",stSize);stSize()}
     if(!ST.run){ST.run=true;ST.nextShoot=performance.now()/1000+4+Math.random()*6;requestAnimationFrame(stTick)}}
   else{ST.run=false;if(ST.cv){ST.cv.remove();ST.cv=null;ST.ctx=null;removeEventListener("resize",stSize)}}}
+const ez=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+// 별자리 하나 그리기: cx,cy 가운데, s 크기(가장 긴 쪽 픽셀), j 선 잇기 진행(0~1), a 투명도, nm 이름 투명도
+function stDraw(ctx,c,cx,cy,s,j,a,nm,now,red){if(a<=0)return;const E=c.E,P=c.P,X=p=>cx+p.x*s,Y=p=>cy+p.y*s,sm=Math.max(.45,Math.min(1,s/220));
+  if(j>0){ctx.lineCap="round";ctx.strokeStyle="rgba(175,200,255,"+(.5*a)+")";ctx.lineWidth=s<120?1:1.2;const per=1/E.length;
+    E.forEach(([u,v],k)=>{const e=Math.min(1,Math.max(0,(j-k*per)/per));if(e<=0)return;const x0=X(P[u]),y0=Y(P[u]);ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+(X(P[v])-x0)*e,y0+(Y(P[v])-y0)*e);ctx.stroke()})}
+  P.forEach((p,k)=>{const x=X(p),y=Y(p),m=p.m*sm;
+    if(p.lit<0||now<p.lit){ctx.fillStyle="rgba(200,215,255,"+(.3*a)+")";ctx.beginPath();ctx.arc(x,y,1.6*m,0,Math.PI*2);ctx.fill();return}
+    const f=red?1:Math.min(1,(now-p.lit)/.8),fl=1-f,tw=red?1:.9+.1*Math.sin(now*2.3+k),R=(12+20*fl)*m,g=ctx.createRadialGradient(x,y,0,x,y,R);
+    g.addColorStop(0,"rgba(220,232,255,"+(.75+.25*fl)*tw*a+")");g.addColorStop(.3,"rgba(175,200,255,"+(.3+.3*fl)*a+")");g.addColorStop(1,"rgba(175,200,255,0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,R,0,Math.PI*2);ctx.fill();
+    if(fl>0){ctx.strokeStyle="rgba(200,220,255,"+(.7*fl*a)+")";ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,(4+26*f)*m,0,Math.PI*2);ctx.stroke()}
+    const cr=(2.4+.6*fl)*m*tw;ctx.globalAlpha=a;ctx.fillStyle="#FFFFFF";ctx.beginPath();ctx.arc(x,y,cr,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="rgba(230,238,255,"+(.35*tw)+")";ctx.lineWidth=.8;const sl=cr*3.2;ctx.beginPath();ctx.moveTo(x-sl,y);ctx.lineTo(x+sl,y);ctx.moveTo(x,y-sl);ctx.lineTo(x,y+sl);ctx.stroke();ctx.globalAlpha=1});
+  if(nm>0){ctx.globalAlpha=nm*a;ctx.fillStyle="#C9D8FF";ctx.font="700 "+(s<120?12:15)+"px "+(ST.ff||"sans-serif");ctx.textAlign="center";ctx.textBaseline="top";ctx.fillText(c.name,cx,cy+c.h*s/2+(s<120?10:16));ctx.globalAlpha=1}}
 function stTick(ms){if(!ST.run)return;requestAnimationFrame(stTick);if(document.hidden)return;
   const now=ms/1000,ctx=ST.ctx,W=ST.W,H=ST.H;if(!ctx)return;const red=cbRed();
   ctx.setTransform(ST.dpr,0,0,ST.dpr,0,0);ctx.clearRect(0,0,W,H);
@@ -777,20 +833,15 @@ function stTick(ms){if(!ST.run)return;requestAnimationFrame(stTick);if(document.
   if(!red){if(!ST.shoot&&now>ST.nextShoot){const x=W*(.15+Math.random()*.8),y=H*Math.random()*.35,a=Math.PI*(.72+Math.random()*.16);ST.shoot={x,y,a,t:now,len:90+Math.random()*90,sp:520+Math.random()*300}}
     const S2=ST.shoot;if(S2){const e=(now-S2.t)/.9;if(e>=1){ST.shoot=null;ST.nextShoot=now+10+Math.random()*12}else{const d=S2.sp*(now-S2.t),hx=S2.x+Math.cos(S2.a)*d,hy=S2.y+Math.sin(S2.a)*d,tx=hx-Math.cos(S2.a)*S2.len,ty=hy-Math.sin(S2.a)*S2.len,g=ctx.createLinearGradient(hx,hy,tx,ty);
       g.addColorStop(0,"rgba(255,255,255,"+(.9*(1-e))+")");g.addColorStop(1,"rgba(255,255,255,0)");ctx.strokeStyle=g;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(hx,hy);ctx.lineTo(tx,ty);ctx.stroke()}}}
-  // 별자리 자리: 넓은 화면은 창 오른쪽 빈자리, 좁은 화면은 화면 가운데(창 뒤)
-  const gut=(W-820)/2;let bx,by,bw,bh;if(gut>=200){bw=gut*.82;bh=Math.min(H*.62,bw*1.5);bx=W-gut/2-bw/2;by=H*.5-bh/2}else{bw=W*.86;bh=H*.62;bx=W*.07;by=H*.24}
-  const P=ST.pts,X=p=>bx+p.x*bw,Y=p=>by+p.y*bh,K=P.length,per=Math.min(.22,1.6/Math.max(1,K));
-  // 다 쳤으면 별끼리 선을 차례로 이어요
-  if(ST.jn&&now>=ST.join){ctx.lineCap="round";for(let k=1;k<K;k++){const p=P[k],q=P[p.par];if(!q)continue;let e=red?1:Math.min(1,Math.max(0,(now-ST.join-(k-1)*per)/per));if(e<=0)continue;
-      const x0=X(q),y0=Y(q),x1=x0+(X(p)-x0)*e,y1=y0+(Y(p)-y0)*e;ctx.strokeStyle="rgba(175,200,255,.5)";ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke()}}
-  const done=ST.jn&&now>ST.join+K*per,glow=done&&!red?.15*Math.sin(now*1.6):0;
-  for(let k=0;k<K;k++){const p=P[k],x=X(p),y=Y(p);
-    if(p.lit<0||now<p.lit){ctx.fillStyle="rgba(200,215,255,.3)";ctx.beginPath();ctx.arc(x,y,1.6*p.m,0,Math.PI*2);ctx.fill();continue}
-    const f=red?1:Math.min(1,(now-p.lit)/.8),fl=1-f,tw=red?1:.9+.1*Math.sin(now*2.3+k),R=(12+20*fl)*p.m*(1+glow),g=ctx.createRadialGradient(x,y,0,x,y,R);
-    g.addColorStop(0,"rgba(220,232,255,"+(.75+.25*fl)*tw+")");g.addColorStop(.3,"rgba(175,200,255,"+(.3+.3*fl)+")");g.addColorStop(1,"rgba(175,200,255,0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,R,0,Math.PI*2);ctx.fill();
-    if(fl>0){ctx.strokeStyle="rgba(200,220,255,"+(.7*fl)+")";ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,(4+26*f)*p.m,0,Math.PI*2);ctx.stroke()}
-    const cr=(2.4+.6*fl)*p.m*tw;ctx.fillStyle="#FFFFFF";ctx.beginPath();ctx.arc(x,y,cr,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="rgba(230,238,255,"+(.35*tw)+")";ctx.lineWidth=.8;const sl=cr*3.2;ctx.beginPath();ctx.moveTo(x-sl,y);ctx.lineTo(x+sl,y);ctx.moveTo(x,y-sl);ctx.lineTo(x,y+sl);ctx.stroke()}}
+  // 큰 자리(넓은 화면은 창 오른쪽, 좁으면 창 뒤)에 지금 별자리, 다 켠 별자리는 선 잇기(0.5초) → 0.9초부터 0.8초 동안 작게 줄며 빈 곳으로
+  const B=stBox(),bcx=B.x+B.w/2,bcy=B.y+B.h/2,T=red?{j:0,h:0,mv:0}:{j:.5,h:.9,mv:.8};let prevGo=-1,mi=0;
+  ST.cons.forEach((c,ci)=>{const bs=Math.min(B.w/Math.max(c.w,.35),B.h/Math.max(c.h,.35),B.w*1.1)*.8;
+    if(ST.idle){stDraw(ctx,c,bcx,bcy,bs,1,1,1,now,red);return}
+    if(c.done<0||!c.slot){// 아직 켜는 중: 앞 별자리가 옮겨 가기 시작한 뒤에 나타나요
+      if(prevGo===-2)return;const a=prevGo<0?1:red?1:Math.min(1,Math.max(0,(now-prevGo)/.5));stDraw(ctx,c,bcx,bcy,bs,0,a,0,now,red);prevGo=-2;return}
+    const t=now-c.done,j=T.j?Math.min(1,t/T.j):1,mk=T.mv?ez(Math.min(1,Math.max(0,(t-T.h)/T.mv))):(t>=0?1:0),rk=c.old&&c.rt&&c.done+T.h+T.mv<=c.rt?(red?1:ez(Math.min(1,(now-c.rt)/.8))):1,sx=((c.old&&rk<1?c.old.fx+(c.slot.fx-c.old.fx)*rk:c.slot.fx))*W,sy=((c.old&&rk<1?c.old.fy+(c.slot.fy-c.old.fy)*rk:c.slot.fy))*H,
+      cx=bcx+(sx-bcx)*mk,cy=bcy+(sy-bcy)*mk,s=bs+(c.ms-bs)*mk,nm=ST.fin<0?0:red?1:Math.min(1,Math.max(0,(now-Math.max(ST.fin,c.done)-T.h-T.mv-.2-mi*.15)/.6));
+    stDraw(ctx,c,cx,cy,s,j,1,nm,now,red);mi++;prevGo=mk>=1||t>=T.h?c.done+T.h:-2})}
 // 금박 테마: 배경에 금박 조각이 천천히 떠다니고, 글자를 칠 때마다 금가루가 튀고, 지문을 다 치면 금가루가 쏟아져요
 const GD={el:null,t:0};
 const gdOn=()=>document.documentElement.dataset.skin==="gold";
