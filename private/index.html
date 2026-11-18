@@ -186,6 +186,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .shop-list .nm{flex:1;min-width:0}
 .shop-list .pr{font-family:var(--display);color:var(--accent)}
 .shop-list .btn{padding:6px 12px;font-size:.85rem}
+.shop-list .tks{padding:6px 9px;min-width:0}.shop-list .tkn{width:52px;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);padding:5px 4px;text-align:center;border-radius:0;-moz-appearance:textfield}.shop-list .tkn::-webkit-inner-spin-button,.shop-list .tkn::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#shop-tk{grid-template-columns:minmax(0,420px)}
 .shop-list li.on{border-color:var(--accent);background:var(--accent-soft)}
 .ttl{display:inline-block;margin-right:6px;padding:0 5px;border:1px solid var(--accent);color:var(--accent);font-size:.75rem;font-weight:700;vertical-align:1px}
 .rank-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
@@ -388,7 +390,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.31</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.25</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1636,13 +1638,19 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_ETC,$("shop-etc"),false,false,true);mk(BOOKS.map(b=>({id:b.id,name:b.title+(b.author?" · "+b.author:""),pr:b.pr,book:1})),$("shop-books"),false,false,true);mk(SHOP_TITLES,$("shop-titles"),false);
   [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha()}
 // 3.5.26 티켓: 상점에서는 다른 물건처럼 사고, 산 티켓은 인벤토리에 보관해요(사용도 인벤토리에서)
-const tkOn=()=>TICKET.sale||shopFree;
+const tkOn=()=>TICKET.sale||shopFree;let tkQty=1;
 function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!on;if(!on){if(!$("inv").hidden)drawInv();return}$("gc-test").hidden=TICKET.sale;
   const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk(),u=$("shop-tk");u.innerHTML="";const li=document.createElement("li");
   const n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
-  const pr=document.createElement("span");pr.className="pr";pr.textContent=TICKET.pr;li.appendChild(pr);
-  const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-buy";b.textContent="구매";b.disabled=!shopFree&&pt<TICKET.pr;
-  b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.appendChild(b);u.appendChild(li);
+  // 3.5.32 장수 고르기(1~100장): − 숫자 + , 값은 장수만큼
+  const q=document.createElement("input");q.type="number";q.min="1";q.max="100";q.value=String(tkQty);q.className="tkn";q.setAttribute("aria-label","살 장수");
+  const pr=document.createElement("span");pr.className="pr";
+  const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-buy";b.textContent="구매";
+  const upd=()=>{let v=Math.floor(Number(q.value));if(!(v>=1))v=1;if(v>100)v=100;tkQty=v;pr.textContent=TICKET.pr*v;b.disabled=!shopFree&&pt<TICKET.pr*v};
+  const st=(d,t)=>{const x=document.createElement("button");x.type="button";x.className="btn acct tks";x.textContent=t;x.setAttribute("aria-label",d>0?"한 장 더":"한 장 덜");x.onclick=()=>{q.value=String(Math.min(100,Math.max(1,tkQty+d)));upd()};return x};
+  q.oninput=upd;q.onchange=()=>{upd();q.value=String(tkQty)};upd();
+  b.onclick=()=>{upd();if(!srvHooks.buy||!srvHooks.buy(TICKET,tkQty))$("shop-msg").textContent="로그인해야 살 수 있어요"};
+  li.append(st(-1,"−"),q,st(1,"+"),pr,b);u.appendChild(li);
   if(!$("inv").hidden)drawInv()}
 let invTk=null; // 지난번 인벤토리에 보인 티켓 수(줄어들 때 숫자가 떨어지는 움직임)
 // 3.5.28 인벤토리: 티켓 + 산 테마·글꼴·사진 배경(상점과 같은 적용 버튼)
@@ -1670,8 +1678,8 @@ function tkFx(){const dv=(c,x)=>{const e=document.createElement("div");e.classNa
 async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("gc-go");if(b)b.disabled=true;r.classList.remove("pop");r.textContent="";
   const fx=tkFx(),[j]=await Promise.all([srvHooks.gacha(),wait(900)]);
   if(!j||j.err){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
-  const pz=j.prize||{},nm=pz.name||pz.id||"?";drawInv();const done=fx.burst(nm);await wait(420);
-  r.textContent="결과: "+nm;void r.offsetWidth;r.classList.add("pop");drawList();applyBg();drawShop();await done}
+  const pz=j.prize||{},nm=pz.name||pz.id||"?";drawInv();const done=fx.burst(nm);await wait(420); // 결과는 이펙트에서만 보여 줘요(아래 "결과:" 줄은 뺌)
+  drawList();applyBg();drawShop();await done}
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
@@ -1835,8 +1843,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.run=o=>{const P=S.tkP;S.tkP=null;if(!uid||!P)return Promise.resolve(null);const me=uid;
     return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid){srvApply(j);
       if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
-  srvHooks.buy=it=>{if(!srvOn())return false;const m=$("shop-msg");m.textContent="구매 중";
-    api("/buy",{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
+  srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");m.textContent="구매 중";
+    api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{if(j&&!j.err){srvApply(j);m.textContent=it.name+(n>1?" "+n+"장":"")+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.tk=()=>srvOn()?SRV.tk:0;
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
