@@ -158,6 +158,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .gc{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.gc-res{margin:0;min-height:1.6em;font-weight:700;color:var(--accent)}.gc-res.roll{opacity:.6}
 /* 3.5.27 티켓 사용 이펙트: 티켓이 흔들리다 작아지며 사라지고, 빛 고리·조각이 퍼진 뒤 결과가 튀어나와요 */
 #inv{position:relative;overflow:hidden}
+.tkblock{position:fixed;inset:0;z-index:999;background:transparent;cursor:wait;touch-action:none}
 .tkfx{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 72%,transparent);pointer-events:none;z-index:5;transition:opacity .35s}
 .tkfx.out{opacity:0}
 .tkfx>*{grid-area:1/1}
@@ -1689,10 +1690,13 @@ function tkFx(){const dv=(c,x)=>{const e=document.createElement("div");e.classNa
   return {async burst(name,lose){if(lose)f.classList.add("lose");f.classList.add("go");await wait(420);p.textContent=name;f.classList.add("show");await wait(lose?700:1300);f.classList.add("out");await wait(350);f.remove()},
     stop(){f.classList.add("out");setTimeout(()=>f.remove(),350)}}}
 async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("gc-go");if(b)b.disabled=true;r.classList.remove("pop");r.textContent="";
+  // 티켓을 여는 동안은 화면 전체 터치·클릭을 막아요(끝나면 풀어요)
+  const blk=document.createElement("div");blk.className="tkblock";blk.setAttribute("aria-hidden","true");const stopEv=e=>{e.preventDefault();e.stopPropagation()};["pointerdown","click","touchstart","contextmenu"].forEach(t=>blk.addEventListener(t,stopEv,{passive:false}));document.body.appendChild(blk);
+  try{
   const fx=tkFx(),[j]=await Promise.all([srvHooks.gacha(),wait(900)]);
   if(!j||j.err){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
   const pz=j.prize||{},nm=pz.name||pz.id||"?";drawInv();const done=fx.burst(nm,!!pz.none||pz.id==="none");await wait(420); // 결과는 이펙트에서만 보여 줘요(아래 "결과:" 줄은 뺌)
-  drawList();applyBg();drawShop();await done}
+  drawList();applyBg();drawShop();await done}finally{blk.remove()}}
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
@@ -1855,6 +1859,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     S.tkP=api("/start",{lines:L,nick:nick||"",...(day?{daily:day}:{})}).then(j=>{if(day&&j&&!j.err){ddMerge([day]);try{achCheck()}catch(e){}}return j&&!j.err?j:null})};
   srvHooks.run=o=>{const P=S.tkP;S.tkP=null;if(!uid||!P)return Promise.resolve(null);const me=uid;
     return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid){srvApply(j);
+      if(j.dailyTk)toast("오늘 첫 연습 · 티켓 +1");
       if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
   let buying=false; // 구매 요청이 끝나기 전에 또 누르면 무시해요(겹치면 서버에서 실패할 수 있어서)
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
