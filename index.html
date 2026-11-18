@@ -388,12 +388,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.27</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.28</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
-      <button class="btn acct" id="invbtn" type="button" hidden>인벤토리</button>
+      <button class="btn acct" id="invbtn" type="button">인벤토리</button>
       <button class="btn acct" id="recbtn" type="button">기록</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
@@ -541,7 +541,14 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card shop" id="inv" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">인벤토리</b></div>
+    <span class="set-l" id="inv-tk-l">티켓</span>
     <ul class="shop-list" id="inv-list"></ul>
+    <span class="set-l" id="inv-th-l">테마</span>
+    <ul class="shop-list" id="inv-th"></ul>
+    <span class="set-l" id="inv-ft-l">글꼴</span>
+    <ul class="shop-list" id="inv-ft"></ul>
+    <span class="set-l" id="inv-bg-l">배경 사진</span>
+    <ul class="shop-list" id="inv-bg"></ul>
     <p class="shop-empty" id="inv-empty" hidden>비어 있음</p>
     <p class="gc-res" id="gc-res" aria-live="polite"></p>
   </section>
@@ -1394,7 +1401,7 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
   [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha()}
 // 3.5.26 티켓: 상점에서는 다른 물건처럼 사고, 산 티켓은 인벤토리에 보관해요(사용도 인벤토리에서)
 const tkOn=()=>TICKET.sale||shopFree;
-function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!on;$("invbtn").hidden=!on;if(!on){$("inv").hidden=true;return}$("gc-test").hidden=TICKET.sale;
+function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!on;if(!on){if(!$("inv").hidden)drawInv();return}$("gc-test").hidden=TICKET.sale;
   const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk(),u=$("shop-tk");u.innerHTML="";const li=document.createElement("li");
   const n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
   const pr=document.createElement("span");pr.className="pr";pr.textContent=shopFree?0:TICKET.pr;li.appendChild(pr);
@@ -1402,11 +1409,20 @@ function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!
   b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.appendChild(b);u.appendChild(li);
   if(!$("inv").hidden)drawInv()}
 let invTk=null; // 지난번 인벤토리에 보인 티켓 수(줄어들 때 숫자가 떨어지는 움직임)
-function drawInv(){const tk=srvHooks.tk(),u=$("inv-list");u.innerHTML="";const drop=invTk!==null&&tk<invTk;invTk=tk;
-  if(tk>0){const li=document.createElement("li"),n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
-    const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";li.appendChild(c);
-    const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-go";b.textContent="사용";b.onclick=useTicket;li.appendChild(b);u.appendChild(li)}
-  $("inv-empty").hidden=tk>0}
+// 3.5.28 인벤토리: 티켓 + 산 테마·글꼴·사진 배경(상점과 같은 적용 버튼)
+function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="";const drop=invTk!==null&&tk<invTk;invTk=tk;
+  const li=(name,right,btxt,fn,on,sw,fam)=>{const l=document.createElement("li");if(on)l.className="on";
+    if(sw){const w=document.createElement("span");w.className="sw";w.style.background=sw;l.appendChild(w)}
+    const n=document.createElement("span");n.className="nm";n.textContent=name;if(fam){n.style.fontFamily='"'+fam+'",var(--body)';n.style.fontSize="1.1rem"}l.appendChild(n);
+    if(right){l.appendChild(right)}const b=document.createElement("button");b.type="button";b.className="btn acct";b.textContent=btxt;if(fn)b.onclick=fn;else b.disabled=true;l.appendChild(b);return l};
+  if(tk>0){const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";const l=li(TICKET.name,c,"사용",useTicket);l.querySelector("button").id="gc-go";u.appendChild(l)}
+  const skin=store.get("tt-skin","basic"),curF=store.get("tt-font","");
+  const th=$("inv-th");th.innerHTML="";SHOP_THEMES.filter(t=>owned(t.id)).forEach(t=>{const on=skin===t.id;th.appendChild(li(t.name,null,on?"적용 중":"적용",on?null:()=>{setSkin(t.id);drawInv();if(!$("shop").hidden)drawShop()},on,t.c))});
+  const fts=SHOP_FONTS.filter(f=>owned(f.id));if(fts.length)loadFont(fts);
+  const ft=$("inv-ft");ft.innerHTML="";fts.forEach(f=>{const on=curF===f.id;ft.appendChild(li(f.name,null,on?"빼기":"적용",()=>{store.set("tt-font",on?"":f.id);applyFont();drawInv();drawFontSet()},on,null,f.fam))});
+  const bg=$("inv-bg");bg.innerHTML="";if(owned("bgphoto")){const n=bgSlots();bg.appendChild(li("사진 배경"+(n?" (+"+n+"칸)":""),null,"설정에서 쓰기",()=>{$("inv").hidden=true;$("setbtn").click()}))}
+  [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
+  $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length)}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function tkFx(){const dv=(c,x)=>{const e=document.createElement("div");e.className=c;if(x!=null)e.textContent=x;return e};const box=$("inv"),old=box.querySelector(".tkfx");if(old)old.remove();
   const f=dv("tkfx");f.setAttribute("aria-hidden","true");f.append(dv("tkfx-r"));
