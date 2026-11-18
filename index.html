@@ -392,7 +392,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.26</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.27</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1447,7 +1447,7 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   const fts=SHOP_FONTS.filter(f=>owned(f.id));if(fts.length)loadFont(fts);
   const ft=$("inv-ft");ft.innerHTML="";fts.forEach(f=>{const on=curF===f.id;ft.appendChild(li(f.name,null,on?"빼기":"적용",()=>{store.set("tt-font",on?"":f.id);applyFont();drawInv();drawFontSet()},on,null,f.fam))});
   const bg=$("inv-bg");bg.innerHTML="";if(owned("bgphoto")){const n=bgSlots();bg.appendChild(li("사진 배경"+(n?" (+"+n+"칸)":""),null,"설정에서 쓰기",()=>{$("inv").hidden=true;$("setbtn").click()}))}
-  const et=$("inv-etc");et.innerHTML="";const nc=srvHooks.nc?srvHooks.nc():0;if(nc>0){const c=document.createElement("span");c.className="pr";c.textContent=nc+"장";et.appendChild(li(NICKPASS.name,c,"쓰기",()=>{$("inv").hidden=true;$("acct").click();setTimeout(()=>{try{$("lg-nick2").focus()}catch(e){}},50)}))}
+  const et=$("inv-etc");et.innerHTML="";const nc=srvHooks.nc?srvHooks.nc():0;if(srvHooks.on&&srvHooks.on()&&!shopFree||nc>0){/* 로그인하면 0장이어도 보여요(제작자는 공짜라 있을 때만) */const c=document.createElement("span");c.className="pr";c.textContent=nc+"장";et.appendChild(li(NICKPASS.name,c,"쓰기",nc<1?null:()=>{$("inv").hidden=true;$("acct").click();setTimeout(()=>{try{$("lg-nick2").focus()}catch(e){}},50)}))}
   [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
   $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||et.children.length)}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
@@ -1629,7 +1629,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
     api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
-  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;
+  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.on=()=>srvOn();
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
