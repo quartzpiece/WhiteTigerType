@@ -99,6 +99,32 @@
 .gd-rain{position:fixed;top:-12px;z-index:61;pointer-events:none;background:linear-gradient(135deg,#FFF4C2,#E8C15A 50%,#A8761F)}
 .skin[data-skin="gold"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
   background:linear-gradient(135deg,#8A5F16,#F7E08A 40%,#C9952F 58%,#FFF4C2 70%,#A8761F)}
+/* 3.6.13 발광: 거의 검은 바탕에 빛나는 청록. 제목은 네온관처럼 빛나다 가끔 깜빡이고, 배경엔 큰 빛무리와 반딧불이 떠다니고, 글자를 칠 때마다 빛이 번져요 */
+:root[data-skin="lumi"]{--bg:#04070A; --surface:#0A1117; --card:rgba(10,17,23,.86); --fg:#E6FFF8; --muted:#7FA39A; --line:#173029;
+  --accent:#5CFFD6; --accent-soft:#0C2A24; --ok:#5CFFD6; --bad:#04070A; --bad-soft:#E6FFF8}
+.skin[data-skin="lumi"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
+  background:radial-gradient(circle,#F2FFFB 0 18%,#5CFFD6 42%,rgba(92,255,214,.25) 70%,transparent 72%);box-shadow:0 0 6px #5CFFD6}
+:root[data-skin="lumi"] h1{color:#E9FFF9;text-shadow:0 0 4px #fff,0 0 10px #5CFFD6,0 0 22px #5CFFD6,0 0 42px rgba(92,255,214,.55);border-color:#5CFFD6;box-shadow:-6px 0 14px -6px #5CFFD6}
+:root[data-skin="lumi"] h1 .ver{text-shadow:none;color:var(--muted)}
+:root[data-skin="lumi"] :is(.pts,.stat b,.shop-list .pr,.rank-list li .pt,.rank-list li:nth-child(-n+3) .no,.rec-sum b,.rec-list li .s,.lines div.now,#pstate,.toast b,.vs-code,.fr-inv b,.ach-l li.got b){text-shadow:0 0 8px rgba(92,255,214,.75)}
+:root[data-skin="lumi"] :is(.btn.primary,.rtab[aria-pressed="true"],.plist button[aria-pressed="true"],.fonts .btn[aria-pressed="true"],.ach-l li.on .btn,.rec-k .btn[aria-pressed="true"]){box-shadow:0 0 10px rgba(92,255,214,.6),0 0 22px rgba(92,255,214,.25)}
+:root[data-skin="lumi"] :is(.prog i,.book-list .bp i){box-shadow:0 0 8px #5CFFD6}
+:root[data-skin="lumi"] .typewrap:focus-within{border-color:#5CFFD6;box-shadow:0 0 12px rgba(92,255,214,.35),inset 0 0 10px rgba(92,255,214,.12)}
+:root[data-skin="lumi"] .mirror i.caret{box-shadow:0 0 8px #5CFFD6}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="lumi"] h1{animation:lmTube 9s linear infinite}}
+@keyframes lmTube{0%,90%,93.5%,96%,100%{opacity:1}91%{opacity:.55}92.5%{opacity:.9}95%{opacity:.4}}
+.lumfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;display:none}
+:root[data-skin="lumi"] .lumfx{display:block}
+.lumfx i{position:absolute;border-radius:50%;background:radial-gradient(circle,var(--lc) 0,transparent 68%);opacity:var(--lo)}
+.lumfx b{position:absolute;width:3px;height:3px;border-radius:50%;background:#E9FFF9;box-shadow:0 0 6px 2px var(--lc);opacity:0}
+@media (prefers-reduced-motion:no-preference){.lumfx i{animation:lmDrift var(--d) ease-in-out infinite alternate}
+  .lumfx b{animation:lmFly var(--d) ease-in-out var(--dl) infinite}}
+@keyframes lmDrift{to{transform:translate(var(--mx),var(--my)) scale(var(--ms))}}
+@keyframes lmFly{0%,100%{opacity:0;transform:translate(0,0)}20%{opacity:.9}50%{opacity:.25;transform:translate(var(--mx),var(--my))}75%{opacity:.85}}
+@media (prefers-reduced-motion:reduce){.lumfx b{opacity:.5}}
+.lm-k{position:absolute;pointer-events:none;z-index:3;border-radius:50%;background:radial-gradient(circle,rgba(242,255,251,.95) 0,rgba(92,255,214,.55) 35%,transparent 70%)}
+.lm-bloom{position:fixed;left:50%;top:50%;z-index:61;pointer-events:none;border-radius:50%;width:40vmax;height:40vmax;margin:-20vmax 0 0 -20vmax;background:radial-gradient(circle,rgba(242,255,251,.55) 0,rgba(92,255,214,.3) 30%,transparent 65%)}
+.lm-up{position:fixed;z-index:61;pointer-events:none;width:4px;height:4px;border-radius:50%;background:#F2FFFB;box-shadow:0 0 8px 3px #5CFFD6}
 .cubefx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 /* 무지개 이스터에그 홀로그램: 화면 전체에 무지갯빛 막이 비치고, 빛줄기가 지나가고, 작은 별이 반짝여요 */
 .holo{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden;display:none;
@@ -451,7 +477,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.6.12</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.6.13</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -498,6 +524,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="glitch" data-shop="1" hidden aria-label="글리치 테마" style="--sw-point:transparent;--sw-base:#030806"></button>
         <button class="skin" type="button" data-skin="stars" data-sp="1" hidden aria-label="특별 테마: 별자리" style="--sw-point:transparent;--sw-base:#060914"></button>
         <button class="skin" type="button" data-skin="gold" data-sp="1" hidden aria-label="특별 테마: 금박" style="--sw-point:transparent;--sw-base:#0B0906"></button>
+        <button class="skin" type="button" data-skin="lumi" data-sp="1" hidden aria-label="특별 테마: 발광" style="--sw-point:transparent;--sw-base:#04070A"></button>
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
@@ -736,7 +763,7 @@ const cbRed=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").match
 function cbColor(){document.documentElement.style.setProperty("--cc",CUBE_C[CB.ci%6])}
 function cubeBegin(n){try{stBegin(n)}catch(e){}cbReset();CB.joy=0;CB.ci=0;cbColor();let pa=-1;
   for(let k=0;k<n;k++){let a;do a=Math.floor(Math.random()*3);while(a===pa);pa=a;const m={a,l:[-1,0,1][Math.floor(Math.random()*3)],d:Math.random()<.5?1:-1};cbTurn(m);CB.mv.push(m)}}
-function cubeStep(last){try{stStep(last);if(last)gdRain()}catch(e){}if(CB.an){cbTurn(CB.an.m);CB.an=null}
+function cubeStep(last){try{stStep(last);if(last)gdRain()}catch(e){}try{lmStep(last)}catch(e){}if(CB.an){cbTurn(CB.an.m);CB.an=null}
   const m=CB.mv.pop();CB.ci++;cbColor();if(!m)return;const inv={a:m.a,l:m.l,d:-m.d};
   if(CB.run&&!cbRed())CB.an={m:inv,t:0,dur:.34};else cbTurn(inv);
   if(last&&!CB.mv.length)CB.joy=1.7}
@@ -777,7 +804,7 @@ function cbTick(now){if(!CB.run)return;requestAnimationFrame(cbTick);if(document
       ctx.fillStyle="rgb("+C.map(x=>Math.min(255,Math.round(x*g))).join(",")+")";const sp2=quad(hs);ctx.beginPath();sp2.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill()}}}
 let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 특별 테마(3.5.32): 상점에는 없고 제작자 계정에서만 보여요(설정·인벤토리)
-const SP_THEMES=[{id:"stars",name:"특별 테마: 별자리"},{id:"gold",name:"특별 테마: 금박"}];
+const SP_THEMES=[{id:"stars",name:"특별 테마: 별자리"},{id:"gold",name:"특별 테마: 금박"},{id:"lumi",name:"특별 테마: 발광"}];
 const spOk=k=>SP_THEMES.some(t=>t.id===k)&&(shopFree||owned(k)); // 3.5.36 티켓으로 얻으면 누구나
 // 별자리 테마(3.5.34): 실제 별자리(적경 시, 적위 도, 등급)와 선. 지문 줄 수에 맞춰 별자리를 여러 개 고르고, 한 줄에 별 하나씩 켜요.
 // 별자리 하나를 다 켜면 선을 잇고 작게 줄여 빈 곳으로 옮기고, 지문을 다 치면 이름이 나와요
@@ -887,6 +914,26 @@ function gdGlint(){if(!GD.el||!gdOn())return;GD.t=setTimeout(gdGlint,500+Math.ra
     f.animate([{filter:"brightness(1)",opacity:f.style.opacity},{filter:"brightness(2.3) saturate(1.2)",opacity:Math.min(1,+f.style.opacity+.45),offset:.4},{filter:"brightness(1)",opacity:f.style.opacity}],{duration:900,easing:"ease-in-out"});
     const g=document.createElement("b"),z=20+Math.max(q.width,q.height)*1.3;g.className="gd-gl";g.style.cssText="left:"+(q.left+q.width*(.3+Math.random()*.4)-z/2).toFixed(0)+"px;top:"+(q.top+q.height*(.3+Math.random()*.4)-z/2).toFixed(0)+"px;width:"+z.toFixed(0)+"px;height:"+z.toFixed(0)+"px";GD.el.appendChild(g);
     g.animate([{transform:"scale(0) rotate(0deg)",opacity:0},{transform:"scale(1) rotate(45deg)",opacity:1,offset:.45},{transform:"scale(0) rotate(90deg)",opacity:0}],{duration:900,easing:"ease-in-out"}).onfinish=()=>g.remove()}}
+// 3.6.13 발광 테마: 배경 빛무리(큰 원 5개)·반딧불(작은 점 22개)은 transform·opacity만 움직여요
+const lmOn=()=>document.documentElement.dataset.skin==="lumi";const LM={el:null};
+function lmSync(){if(lmOn()){if(LM.el)return;const d=document.createElement("div");d.className="lumfx";d.setAttribute("aria-hidden","true");const C=["rgba(92,255,214,.55)","rgba(80,200,255,.45)","rgba(150,255,190,.45)"];
+    for(let k=0;k<5;k++){const i=document.createElement("i"),z=260+Math.random()*320;i.style.cssText="left:"+(Math.random()*100-15).toFixed(0)+"%;top:"+(Math.random()*100-15).toFixed(0)+"%;width:"+z.toFixed(0)+"px;height:"+z.toFixed(0)+"px;--lc:"+C[k%3]+";--lo:"+(.18+Math.random()*.14).toFixed(2)+";--d:"+(18+Math.random()*16).toFixed(0)+"s;--mx:"+((Math.random()-.5)*220).toFixed(0)+"px;--my:"+((Math.random()-.5)*180).toFixed(0)+"px;--ms:"+(.8+Math.random()*.5).toFixed(2);d.appendChild(i)}
+    for(let k=0;k<22;k++){const b=document.createElement("b");b.style.cssText="left:"+(Math.random()*100).toFixed(1)+"%;top:"+(Math.random()*100).toFixed(1)+"%;--lc:"+C[k%3].replace(/[\d.]+\)$/,".9)")+";--d:"+(7+Math.random()*9).toFixed(1)+"s;--dl:-"+(Math.random()*10).toFixed(1)+"s;--mx:"+((Math.random()-.5)*90).toFixed(0)+"px;--my:"+((Math.random()-.5)*70).toFixed(0)+"px";d.appendChild(b)}
+    const b=document.querySelector(".bgart");if(b)b.after(d);else document.body.prepend(d);LM.el=d}
+  else if(LM.el){LM.el.remove();LM.el=null}}
+let lmN=0;
+// 글자를 칠 때마다 방금 친 글자에서 빛이 동그랗게 번져요
+function lmKey(){if(!lmOn()||lmN>24||cbRed())return;const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
+  let g=c.previousElementSibling;while(g&&g.classList.contains("auto"))g=g.previousElementSibling;
+  const B=box.getBoundingClientRect(),C=(g||c).getBoundingClientRect(),cx=C.left-B.left+(g?C.width/2:0),cy=C.top-B.top+C.height/2,z=34,i=document.createElement("i");i.className="lm-k";
+  i.style.cssText="left:"+(cx-z/2).toFixed(1)+"px;top:"+(cy-z/2).toFixed(1)+"px;width:"+z+"px;height:"+z+"px";box.appendChild(i);lmN++;
+  i.animate([{transform:"scale(.2)",opacity:.95},{transform:"scale(1.5)",opacity:0}],{duration:520,easing:"cubic-bezier(.2,.7,.4,1)"}).onfinish=()=>{i.remove();lmN--}}
+// 한 줄 끝내면 창 테두리가 한 번 환하게, 다 치면 가운데서 빛이 퍼지고 빛 알갱이가 떠올라요
+function lmStep(last){if(!lmOn()||cbRed()||!document.body.animate)return;const w=document.querySelector(".typewrap");
+  if(w&&w.animate)w.animate([{boxShadow:"0 0 0 rgba(92,255,214,0)"},{boxShadow:"0 0 26px rgba(92,255,214,.75),inset 0 0 14px rgba(92,255,214,.3)",offset:.3},{boxShadow:"0 0 0 rgba(92,255,214,0)"}],{duration:700,easing:"ease-out"});
+  if(!last)return;const f=document.createElement("div");f.className="lm-bloom";document.body.appendChild(f);f.animate([{transform:"scale(.1)",opacity:0},{transform:"scale(1)",opacity:1,offset:.35},{transform:"scale(1.6)",opacity:0}],{duration:1600,easing:"ease-out"}).onfinish=()=>f.remove();
+  const W=innerWidth,H=innerHeight;for(let k=0;k<26;k++){const i=document.createElement("i");i.className="lm-up";i.style.cssText="left:"+(Math.random()*W).toFixed(0)+"px;top:"+(H*(.55+Math.random()*.5)).toFixed(0)+"px";document.body.appendChild(i);
+    const sw=(Math.random()-.5)*60;i.animate([{transform:"translate(0,0)",opacity:0},{opacity:1,offset:.2},{transform:"translate("+sw.toFixed(0)+"px,-"+(H*(.35+Math.random()*.3)).toFixed(0)+"px)",opacity:0}],{duration:1800+Math.random()*1400,delay:Math.random()*700,easing:"ease-out",fill:"backwards"}).onfinish=()=>i.remove()}}
 let gdN=0;
 function gdKey(){if(!gdOn()||gdN>60||cbRed())return;const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
   let g=c.previousElementSibling;while(g&&g.classList.contains("auto"))g=g.previousElementSibling;
@@ -1697,7 +1744,7 @@ async function bgSet(i,d){bgImg[i]=d;
 // 덮개·창: 사진 배경일 땐 tt-bgdim/tt-cardop, 아니면 테마용 tt-tdim/tt-tcardop(null = 테마 기본)
 const numOr=(v,d)=>{const n=Number(v);return v===null||v===undefined||v===""||!Number.isFinite(n)?d:n};
 const isPhoto=()=>document.documentElement.classList.contains("photo-bg");
-const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"||k==="glitch"||k==="stars"?{dim:0,card:84}:k==="gold"?{dim:0,card:86}:{dim:0,card:100}};
+const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"||k==="glitch"||k==="stars"?{dim:0,card:84}:k==="gold"||k==="lumi"?{dim:0,card:86}:{dim:0,card:100}};
 function applyBg(){const R=document.documentElement;bgPaint();const ph=isPhoto(),df=themeDef();let dim,card;
   if(ph){dim=Math.min(85,Math.max(20,numOr(store.get("tt-bgdim",60),60)));card=Math.min(100,Math.max(0,numOr(store.get("tt-cardop",80),80)));R.classList.add("seethru");R.classList.remove("tdim");R.style.setProperty("--bgdim",String(dim/100));R.style.setProperty("--cardop",card+"%")}
   else{const td=numOr(store.get("tt-tdim",null),null),tc=numOr(store.get("tt-tcardop",null),null);dim=td===null?df.dim:Math.min(85,Math.max(0,td));card=tc===null?df.card:Math.min(100,Math.max(0,tc));
@@ -1791,7 +1838,7 @@ function achCheck(f){const R=runsGet(),ids=[];let BP={};try{BP=bookP()}catch(e){
   if(f&&f.anthem&&f.spd>=600)ids.push("p-anthem");if(f&&f.mine)ids.push("p-mine");
   return achGrant(ids)}
 try{achCheck()}catch(e){} // 예전 기록으로 얻을 수 있는 업적은 켤 때 바로 줘요
-// 3.6.12: 은하수를 여행하는·재벌 3세는 칭호 배지·업적 목록·알림을 별자리·금박 닉네임 효과 줄처럼
+// 3.6.13: 은하수를 여행하는·재벌 3세는 칭호 배지·업적 목록·알림을 별자리·금박 닉네임 효과 줄처럼
 const ACH_FX={"g-stars":"stars","g-gold":"gold"};
 function drawAch(){const el=$("ach-list");if(!el)return;el.innerHTML="";const A=achGet(),R=runsGet(),cur=store.get("tt-title","");let n=0;
   let S=null;try{S=achStatsHook?achStatsHook(()=>{if(!$("rec").hidden)drawAch()}):null}catch(e){}
@@ -1832,7 +1879,7 @@ function glSync(){clearTimeout(GL.t);clearTimeout(GL.r);document.documentElement
   const goR=()=>{if(document.documentElement.dataset.skin!=="glitch")return;if(!document.hidden)glRects();GL.r=setTimeout(goR,3000+Math.random()*3000)};GL.r=setTimeout(goR,1000+Math.random()*2000)}
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k)||SP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&(owned(k)||spOk(k))))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
-  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}try{stSync();gdSync()}catch(e){}}
+  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}try{stSync();gdSync();lmSync()}catch(e){}}
 document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
@@ -2002,6 +2049,7 @@ $("fxkbtn").onclick=()=>{store.set("tt-fxk",!store.get("tt-fxk",false));showFxk(
 // 한 타 효과: 글자를 칠 때마다 방금 친 글자 가운데에서 작은 네모 고리가 퍼져요 (무지개 테마, 설정에서 켜기)
 let fxkN=0;
 inp.addEventListener("input",e=>{if(!gdOn()||e.inputType&&e.inputType.startsWith("delete"))return;requestAnimationFrame(gdKey)});
+inp.addEventListener("input",e=>{if(!lmOn()||e.inputType&&e.inputType.startsWith("delete"))return;requestAnimationFrame(lmKey)});
 inp.addEventListener("input",e=>{if(document.documentElement.dataset.skin!=="rainbow"||!store.get("tt-fxk",false)||fxkN>24)return;
   if(e.inputType&&e.inputType.startsWith("delete"))return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(x){}
   requestAnimationFrame(()=>{const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
@@ -2086,7 +2134,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
     api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
-  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.nfx=()=>srvOn()?SRV.nfx:"";srvHooks.setNfx=id=>api("/nfx",{id}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{});srvHooks.apply=j=>{if(j&&!j.err)srvApply(j)}; /* 3.6.12: 색은 연출이 끝난 뒤 apply로 적용 */srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
+  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.nfx=()=>srvOn()?SRV.nfx:"";srvHooks.setNfx=id=>api("/nfx",{id}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{});srvHooks.apply=j=>{if(j&&!j.err)srvApply(j)}; /* 3.6.13: 색은 연출이 끝난 뒤 apply로 적용 */srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
@@ -2127,7 +2175,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 닉네임은 rank/{uid}에 있는 지금 닉네임으로 보여 줘요 (바꾸면 모든 랭킹에 바로 적용)
   async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]={n:nick,egg:eggNick(),tt:store.get("tt-title","")};return}
     try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]={n:String(v.nick),egg:v.egg===true,tt:typeof v.tt==="string"?v.tt:"",c:v.c,fx:v.fx}}}catch(e){}}));return m}
-  // 3.6.12 랭킹의 내 줄: 단 닉네임 효과(없으면 무지개)에 맞춰 배경이 바뀌어요
+  // 3.6.13 랭킹의 내 줄: 단 닉네임 효과(없으면 무지개)에 맞춰 배경이 바뀌어요
   const meRow=li=>{li.className="me";const f=nfxOk(SRV.nfx)?SRV.nfx:eggNick()?"egg":"";if(f)li.classList.add("rfx-"+f);if(colOk(SRV.col))li.style.setProperty("--nc",SRV.col)};
   const rowFx=(li,id,o)=>{if(id===uid){meRow(li);return}if(!o)return;const f=nfxOk(o.fx)?o.fx:o.egg===true?"egg":"";if(f)li.classList.add("rfx-"+f);if(colOk(o.c))li.style.setProperty("--nc",o.c)};
   const nmEl=(mk,o,v,id)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");if(o)paintNick(e,id===uid&&SRV.col?SRV.col:o.c,id===uid?SRV.nfx:o.fx);addTtl(e,o&&o.tt);addFm(e,id);return e};
