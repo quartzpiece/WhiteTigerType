@@ -79,8 +79,16 @@
   --accent:#E8C15A; --accent-soft:#2C2310; --ok:#E8C15A; --bad:#0B0906; --bad-soft:#F2E8D0}
 :root[data-skin="gold"] h1{background:linear-gradient(100deg,#B0802A,#F7E08A 18%,#C9952F 34%,#FFF4C2 50%,#C9952F 66%,#F0D27A 82%,#B0802A) 0 50%/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;border-image:linear-gradient(#F7E08A,#A8761F) 1}
 :root[data-skin="gold"] h1 .ver{-webkit-text-fill-color:var(--muted);color:var(--muted)}
-:root[data-skin="gold"] .prog i{background:linear-gradient(90deg,#A8761F,#F7E08A 55%,#D4A443)}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="gold"] h1{animation:flow 7s linear infinite}}
+/* 3.6.1 금박: 포인트색이 모두 제목처럼 반짝여요. 글자·바탕은 금빛 흐름, 테두리 같은 나머지는 포인트색이 밝아졌다 어두워져요 */
+@property --gdc{syntax:"<color>";inherits:true;initial-value:#E8C15A}
+:root[data-skin="gold"]{--accent:var(--gdc);--ok:var(--gdc)}
+:root[data-skin="gold"] :is(.pts,.stat b,.shop-list .pr,.rank-list li .pt,.rank-list li:nth-child(-n+3) .no,.rec-sum b,.rec-list li .s,.lines div.now,#pstate,.toast b,.vs-code,.fr-inv b,.fb-list .fb-h b){background:linear-gradient(100deg,#B0802A,#F7E08A 18%,#C9952F 34%,#FFF4C2 50%,#C9952F 66%,#F0D27A 82%,#B0802A) 0 50%/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent}
+:root[data-skin="gold"] :is(.btn.primary,.rtab[aria-pressed="true"],.plist button[aria-pressed="true"],.kbw .btn[aria-pressed="true"],.fonts .btn[aria-pressed="true"],#kbl-row .btn[aria-pressed="true"],.ach-l li.on .btn,.rec-k .btn[aria-pressed="true"],.book-list .bp i,.prog i){background:linear-gradient(100deg,#B0802A,#F7E08A 18%,#C9952F 34%,#FFF4C2 50%,#C9952F 66%,#F0D27A 82%,#B0802A) 0 50%/200% 100%}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="gold"]{animation:gdAcc 3.6s steps(36) infinite}
+  :root[data-skin="gold"] :is(.pts,.stat b,.shop-list .pr,.rank-list li .pt,.rank-list li:nth-child(-n+3) .no,.rec-sum b,.rec-list li .s,.lines div.now,#pstate,.toast b,.vs-code,.fr-inv b,.fb-list .fb-h b,.btn.primary,.rtab[aria-pressed="true"],.plist button[aria-pressed="true"],.kbw .btn[aria-pressed="true"],.fonts .btn[aria-pressed="true"],#kbl-row .btn[aria-pressed="true"],.ach-l li.on .btn,.rec-k .btn[aria-pressed="true"],.book-list .bp i,.prog i){animation:flow 7s linear infinite}
+  :root[data-skin="gold"] .pts.up{animation:ptup .6s ease-out,flow 7s linear infinite}}
+@keyframes gdAcc{0%,100%{--gdc:#D4A443}50%{--gdc:#FFEBA6}}
 .goldfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;display:none}
 :root[data-skin="gold"] .goldfx{display:block}
 .goldfx i{position:absolute;background:linear-gradient(135deg,#8A5F16,#F7E08A 45%,#C9952F 60%,#FFF4C2 72%,#9C6B1C)}
@@ -218,6 +226,13 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .shop-list .sw{width:18px;height:18px;flex:none}
 .shop-list .nm{flex:1;min-width:0}
 .shop-list .pr{font-family:var(--display);color:var(--accent)}
+/* 닉네임 효과(3.6.1): 발광(지금 닉네임 색으로 빛나요), 별자리 표시(이름 뒤에 작은 별자리), 금색(금빛이 흘러요) */
+.nx-glow{text-shadow:0 0 4px currentColor,0 0 10px currentColor,0 0 20px currentColor}
+.nx-stars{padding-right:34px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 14'%3E%3Cpath d='M26.9 1L29 6.1L21.3 10.3L17.6 7.2ZM17.6 7.2L11.6 8L6.7 8.4L1 13' stroke='%23AFC8FF' stroke-width='.7' fill='none' opacity='.8'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26.9' cy='1.3' r='1.2'/%3E%3Ccircle cx='28.7' cy='6.1' r='1'/%3E%3Ccircle cx='21.3' cy='10.3' r='1'/%3E%3Ccircle cx='17.6' cy='7.2' r='.75'/%3E%3Ccircle cx='11.6' cy='8' r='1.2'/%3E%3Ccircle cx='6.7' cy='8.4' r='1.05'/%3E%3Ccircle cx='1.3' cy='12.7' r='1.15'/%3E%3C/g%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 3px center!important;background-size:27px 13px!important;text-shadow:0 0 6px rgba(175,200,255,.55)} /* 북두칠성(실제 별 위치) */
+.nx-gold:not(button){background:linear-gradient(100deg,#B0802A,#F7E08A 18%,#C9952F 34%,#FFF4C2 50%,#C9952F 66%,#F0D27A 82%,#B0802A) 0 50%/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent!important;-webkit-text-fill-color:transparent;font-weight:700}
+@media (prefers-reduced-motion:no-preference){.nx-glow{animation:nxGlow 2.4s ease-in-out infinite}.nx-gold:not(button){animation:flow 4s linear infinite}}
+@keyframes nxGlow{50%{text-shadow:0 0 2px currentColor,0 0 6px currentColor,0 0 11px currentColor}}
+.nfx-pv{margin-left:6px;font-weight:700}
 .shop-list li.tok{font-weight:700}.shop-list li.tok.lk{color:#E8C15A;border-color:#E8C15A;background:rgba(232,193,90,.1);box-shadow:0 0 10px rgba(232,193,90,.3)}.shop-list li.tok.ul{color:#8E8E89;border-color:#6A6A66;background:rgba(142,142,137,.08)}.shop-list li.tok .pr{color:inherit}
 .shop-list .btn{padding:6px 12px;font-size:.85rem}
 .shop-list .tks{padding:6px 9px;min-width:0}.shop-list .tkn{width:52px;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);padding:5px 4px;text-align:center;border-radius:0;-moz-appearance:textfield}.shop-list .tkn::-webkit-inner-spin-button,.shop-list .tkn::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -424,7 +439,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.6.0</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.6.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1571,17 +1586,22 @@ const SHOP_TITLES=[];
 const TICKET={id:"ticket",name:"티켓",pr:100,sale:true}; // 3.6.0 공개(사용자 요청)
 // 사용자 지정(2026-11-18): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%, 특별 폰트 1%, 닉네임 색상 변경권 5%, 꽝 87%
 // hold = 아직 없는 상품(이름만 보이고 서버 pts.pz에 세어 둠, 나중에 만들면 줄 것), cc = 닉네임 색상 변경권(서버 pts.cc, 쓰는 기능은 아직)
-// 3.5.36 확률(사용자 지정): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%(별자리·금박 각 0.5%, 하나 가지면 다른 하나가 1%), 특별 폰트 1%, 색상 변경권 16%, 불운·행운의 징표 각 0.5%, 1~75포인트 각 1%
+// 3.5.36 확률(사용자 지정): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%(별자리·금박 각 0.5%, 하나 가지면 다른 하나가 1%), 특별 폰트 1%, 색상 변경권 15%(3.6.1), 닉네임 효과 1%(3.6.1, 발광·별자리 표시·금색 각 1/3%), 불운·행운의 징표 각 0.5%, 1~75포인트 각 1%
 // grp: 묶음 무게를 아직 안 가진 것끼리 나눠요. 묶음을 다 가지면 그 무게는 랜덤 포인트(rp) 빼고 남은 상품이 제 무게대로 나눠 가져요(서버가 계산)
 const GACHA=[{id:"pt1000",name:"1000포인트",w:1,pt:1000},{id:"nick1",name:"닉네임 변경권",w:5,nc:1},{id:"sp-stars",name:"특별 테마: 별자리",w:.5,sp:"stars",grp:"sp-theme"},{id:"sp-gold",name:"특별 테마: 금박",w:.5,sp:"gold",grp:"sp-theme"},
-  {id:"sp-pcpeace",name:"평창평화체 라이트",w:1,sp:"f-pcpeace",grp:"sp-font"},{id:"ncolor1",name:"닉네임 색상 변경권",w:16,cc:1},{id:"ul1",name:"불운의 징표",w:.5,ul:1},{id:"lk1",name:"행운의 징표",w:.5,lk:1},
+  {id:"sp-pcpeace",name:"평창평화체 라이트",w:1,sp:"f-pcpeace",grp:"sp-font"},{id:"ncolor1",name:"닉네임 색상 변경권",w:15,cc:1},
+  {id:"nx-glow",name:"닉네임 효과: 발광",w:1/3,sp:"nx-glow",grp:"nick-fx"},{id:"nx-stars",name:"닉네임 효과: 별자리 표시",w:1/3,sp:"nx-stars",grp:"nick-fx"},{id:"nx-gold",name:"닉네임 효과: 금색",w:1/3,sp:"nx-gold",grp:"nick-fx"},{id:"ul1",name:"불운의 징표",w:.5,ul:1},{id:"lk1",name:"행운의 징표",w:.5,lk:1},
   ...Array.from({length:75},(x,i)=>({id:"rp"+(i+1),name:(i+1)+"포인트",w:1,pt:i+1,rp:1}))];
 // 3.5.26 닉네임 변경권: 상점 1000포인트(여러 장 가능), 닉네임을 바꿀 때 1장씩 써요(서버 pts.nc)
 const NICKPASS={id:"nickpass",name:"닉네임 변경권",pr:1000};
 // 닉네임 색상(서버 pts.col → 랭킹 rank.c): 색이 있으면 닉네임 글자를 그 색으로
 // 무지개 닉네임(무지갯빛 이스터에그로 얻는 닉네임 강조)은 인벤토리에서 빼고 달 수 있어요(서버 pts.eo가 기준, tt-eggoff는 그 복사본)
 const eggNick=()=>store.get("tt-egg",false)===true&&store.get("tt-eggoff",false)!==true;
-const colOk=c=>typeof c==="string"&&/^#[0-9a-f]{6}$/i.test(c);const paintNick=(e,c)=>{if(e&&colOk(c))e.style.color=c};
+const colOk=c=>typeof c==="string"&&/^#[0-9a-f]{6}$/i.test(c);
+// 3.6.1 닉네임 효과: 티켓으로 얻고(inv) 인벤토리에서 하나 달아요(서버 pts.nfx, 랭킹 rank.fx). 제작자는 셋 다 쓸 수 있어요
+const NFX=[{id:"nx-glow",name:"닉네임 효과: 발광"},{id:"nx-stars",name:"닉네임 효과: 별자리 표시"},{id:"nx-gold",name:"닉네임 효과: 금색"}],nfxOk=id=>NFX.some(x=>x.id===id);
+const paintNick=(e,c,fx)=>{if(!e)return;if(colOk(c))e.style.color=c;NFX.forEach(x=>e.classList.remove(x.id));const bt=e.tagName==="BUTTON",inner=bt&&e.querySelector(":scope > span.nx-gold");if(inner)e.textContent=e.textContent;
+  if(!nfxOk(fx))return;if(bt&&fx==="nx-gold"){const t=e.textContent,sp=document.createElement("span");sp.className="nx-gold";sp.textContent=t;e.textContent="";e.appendChild(sp)}else e.classList.add(fx)}; // 금색은 버튼 안에서는 글자만 감싸서 반짝여요(버튼 바탕은 그대로)
 const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
 
 // 필사: 책(저작권이 끝난 작품)을 문단마다 끊어서 치고, 몇 번째 문단까지 쳤는지 기억해요. 상점에서 권당 300포인트
@@ -1855,6 +1875,9 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   const cc=srvHooks.cc?srvHooks.cc():0;if(cc>0){const c=document.createElement("span");c.className="pr";c.textContent=cc+"장";et.appendChild(li("닉네임 색상 변경권",c,"사용",useColor))}
   if(store.get("tt-egg",false)===true){const on=eggNick(),l=li("무지개 닉네임",null,on?"빼기":"달기",async()=>{if(!srvHooks.eggoff)return;const j=await srvHooks.eggoff(on);if(!j||j.err){$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";return}store.set("tt-eggoff",on);if(eggHook)eggHook();if(srvHooks.rank)srvHooks.rank();if(rankHook)rankHook();drawInv()},on);et.appendChild(l)}
   {const col=srvHooks.col?srvHooks.col():"";if(colOk(col)){const c=document.createElement("span");c.className="sw";c.style.background=col;const l=li("지금 닉네임 색 "+col.toUpperCase(),null,"기본으로",null);l.insertBefore(c,l.firstChild);l.querySelector("button").hidden=true;et.appendChild(l)}}
+  { /* 3.6.1 닉네임 효과: 가진 것(제작자는 모두) 중 하나를 달고 빼요. 이름 칸에 그 효과를 미리 보여 줘요 */const cur=srvHooks.nfx?srvHooks.nfx():"";
+    NFX.filter(x=>shopFree||owned(x.id)).forEach(x=>{const on=cur===x.id,l=li(x.name,null,on?"빼기":"달기",async()=>{if(!srvHooks.setNfx)return;const bt=l.querySelector("button");bt.disabled=true;const j=await srvHooks.setNfx(on?"":x.id);if(j&&j.err)$("gc-res").textContent=j.err;drawInv()},on);
+      const nm=l.querySelector(".nm");nm.textContent="";const pv=document.createElement("span");pv.className="nfx-pv";pv.textContent=(srvHooks.on&&srvHooks.on()?$("acct").textContent:"")||"닉네임";paintNick(pv,srvHooks.col?srvHooks.col():"",x.id);nm.append(x.name.replace("닉네임 효과: ","")+" ",pv);et.appendChild(l)})}
   [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
   $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||et.children.length)}
 // 닉네임 색상 변경권 쓰기: 서버가 RGB를 아무 값으로 정해 줘요
@@ -2002,14 +2025,14 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function nickTaken(n,me){try{const d=await FS.getDoc(FS.doc(fdb,"nick",nickKey(n)));if(d.exists()&&(d.data()||{}).uid!==me)return true}catch(e){}
     try{const sn=await FS.getDocs(FS.query(FS.collection(fdb,"rank"),FS.where("nick","==",n),FS.limit(5)));let t=false;sn.forEach(d=>{if(d.id!==me)t=true});if(t)return true}catch(e){}return false}
   async function nickFree(n,me){if(!n||!me)return;try{const ref=FS.doc(fdb,"nick",nickKey(n)),d=await FS.getDoc(ref);if(d.exists()&&(d.data()||{}).uid===me)await FS.deleteDoc(ref)}catch(e){}}
-  const showNick=id=>{const n=nick||id;acct.textContent=n;acct.classList.toggle("egg",eggNick());acct.style.color="";paintNick(acct,SRV.col);$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
+  const showNick=id=>{const n=nick||id;acct.textContent=n;acct.classList.toggle("egg",eggNick());acct.style.color="";paintNick(acct,SRV.col,SRV.nfx);$("lg-who").textContent=n;$("lg-idv").textContent="아이디: "+id};
   async function push(){if(!uid)return;if(pushing){again=true;return}pushing=true;sync("저장 중");
     try{await FS.setDoc(FS.doc(fdb,"users",uid),{...myData(),id:auth.currentUser&&auth.currentUser.email.split("@")[0],nick:nick,at:Date.now()});sync("저장됨")}catch(e){sync("저장 실패")}
     pushRank();pushing=false;if(again){again=false;push()}}
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
   // 서버(3.5.16~): 포인트·상점·업적은 워커 서버(pts/{uid})가 정해요. 랭킹 문서는 서버 값(SRV)만 쓸 수 있어요(규칙)
-  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null,tk:0,nc:0,cc:0,col:"",lk:0,ul:0};
+  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null,tk:0,nc:0,cc:0,col:"",lk:0,ul:0,nfx:""};
   async function api(p,b){const u=auth.currentUser;if(!u)return null;try{const tk=await u.getIdToken(),r=await fetch(API+p,{method:"POST",headers:{authorization:"Bearer "+tk,"content-type":"application/json"},body:JSON.stringify(b||{})});let j=null;try{j=await r.json()}catch(e){}return r.ok?j:{err:(j&&j.err)||"서버 오류",code:r.status}}catch(e){return null}}
   // 서버가 준 값을 사이트에 반영: 포인트·산 것·업적(서버가 준 것만 남아요)
   function srvApply(j){if(!j||j.err)return;if(Number.isFinite(j.tot)){SRV.tot=j.tot;SRV.frozen=null;store.set("tt-tot",j.tot)}
@@ -2020,7 +2043,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg!==(store.get("tt-egg",false)===true)){store.set("tt-egg",j.egg);applyHolo();if(eggHook)eggHook()}}
     if(j.eg&&typeof j.eg==="object")[["snow",applySnow],["rain",applyRain],["piano",applyPiano]].forEach(([k,fn])=>{const v=j.eg[k]===true;if(v!==(store.get("tt-"+k,false)===true)){store.set("tt-"+k,v);if(v)store.set("tt-"+k+"fx",true);try{fn()}catch(e){}}}); /* 3.5.24 이스터에그는 서버 값만 */
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
-    if(Number.isFinite(j.cc))SRV.cc=j.cc;if(Number.isFinite(j.lk))SRV.lk=j.lk;if(Number.isFinite(j.ul))SRV.ul=j.ul;if(typeof j.eo==="boolean"&&j.eo!==(store.get("tt-eggoff",false)===true)){store.set("tt-eggoff",j.eo);lastRank="";if(eggHook)eggHook()}if(colOk(j.col)&&j.col!==SRV.col){SRV.col=j.col;lastRank="";try{paintNick(acct,SRV.col)}catch(e){}}if(Number.isFinite(j.nc)){SRV.nc=j.nc;try{ncDraw()}catch(e){}}if(Number.isFinite(j.tk)){SRV.tk=j.tk;try{if(!$("inv").hidden)drawInv()}catch(e){}}
+    if(Number.isFinite(j.cc))SRV.cc=j.cc;if(Number.isFinite(j.lk))SRV.lk=j.lk;if(typeof j.nfx==="string"&&j.nfx!==SRV.nfx){SRV.nfx=nfxOk(j.nfx)?j.nfx:"";lastRank="";try{paintNick(acct,SRV.col,SRV.nfx)}catch(e){}}if(Number.isFinite(j.ul))SRV.ul=j.ul;if(typeof j.eo==="boolean"&&j.eo!==(store.get("tt-eggoff",false)===true)){store.set("tt-eggoff",j.eo);lastRank="";if(eggHook)eggHook()}if(colOk(j.col)&&j.col!==SRV.col){SRV.col=j.col;lastRank="";try{paintNick(acct,SRV.col,SRV.nfx)}catch(e){}}if(Number.isFinite(j.nc)){SRV.nc=j.nc;try{ncDraw()}catch(e){}}if(Number.isFinite(j.tk)){SRV.tk=j.tk;try{if(!$("inv").hidden)drawInv()}catch(e){}}
     if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
@@ -2047,7 +2070,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
     api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
-  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
+  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.nfx=()=>srvOn()?SRV.nfx:"";srvHooks.setNfx=id=>api("/nfx",{id}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
@@ -2065,10 +2088,10 @@ async function initCloud(){if(!FB_CONFIG)return;
     $("mg-find").onclick=async()=>{const q=$("mg-q").value.trim();if(!q){mgMsg("닉네임을 적어 주세요");return}mgMsg("찾는 중");mgOut.innerHTML="";const j=await api("/admin",{act:"find",q});
       if(!j){mgMsg("서버 연결 실패");return}if(j.err){mgMsg(j.err);return}mgMsg(j.list.length?"":"없어요");j.list.forEach(u=>mgOut.append(card(u)))};
     $("mg-q").addEventListener("keydown",e=>{if(e.key==="Enter")$("mg-find").click()})}
-  async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=F?(typeof F.nick==="string"?F.nick:(nick||"")):(SRV.nick||nick||""),egg=F?F.egg===true:(!!SRV.egg&&store.get("tt-eggoff",false)!==true),tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,cl=F?"":(colOk(SRV.col)?SRV.col:""),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs+"|"+cl;if(key===lastRank)return;
-    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs;if(cl)v.c=cl; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
+  async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=F?(typeof F.nick==="string"?F.nick:(nick||"")):(SRV.nick||nick||""),egg=F?F.egg===true:(!!SRV.egg&&store.get("tt-eggoff",false)!==true),tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,cl=F?"":(colOk(SRV.col)?SRV.col:""),fx=F?"":(nfxOk(SRV.nfx)?SRV.nfx:""),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs+"|"+cl+"|"+fx;if(key===lastRank)return;
+    const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs;if(cl)v.c=cl;if(fx)v.fx=fx; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
-      const alts=[],strip=(...ks)=>{const w={...v};ks.forEach(k=>delete w[k]);return w};if(v.c)alts.push(strip("c"));if(v.b)alts.push(strip("b","c"));if(v.a)alts.push(strip("b","a","c"));if(tt)alts.push(strip("b","a","tt","c"));if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
+      const alts=[],strip=(...ks)=>{const w={...v};ks.forEach(k=>delete w[k]);return w};if(v.fx)alts.push(strip("fx"));if(v.c)alts.push(strip("c","fx"));if(v.b)alts.push(strip("b","c","fx"));if(v.a)alts.push(strip("b","a","c","fx"));if(tt)alts.push(strip("b","a","tt","c","fx"));if(egg)alts.push({nick:nm,pt:pt,at:Date.now()});for(const w of alts){try{await FS.setDoc(FS.doc(fdb,"rank",uid),w);break}catch(e2){}}}}
   rankHook=()=>pushRank();
   // 업적별 달성 비율(3.4.19): rank 문서(로그인한 사람마다 하나)를 모두 읽어 a(얻은 업적)를 세요. 5분 동안은 다시 안 읽어요
   let achSt=null,achStAt=0,achStLoading=false;
@@ -2085,8 +2108,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   eggHook=()=>{if(auth.currentUser)showNick(auth.currentUser.email.split("@")[0])};
   // 닉네임은 rank/{uid}에 있는 지금 닉네임으로 보여 줘요 (바꾸면 모든 랭킹에 바로 적용)
   async function nickMap(ids){const m={};await Promise.all(ids.map(async id=>{if(id===uid&&nick){m[id]={n:nick,egg:eggNick(),tt:store.get("tt-title","")};return}
-    try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]={n:String(v.nick),egg:v.egg===true,tt:typeof v.tt==="string"?v.tt:"",c:v.c}}}catch(e){}}));return m}
-  const nmEl=(mk,o,v,id)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");if(o)paintNick(e,id===uid&&SRV.col?SRV.col:o.c);addTtl(e,o&&o.tt);addFm(e,id);return e};
+    try{const d=await FS.getDoc(FS.doc(fdb,"rank",id));if(d.exists()){const v=d.data()||{};if(v.nick)m[id]={n:String(v.nick),egg:v.egg===true,tt:typeof v.tt==="string"?v.tt:"",c:v.c,fx:v.fx}}}catch(e){}}));return m}
+  const nmEl=(mk,o,v,id)=>{const e=mk("nm",o?o.n:String(v.nick||"이름 없음"));if(o&&o.egg)e.classList.add("egg");if(o)paintNick(e,id===uid&&SRV.col?SRV.col:o.c,id===uid?SRV.nfx:o.fx);addTtl(e,o&&o.tt);addFm(e,id);return e};
   // 친구 메모(3.5.2): 랭킹에서도 닉네임 오른쪽에 회색 작은 글자로
   const addFm=(el,id)=>{const m=id&&id!==uid&&fmGet()[id];if(!m)return;const s=document.createElement("span");s.className="fm";s.textContent=m;el.appendChild(s)};
   const addTtl=(el,id)=>{const n=titleName(id||"");if(!n)return;const b=document.createElement("span");b.className="ttl";b.textContent=n;el.prepend(b)};
@@ -2098,7 +2121,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   async function loadRank(){psel.hidden=rTab!=="ps";$("rank-dnav").hidden=rTab!=="daily";if(rTab==="daily")return loadRankDaily();if(rTab==="ps")return loadRankPs();if(rTab==="pt"&&rFo&&uid)return loadRankFr();$("rank-dtext").hidden=true;const list=$("rank-list"),m=$("rank-msg");list.className="rank-list";m.textContent="불러오는 중";
     try{const q=FS.query(FS.collection(fdb,"rank"),FS.orderBy("pt","desc"),FS.limit(20));const snap=await FS.getDocs(q);
       list.innerHTML="";let n=0;snap.forEach(d=>{const v=d.data()||{};n++;const li=document.createElement("li");if(d.id===uid)li.className="me";
-        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?eggNick():v.egg===true)b.classList.add("egg");paintNick(b,me&&SRV.col?SRV.col:v.c);addTtl(b,me?store.get("tt-title",""):v.tt);addFm(b,d.id);
+        const a=document.createElement("span");a.className="no";a.textContent=n;const b=document.createElement("span");b.className="nm";const me=d.id===uid;b.textContent=(me&&nick)?nick:String(v.nick||"이름 없음");if(me?eggNick():v.egg===true)b.classList.add("egg");paintNick(b,me&&SRV.col?SRV.col:v.c,me?SRV.nfx:v.fx);addTtl(b,me?store.get("tt-title",""):v.tt);addFm(b,d.id);
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
@@ -2315,7 +2338,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   const frV=id=>id===uid?{nick:nick,egg:eggNick(),tt:store.get("tt-title",""),pt:SRV.tot!==null?SRV.tot:Math.floor(getTot()),b:bstGet(),a:Object.keys(achGet())}:((FR.info[id]||{}).v||{});
   const frNick=(id,fb)=>{const v=frV(id);return v.nick?String(v.nick):(fb||"이름 없음")};
   // 닉네임 오른쪽에 내 메모(회색 작은 글자)
-  function frName(id,fb){const e=document.createElement("span");e.className="nm";const v=frV(id);e.textContent=frNick(id,fb);if(v.egg===true)e.classList.add("egg");paintNick(e,v.c);addTtl(e,typeof v.tt==="string"?v.tt:"");
+  function frName(id,fb){const e=document.createElement("span");e.className="nm";const v=frV(id);e.textContent=frNick(id,fb);if(v.egg===true)e.classList.add("egg");paintNick(e,id===uid?SRV.col:v.c,id===uid?SRV.nfx:v.fx);addTtl(e,typeof v.tt==="string"?v.tt:"");
     const m=id!==uid&&fmGet()[id];if(m){const s=document.createElement("span");s.className="fm";s.textContent=m;e.appendChild(s)}return e}
   const frSt=t=>{const e=document.createElement("span");e.className="st";e.textContent=t||"";return e};
   const frLi=(nm,st,bts)=>{const li=document.createElement("li"),bt=document.createElement("span");bt.className="bt";bts.forEach(b=>bt.appendChild(b));li.append(nm,st,bt);return li};
