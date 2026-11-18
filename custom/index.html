@@ -394,7 +394,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.28</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.29</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1191,7 +1191,7 @@ const GACHA=[{id:"pt1000",name:"1000포인트",w:1,pt:1000},{id:"nick1",name:"�
 // 3.5.26 닉네임 변경권: 상점 1000포인트(여러 장 가능), 닉네임을 바꿀 때 1장씩 써요(서버 pts.nc)
 const NICKPASS={id:"nickpass",name:"닉네임 변경권",pr:1000};
 // 닉네임 색상(서버 pts.col → 랭킹 rank.c): 색이 있으면 닉네임 글자를 그 색으로
-// 무지개 닉네임(무지갯빛 이스터에그로 얻는 닉네임 강조)은 인벤토리에서 빼고 달 수 있어요(tt-eggoff, 이 기기)
+// 무지개 닉네임(무지갯빛 이스터에그로 얻는 닉네임 강조)은 인벤토리에서 빼고 달 수 있어요(서버 pts.eo가 기준, tt-eggoff는 그 복사본)
 const eggNick=()=>store.get("tt-egg",false)===true&&store.get("tt-eggoff",false)!==true;
 const colOk=c=>typeof c==="string"&&/^#[0-9a-f]{6}$/i.test(c);const paintNick=(e,c)=>{if(e&&colOk(c))e.style.color=c};
 const SHOP_ETC=[{id:"bgphoto",name:"사진 배경",pr:1000},{id:"bgslot",name:"사진 슬롯 +1",pr:250,multi:true,max:9,need:"bgphoto"}];
@@ -1457,7 +1457,7 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   const bg=$("inv-bg");bg.innerHTML="";if(owned("bgphoto")){const n=bgSlots();bg.appendChild(li("사진 배경"+(n?" (+"+n+"칸)":""),null,"설정에서 쓰기",()=>{$("inv").hidden=true;$("setbtn").click()}))}
   const et=$("inv-etc");et.innerHTML="";const nc=srvHooks.nc?srvHooks.nc():0;if(srvHooks.on&&srvHooks.on()&&!shopFree||nc>0){/* 로그인하면 0장이어도 보여요(제작자는 공짜라 있을 때만) */const c=document.createElement("span");c.className="pr";c.textContent=nc+"장";et.appendChild(li(NICKPASS.name,c,"쓰기",nc<1?null:()=>{$("inv").hidden=true;$("acct").click();setTimeout(()=>{try{$("lg-nick2").focus()}catch(e){}},50)}))}
   const cc=srvHooks.cc?srvHooks.cc():0;if(cc>0){const c=document.createElement("span");c.className="pr";c.textContent=cc+"장";et.appendChild(li("닉네임 색상 변경권",c,"사용",useColor))}
-  if(store.get("tt-egg",false)===true){const on=eggNick(),l=li("무지개 닉네임",null,on?"빼기":"달기",()=>{store.set("tt-eggoff",on);if(eggHook)eggHook();if(srvHooks.rank)srvHooks.rank();if(rankHook)rankHook();drawInv()},on);et.appendChild(l)}
+  if(store.get("tt-egg",false)===true){const on=eggNick(),l=li("무지개 닉네임",null,on?"빼기":"달기",async()=>{if(!srvHooks.eggoff)return;const j=await srvHooks.eggoff(on);if(!j||j.err){$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";return}store.set("tt-eggoff",on);if(eggHook)eggHook();if(srvHooks.rank)srvHooks.rank();if(rankHook)rankHook();drawInv()},on);et.appendChild(l)}
   {const col=srvHooks.col?srvHooks.col():"";if(colOk(col)){const c=document.createElement("span");c.className="sw";c.style.background=col;const l=li("지금 닉네임 색 "+col.toUpperCase(),null,"기본으로",null);l.insertBefore(c,l.firstChild);l.querySelector("button").hidden=true;et.appendChild(l)}}
   [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
   $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||et.children.length)}
@@ -1621,7 +1621,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg!==(store.get("tt-egg",false)===true)){store.set("tt-egg",j.egg);applyHolo();if(eggHook)eggHook()}}
     if(j.eg&&typeof j.eg==="object")[["snow",applySnow],["rain",applyRain],["piano",applyPiano]].forEach(([k,fn])=>{const v=j.eg[k]===true;if(v!==(store.get("tt-"+k,false)===true)){store.set("tt-"+k,v);if(v)store.set("tt-"+k+"fx",true);try{fn()}catch(e){}}}); /* 3.5.24 이스터에그는 서버 값만 */
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
-    if(Number.isFinite(j.cc))SRV.cc=j.cc;if(colOk(j.col)&&j.col!==SRV.col){SRV.col=j.col;lastRank="";try{paintNick(acct,SRV.col)}catch(e){}}if(Number.isFinite(j.nc)){SRV.nc=j.nc;try{ncDraw()}catch(e){}}if(Number.isFinite(j.tk)){SRV.tk=j.tk;try{if(!$("inv").hidden)drawInv()}catch(e){}}
+    if(Number.isFinite(j.cc))SRV.cc=j.cc;if(typeof j.eo==="boolean"&&j.eo!==(store.get("tt-eggoff",false)===true)){store.set("tt-eggoff",j.eo);lastRank="";if(eggHook)eggHook()}if(colOk(j.col)&&j.col!==SRV.col){SRV.col=j.col;lastRank="";try{paintNick(acct,SRV.col)}catch(e){}}if(Number.isFinite(j.nc)){SRV.nc=j.nc;try{ncDraw()}catch(e){}}if(Number.isFinite(j.tk)){SRV.tk=j.tk;try{if(!$("inv").hidden)drawInv()}catch(e){}}
     if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
@@ -1648,7 +1648,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
     api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
-  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};
+  srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
   srvHooks.gacha=()=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
