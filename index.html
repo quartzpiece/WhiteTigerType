@@ -388,7 +388,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.28</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.5.29</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -500,7 +500,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   </section>
 
   <section class="card" id="rec" hidden>
-    <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></div>
+    <div class="row" style="justify-content:space-between"><span class="row" style="gap:10px;align-items:baseline"><b class="rank-h">내 기록</b><span class="hint">3.2.1 업데이트 이후부터 반영</span></span><span class="row" style="gap:8px"><button class="btn acct" id="rec-last" type="button" hidden>최근 기록 지우기</button><button class="btn acct" id="rec-clr" type="button">연습 기록 지우기</button></span></div>
     <div class="row rec-k" role="group" aria-label="기록 종류"><button class="btn acct" id="rec-k2" type="button" aria-pressed="true">두벌식</button><button class="btn acct" id="rec-k3" type="button" aria-pressed="false">세벌식 390</button><button class="btn acct" id="rec-ke" type="button" aria-pressed="false">영타</button><button class="btn acct" id="rec-ka" type="button" aria-pressed="false">업적</button></div>
     <div class="rec-main" id="rec-main">
     <div class="rec-sum" id="rec-sum"></div>
@@ -544,7 +544,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <span class="set-l" id="inv-tk-l">티켓</span>
     <ul class="shop-list" id="inv-list"></ul>
     <span class="set-l" id="inv-th-l">테마</span>
-    <ul class="shop-list" id="inv-th"></ul>
+    <div class="skins" id="inv-th" role="group" aria-label="산 테마"></div>
     <span class="set-l" id="inv-ft-l">글꼴</span>
     <ul class="shop-list" id="inv-ft"></ul>
     <span class="set-l" id="inv-bg-l">배경 사진</span>
@@ -1002,6 +1002,8 @@ const inp=$("typing");
 // 세벌식 390 (3.3.0): 사이트 안 입력기. 컴퓨터 입력기는 영문 상태로 두고, 키 위치(e.code)로 초성·중성·종성을 바로 조합해요
 // 배열은 리눅스 한글 입력기 libhangul의 '세벌식 390' 표 그대로 (US 자판 글자 → 자모 또는 기호)
 // tt-kbl: "2" 두벌식, "390" 세벌식 390(사이트 입력기), "390os" 세벌식 390(내 컴퓨터 입력기). 기록은 390os도 세벌식 쪽
+// 3.5.29 세벌식 390 (내 입력기)는 잠시 멈춤: 버튼을 숨기고, 쓰던 사람은 사이트 입력기(세벌식 390)로 바꿔요. 다시 켜려면 OS390_OFF=false
+const OS390_OFF=true;if(OS390_OFF&&store.get("tt-kbl","2")==="390os")store.set("tt-kbl","390");
 const KBL=()=>{const v=store.get("tt-kbl","2");return v==="390"||v==="390os"?"390":"2"};
 const IME_ON=()=>store.get("tt-kbl","2")==="390";
 const K390={"!":0x11bd,"'":0x1110,"/":0x1169,"0":0x110f,"1":0x11c2,"2":0x11bb,"3":0x11b8,"4":0x116d,"5":0x1172,"6":0x1163,"7":0x1168,"8":0x1174,"9":0x116e,";":0x1107,"<":"2",">":"3","A":0x11ae,"B":"!","C":0x11b1,"D":0x11b0,"E":0x11bf,"F":0x11a9,"G":"/","H":"'","I":"8","J":"4","K":"5","L":"6","M":"1","N":"0","O":"9","P":">","Q":0x11c1,"R":0x1164,"S":0x11ad,"T":";","U":"7","V":0x11b6,"W":0x11c0,"X":0x11b9,"Y":"<","Z":0x11be,"a":0x11bc,"b":0x116e,"c":0x1166,"d":0x1175,"e":0x1167,"f":0x1161,"g":0x1173,"h":0x1102,"i":0x1106,"j":0x110b,"k":0x1100,"l":0x110c,"m":0x1112,"n":0x1109,"o":0x110e,"p":0x1111,"q":0x11ba,"r":0x1162,"s":0x11ab,"t":0x1165,"u":0x1103,"v":0x1169,"w":0x11af,"x":0x11a8,"y":0x1105,"z":0x11b7};
@@ -1103,7 +1105,7 @@ function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=
     ch.appendChild(mk("polyline",{class:"ln",points:P.map((x,i)=>X(i)+","+Y(x.s)).join(" ")}));
     P.forEach((x,i)=>{const c=mk("circle",{class:"dt",cx:X(i),cy:Y(x.s),r:3.5});const tt=mk("title",{});tt.textContent=recDate(x.at)+" · "+x.t+" · "+x.s+"타 · "+x.a+"%";c.appendChild(tt);ch.appendChild(c)});
     [[0,"start"],[P.length-1,"end"]].forEach(([i,an])=>{const t=mk("text",{x:X(i),y:162,"text-anchor":an});t.textContent=recDate(P[i].at);ch.appendChild(t)})}
-  const list=$("rec-list");list.innerHTML="";$("rec-l-l").hidden=!R.length;$("rec-clr").hidden=!R.length;
+  const list=$("rec-list");list.innerHTML="";$("rec-l-l").hidden=!R.length;$("rec-clr").hidden=!R.length;$("rec-last").hidden=!R.length||!shopFree;
   if(R.length){const hd=el("li","hd");hd.append(el("span","","날짜"),el("span","","지문"),el("span","s","타수"),el("span","a","정확도"));list.appendChild(hd);
     R.slice(-50).reverse().forEach(x=>{const li=el("li");li.append(el("span","d",recDate(x.at)),(()=>{const e=el("span","t");qText(e,x.t);return e})(),el("span","s",String(x.s)),el("span","a",x.a+"%"));li.title=x.t+" · "+x.n+"줄";list.appendChild(li)})}
   else{const li=el("li");li.style.display="block";li.textContent="아직 기록 없음 · 연습을 끝까지 마치면 쌓여요";list.appendChild(li)}
@@ -1112,6 +1114,9 @@ function drawRec(){try{drawAch()}catch(e){}const VK=recK(),R=runsGet().filter(x=
 $("recbtn").onclick=()=>{const c=$("rec"),o=c.hidden;closePanels(o?"rec":null);c.hidden=!o;if(o){REC_K=null;REC_ACH=false;recKSet()}};
 function recKSet(){const K=recK(),t=K==="390",A=REC_ACH&&ACH.length>0;$("rec-k2").setAttribute("aria-pressed",String(!A&&K==="2"));$("rec-k3").setAttribute("aria-pressed",String(!A&&t));$("rec-ke").setAttribute("aria-pressed",String(!A&&K==="en"));$("rec-ka").setAttribute("aria-pressed",String(A));$("rec-ka").hidden=!ACH.length;$("rec-main").hidden=A;$("rec-ach").hidden=!A;const n=$("kb-note");if(n)n.hidden=!t;drawRec();try{drawKb()}catch(e){}if(A)$("rec-clr").hidden=true}
 $("rec-k2").onclick=()=>{REC_K="2";REC_ACH=false;recKSet()};$("rec-k3").onclick=()=>{REC_K="390";REC_ACH=false;recKSet()};$("rec-ke").onclick=()=>{REC_K="en";REC_ACH=false;recKSet()};$("rec-ka").onclick=()=>{REC_ACH=true;recKSet()};
+// 3.5.29 최근 기록 지우기(제작자만): 지금 보는 자판 기록 중 가장 최근 것 하나만 지워요. 두 번 눌러야 지워져요
+$("rec-last").onclick=()=>{const b=$("rec-last");if(!shopFree)return;if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="최근 기록 지우기";
+  const t=recK(),R=runsGet();let k=-1;R.forEach((x,i)=>{if((x.k||"2")===t&&(k<0||Number(x.at)>=Number(R[k].at)))k=i});if(k>=0){R.splice(k,1);store.set("tt-runs",R)}drawRec()};
 $("rec-clr").onclick=()=>{const b=$("rec-clr");if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="한 번 더";return}b.dataset.arm="";b.textContent="연습 기록 지우기";const t=recK();store.set("tt-runs",runsGet().filter(x=>(x.k||"2")!==t));drawRec()};
 // 피아노: 키마다 음이 정해져 있어요. 5음 음계(도레미솔라)라서 아무렇게나 쳐도 어울려요. 아래 줄은 낮은 음, 위 줄은 높은 음, 스페이스는 낮은 화음
 const PN_BASE=[0,2,4,7,9],pnHz=k=>261.63*Math.pow(2,(Math.floor(k/5)*12+PN_BASE[((k%5)+5)%5])/12);
@@ -1147,7 +1152,7 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 // 폰 화면 키보드는 어떤 키인지 안 알려 줘서, 친 글자로 음을 골라요
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
-function applyKbl(){const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
+function applyKbl(){$("kbl-390os").hidden=OS390_OFF;if(OS390_OFF&&store.get("tt-kbl","2")==="390os")store.set("tt-kbl","390");const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
   if(!$("rec").hidden){REC_K=null;recKSet()}}
 function applyOvl(){const on=store.get("tt-ovl",false)===true;document.documentElement.classList.toggle("ovl",on);$("ovl-0").setAttribute("aria-pressed",String(!on));$("ovl-1").setAttribute("aria-pressed",String(on));try{if(!$("practice").hidden&&S.prep&&S.prep[S.i])paint()}catch(e){}}
 $("ovl-0").onclick=()=>{store.set("tt-ovl",false);applyOvl()};$("ovl-1").onclick=()=>{store.set("tt-ovl",true);applyOvl()};applyOvl();
@@ -1155,7 +1160,7 @@ $("target").addEventListener("click",()=>{if(!$("practice").hidden)$("typing").f
 $("practice").addEventListener("click",e=>{if(document.documentElement.classList.contains("ovl")&&!e.target.closest("button,a,input,select,textarea")&&!getSelection().toString())$("typing").focus({preventScroll:true})});
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
-$("kbl-390os").onclick=()=>{try{h3Reset()}catch(e){}store.set("tt-kbl","390os");S.composing=false;KS.run={};applyKbl()};
+$("kbl-390os").onclick=()=>{if(OS390_OFF)return;try{h3Reset()}catch(e){}store.set("tt-kbl","390os");S.composing=false;KS.run={};applyKbl()};
 function applyPiano(){const on=!!store.get("tt-piano",false),fx=store.get("tt-pianofx",true)!==false,row=$("piano-row");if(row){row.hidden=!on;$("pianobtn").textContent="피아노 소리: "+(fx?"켜짐":"꺼짐");$("pianobtn").setAttribute("aria-pressed",String(fx))}}
 $("pianobtn").onclick=()=>{store.set("tt-pianofx",store.get("tt-pianofx",true)===false);applyPiano();if(pianoOn())pnNote(pnHz(2),.8)};
 applyPiano();applyKbl();
@@ -1417,7 +1422,8 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
     if(right){l.appendChild(right)}const b=document.createElement("button");b.type="button";b.className="btn acct";b.textContent=btxt;if(fn)b.onclick=fn;else b.disabled=true;l.appendChild(b);return l};
   if(tk>0){const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";const l=li(TICKET.name,c,"사용",useTicket);l.querySelector("button").id="gc-go";u.appendChild(l)}
   const skin=store.get("tt-skin","basic"),curF=store.get("tt-font","");
-  const th=$("inv-th");th.innerHTML="";SHOP_THEMES.filter(t=>owned(t.id)).forEach(t=>{const on=skin===t.id;th.appendChild(li(t.name,null,on?"적용 중":"적용",on?null:()=>{setSkin(t.id);drawInv();if(!$("shop").hidden)drawShop()},on,t.c))});
+  const th=$("inv-th");th.innerHTML="";SHOP_THEMES.filter(t=>owned(t.id)).forEach(t=>{const o=document.querySelector('#settings .skin[data-skin="'+t.id+'"]');if(!o)return; // 3.5.29 테마는 설정처럼 아이콘만
+    const b=o.cloneNode(true);b.hidden=false;b.removeAttribute("id");b.setAttribute("aria-pressed",String(skin===t.id));b.onclick=()=>{setSkin(t.id);drawInv();if(!$("shop").hidden)drawShop()};th.appendChild(b)});
   const fts=SHOP_FONTS.filter(f=>owned(f.id));if(fts.length)loadFont(fts);
   const ft=$("inv-ft");ft.innerHTML="";fts.forEach(f=>{const on=curF===f.id;ft.appendChild(li(f.name,null,on?"빼기":"적용",()=>{store.set("tt-font",on?"":f.id);applyFont();drawInv();drawFontSet()},on,null,f.fam))});
   const bg=$("inv-bg");bg.innerHTML="";if(owned("bgphoto")){const n=bgSlots();bg.appendChild(li("사진 배경"+(n?" (+"+n+"칸)":""),null,"설정에서 쓰기",()=>{$("inv").hidden=true;$("setbtn").click()}))}
