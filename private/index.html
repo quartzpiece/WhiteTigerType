@@ -364,11 +364,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.25</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.26</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
+      <button class="btn acct" id="invbtn" type="button" hidden>인벤토리</button>
       <button class="btn acct" id="recbtn" type="button">기록</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
@@ -508,13 +509,17 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <ul class="shop-list" id="shop-books"></ul>
     <span class="set-l" id="shop-tt-l">업적</span>
     <ul class="shop-list" id="shop-titles"></ul>
-    <div class="gc" id="shop-gc" hidden>
-      <span class="set-l">티켓<span class="hint" id="gc-test"> · 시험 중 (제작자만 보여요)</span></span>
-      <div class="row"><b id="gc-tk">티켓 0장</b><button class="btn acct" id="gc-buy" type="button">티켓 사기</button><button class="btn primary" id="gc-go" type="button">티켓 사용</button></div>
-      <p class="gc-res" id="gc-res" aria-live="polite"></p>
-    </div>
+    <span class="set-l" id="shop-tk-l" hidden>티켓<span class="hint" id="gc-test"> · 시험 중 (제작자만 보여요)</span></span>
+    <ul class="shop-list" id="shop-tk" hidden></ul>
     <p class="shop-empty" id="shop-empty">준비 중</p>
     <p class="hint" id="shop-msg" aria-live="polite"></p>
+  </section>
+
+  <section class="card shop" id="inv" hidden>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">인벤토리</b></div>
+    <ul class="shop-list" id="inv-list"></ul>
+    <p class="shop-empty" id="inv-empty" hidden>비어 있음</p>
+    <p class="gc-res" id="gc-res" aria-live="polite"></p>
   </section>
 
   <section class="card rank" id="rank" hidden>
@@ -1594,12 +1599,24 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_ETC,$("shop-etc"),false,false,true);mk(BOOKS.map(b=>({id:b.id,name:b.title+(b.author?" · "+b.author:""),pr:b.pr,book:1})),$("shop-books"),false,false,true);mk(SHOP_TITLES,$("shop-titles"),false);
   [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha()}
-function drawGacha(){const on=TICKET.sale||shopFree;$("shop-gc").hidden=!on;if(!on)return;$("gc-test").hidden=TICKET.sale;
-  const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk();$("gc-tk").textContent="티켓 "+tk+"장";$("gc-buy").textContent="티켓 사기 ("+(shopFree?0:TICKET.pr)+")";$("gc-buy").disabled=!shopFree&&pt<TICKET.pr;$("gc-go").disabled=tk<1}
-$("gc-buy").onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};
-$("gc-go").onclick=async()=>{if(!srvHooks.gacha){$("shop-msg").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("gc-go");b.disabled=true;r.classList.add("roll");r.textContent="사용 중…";
-  const j=await srvHooks.gacha();r.classList.remove("roll");if(!j||j.err){r.textContent=(j&&j.err)||"서버 연결 실패";drawGacha();return}
-  const pz=j.prize||{};r.textContent="결과: "+(pz.name||pz.id||"?");drawList();applyBg();drawShop()};
+// 3.5.26 티켓: 상점에서는 다른 물건처럼 사고, 산 티켓은 인벤토리에 보관해요(사용도 인벤토리에서)
+const tkOn=()=>TICKET.sale||shopFree;
+function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!on;$("invbtn").hidden=!on;if(!on){$("inv").hidden=true;return}$("gc-test").hidden=TICKET.sale;
+  const pt=Number(store.get("tt-pt",0))||0,tk=srvHooks.tk(),u=$("shop-tk");u.innerHTML="";const li=document.createElement("li");
+  const n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
+  const pr=document.createElement("span");pr.className="pr";pr.textContent=shopFree?0:TICKET.pr;li.appendChild(pr);
+  const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-buy";b.textContent="구매";b.disabled=!shopFree&&pt<TICKET.pr;
+  b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(TICKET))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.appendChild(b);u.appendChild(li);
+  if(!$("inv").hidden)drawInv()}
+function drawInv(){const tk=srvHooks.tk(),u=$("inv-list");u.innerHTML="";
+  if(tk>0){const li=document.createElement("li"),n=document.createElement("span");n.className="nm";n.textContent=TICKET.name;li.appendChild(n);
+    const c=document.createElement("span");c.className="pr";c.textContent=tk+"장";li.appendChild(c);
+    const b=document.createElement("button");b.type="button";b.className="btn acct";b.id="gc-go";b.textContent="사용";b.onclick=useTicket;li.appendChild(b);u.appendChild(li)}
+  $("inv-empty").hidden=tk>0}
+async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("gc-go");if(b)b.disabled=true;r.classList.add("roll");r.textContent="사용 중…";
+  const j=await srvHooks.gacha();r.classList.remove("roll");if(!j||j.err){r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
+  const pz=j.prize||{};r.textContent="결과: "+(pz.name||pz.id||"?");drawList();applyBg();drawShop();drawInv()}
+$("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
   store.set("tt-tot",getTot());if(it.multi)store.set("tt-bgslots",bgSlots()+1);else store.set("tt-inv",(Array.isArray(inv)?inv:[]).concat(it.id));if(!shopFree)store.set("tt-pt",pt-it.pr);showPts();shopSkins();
@@ -1674,7 +1691,7 @@ function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[d
 const srvHooks={start:null,run:null,buy:null,wx:null,fb:null,gacha:null,tk:()=>0};
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
-function closePanels(except){["login","rank","fr","settings","daily","vs","shop","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
+function closePanels(except){["login","rank","fr","settings","daily","vs","shop","inv","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
   if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
 function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
@@ -1740,7 +1757,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     if(typeof j.egg==="boolean"){SRV.egg=j.egg;if(j.egg!==(store.get("tt-egg",false)===true)){store.set("tt-egg",j.egg);applyHolo();if(eggHook)eggHook()}}
     if(j.eg&&typeof j.eg==="object")[["snow",applySnow],["rain",applyRain],["piano",applyPiano]].forEach(([k,fn])=>{const v=j.eg[k]===true;if(v!==(store.get("tt-"+k,false)===true)){store.set("tt-"+k,v);if(v)store.set("tt-"+k+"fx",true);try{fn()}catch(e){}}}); /* 3.5.24 이스터에그는 서버 값만 */
     if(Number.isFinite(j.bst))SRV.bst=j.bst;
-    if(Number.isFinite(j.tk))SRV.tk=j.tk;
+    if(Number.isFinite(j.tk)){SRV.tk=j.tk;try{if(!$("inv").hidden)drawInv()}catch(e){}}
     if(typeof j.nick==="string"){SRV.nick=j.nick;if(j.nick&&uid&&auth.currentUser&&j.nick!==nick){nick=j.nick;lastRank="";showNick(auth.currentUser.email.split("@")[0]);cloudHook()}} /* 서버 닉네임이 기준(관리자가 바꿨을 수도 있어요) */
     try{shopSkins();if(!$("shop").hidden)drawShop();applyBg()}catch(e){}pushRank()}
   async function srvInit(){const me=uid;if(!me)return;let j=null;
@@ -2113,7 +2130,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();
     if(!user){uid=null;nick="";SRV.tot=null;try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
