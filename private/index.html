@@ -424,7 +424,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.5.38</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.6.0</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1568,7 +1568,7 @@ const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{
 const SHOP_TITLES=[];
 // 뽑기(3.5.22): 티켓은 상점에서 사고(서버 pts.tk), 뽑기는 서버가 GACHA 목록에서 골라요. sale:false 동안은 제작자 계정에서만 보이고 살 수 있어요
 // GACHA 항목: {id:"g-…",name:"보이는 이름",w:뽑힐 무게,item:"상점 물건 id"} 또는 {id,name,w,pt:쓸 수 있는 포인트}. 이미 가진 물건은 빼고 뽑아요
-const TICKET={id:"ticket",name:"티켓",pr:100,sale:false};
+const TICKET={id:"ticket",name:"티켓",pr:100,sale:true}; // 3.6.0 공개(사용자 요청)
 // 사용자 지정(2026-11-18): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%, 특별 폰트 1%, 닉네임 색상 변경권 5%, 꽝 87%
 // hold = 아직 없는 상품(이름만 보이고 서버 pts.pz에 세어 둠, 나중에 만들면 줄 것), cc = 닉네임 색상 변경권(서버 pts.cc, 쓰는 기능은 아직)
 // 3.5.36 확률(사용자 지정): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%(별자리·금박 각 0.5%, 하나 가지면 다른 하나가 1%), 특별 폰트 1%, 색상 변경권 16%, 불운·행운의 징표 각 0.5%, 1~75포인트 각 1%
