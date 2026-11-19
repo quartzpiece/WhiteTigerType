@@ -106,9 +106,10 @@
 :root[data-skin="snowmt"] h1 .ver{-webkit-text-fill-color:var(--muted);color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){:root[data-skin="snowmt"] h1{animation:flow 9s linear infinite}}
 .smfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse 70% 40% at 70% 8%,rgba(120,170,230,.16),transparent 70%),radial-gradient(ellipse 50% 30% at 20% 20%,rgba(150,120,220,.08),transparent 70%)}
-.smfx svg{position:absolute;left:0;bottom:0;width:100%;height:min(48vh,440px)}
-.smfx canvas{position:absolute;inset:0;width:100%;height:100%}
+.smfx svg{position:absolute;left:0;bottom:0;width:100%}
+.smfx canvas{position:absolute;inset:0;width:100%;height:100%}.smfx canvas.sm-au{height:62%;opacity:.95}
 .smfx .sm-cap{transition:filter .2s}
+.smfx .sm-gl{position:absolute;width:28px;height:28px;opacity:0;background:radial-gradient(circle,#fff 0 8%,rgba(230,245,255,.9) 14%,transparent 32%),linear-gradient(transparent 46%,rgba(240,250,255,.95) 50%,transparent 54%),linear-gradient(90deg,transparent 46%,rgba(240,250,255,.95) 50%,transparent 54%);-webkit-mask:radial-gradient(circle,#000 20%,transparent 70%);mask:radial-gradient(circle,#000 20%,transparent 70%)}
 .sm-k{position:absolute;pointer-events:none;z-index:3;border-radius:50%!important;background:#F4FAFF;box-shadow:0 0 4px rgba(200,230,255,.9)}
 .sm-gust{position:fixed;z-index:61;pointer-events:none;border-radius:50%!important;background:#F4FAFF;box-shadow:0 0 5px rgba(200,230,255,.8)}
 .skin[data-skin="snowmt"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
@@ -550,7 +551,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.29</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.31</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -837,7 +838,7 @@ function cbTurn(m){const t=m.d*Math.PI/2;CB.cs.forEach(q=>{if(q.p[m.a]!==m.l)ret
 const cbOn=()=>document.documentElement.dataset.skin==="cube";
 const cbRed=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}};
 function cbColor(){document.documentElement.style.setProperty("--cc",CUBE_C[CB.ci%6])}
-function cubeBegin(n){try{stBegin(n)}catch(e){}cbReset();CB.joy=0;CB.ci=0;cbColor();let pa=-1;
+function cubeBegin(n){try{stBegin(n)}catch(e){}try{smBegin(n)}catch(e){}cbReset();CB.joy=0;CB.ci=0;cbColor();let pa=-1;
   for(let k=0;k<n;k++){let a;do a=Math.floor(Math.random()*3);while(a===pa);pa=a;const m={a,l:[-1,0,1][Math.floor(Math.random()*3)],d:Math.random()<.5?1:-1};cbTurn(m);CB.mv.push(m)}}
 function cubeStep(last){try{stStep(last);if(last)gdRain()}catch(e){}try{smStep(last)}catch(e){}try{lmStep(last)}catch(e){}if(CB.an){cbTurn(CB.an.m);CB.an=null}
   const m=CB.mv.pop();CB.ci++;cbColor();if(!m)return;const inv={a:m.a,l:m.l,d:-m.d};
@@ -1077,33 +1078,67 @@ function gdRain(){if(!gdOn()||cbRed()||!document.body.animate)return;const W=inn
   for(let k=0;k<34;k++){const i=document.createElement("i"),s=3+Math.random()*6;i.className="gd-rain";i.style.cssText="left:"+(Math.random()*W).toFixed(0)+"px;width:"+s.toFixed(1)+"px;height:"+(s*(.5+Math.random()*.5)).toFixed(1)+"px";document.body.appendChild(i);
     const sw=(Math.random()-.5)*80,rt=(Math.random()-.5)*900|0;i.animate([{transform:"translate(0,0) rotate(0deg)",opacity:0},{opacity:1,offset:.1},{transform:"translate("+sw.toFixed(0)+"px,"+(H*.6).toFixed(0)+"px) rotate("+(rt/2|0)+"deg)",opacity:.9,offset:.7},{transform:"translate("+(-sw/2).toFixed(0)+"px,"+(H+20)+"px) rotate("+rt+"deg)",opacity:0}],{duration:1500+Math.random()*1200,delay:Math.random()*600,easing:"ease-in",fill:"backwards"}).onfinish=()=>i.remove()}}
 // 3.7.29 설산 테마: 아래쪽에 눈 덮인 산(세 겹, 들어올 때마다 모양이 조금씩 달라요), 캔버스에 눈이 천천히 내려요
-const smOn=()=>document.documentElement.dataset.skin==="snowmt";const SM={el:null,cv:null,raf:0,fl:[],last:0,caps:[]};
-function smRange(n,base,amp,seed){const P=[];let x=0;P.push([0,base]);const st=1000/n;for(let i=0;i<=n;i++){const px=i*st+(Math.random()-.5)*st*.5,h=base-amp*(.35+Math.random()*.65);P.push([Math.max(0,Math.min(1000,px)),h]);if(i<n)P.push([Math.min(1000,px+st*.5),base-amp*(.1+Math.random()*.35)])}P.push([1000,base]);return P}
-function smSync(){if(smOn()){if(SM.el)return;const d=document.createElement("div");d.className="smfx";d.setAttribute("aria-hidden","true");
-    const L=[{n:5,b:400,a:300,c:"#16253D",cap:"#C9D9EC",o:.55},{n:4,b:400,a:230,c:"#1E3150",cap:"#DDE9F6",o:.8},{n:3,b:400,a:150,c:"#29405F",cap:"#F2F8FF",o:1}];
-    let svg='<svg viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice">';SM.caps=[];
-    L.forEach((l,li)=>{const P=smRange(l.n,l.b,l.a);svg+='<path d="M'+P.map(p=>p[0].toFixed(0)+" "+p[1].toFixed(0)).join(" L")+' Z" fill="'+l.c+'"/>';
-      for(let i=1;i<P.length-1;i++){const [x,y]=P[i],pl=P[i-1],pr=P[i+1];if(!(y<pl[1]&&y<pr[1]))continue;const dep=Math.min(46,(l.b-y)*.28);if(dep<10)continue;
-        const lx=x+(pl[0]-x)*dep/Math.max(1,pl[1]-y),rx=x+(pr[0]-x)*dep/Math.max(1,pr[1]-y),yy=y+dep,m1=x+(lx-x)*.5,m2=x+(rx-x)*.5;
-        svg+='<path class="sm-cap" d="M'+x.toFixed(0)+" "+y.toFixed(0)+" L"+lx.toFixed(0)+" "+yy.toFixed(0)+" L"+m1.toFixed(0)+" "+(yy-dep*.28).toFixed(0)+" L"+x.toFixed(0)+" "+(yy-dep*.12).toFixed(0)+" L"+m2.toFixed(0)+" "+(yy-dep*.3).toFixed(0)+" L"+rx.toFixed(0)+" "+yy.toFixed(0)+' Z" fill="'+l.cap+'" opacity="'+l.o+'"/>'}});
-    svg+="</svg>";d.innerHTML=svg;const cv=document.createElement("canvas");d.appendChild(cv);SM.cv=cv;SM.caps=[...d.querySelectorAll(".sm-cap")];
-    const b=document.querySelector(".bgart");if(b)b.after(d);else document.body.prepend(d);SM.el=d;smSize();SM.fl=[];const W=innerWidth,H=innerHeight;for(let i=0;i<Math.min(110,Math.round(W*H/14000));i++)SM.fl.push(smFlake(W,H,true));
-    if(!cbRed()){SM.last=performance.now();SM.raf=requestAnimationFrame(smTick)}else smDraw()}
-  else{cancelAnimationFrame(SM.raf);SM.raf=0;if(SM.el){SM.el.remove();SM.el=null;SM.cv=null}}}
-function smSize(){const c=SM.cv;if(!c)return;const r=Math.min(1.5,devicePixelRatio||1);c.width=Math.round(innerWidth*r);c.height=Math.round(innerHeight*r);c.getContext("2d").setTransform(r,0,0,r,0,0)}
-addEventListener("resize",()=>{if(SM.el){smSize();if(cbRed())smDraw()}});
+const smOn=()=>document.documentElement.dataset.skin==="snowmt";const SM={el:null,cv:null,au:null,raf:0,fl:[],last:0,caps:[],n:0,k:0,lv:.22,lt:.22,sg:-1e9,t:0};
+// 3.7.31 산 능선: 가운데 점을 위아래로 흔들며 나누는 방식(자연스러운 바위 능선). 0~1로 만들어 두고 화면 크기에 맞춰 그려서 늘어나거나 찌그러지지 않아요
+function smRidge(n,rough){const P=new Array(n+1);P[0]=Math.random();P[n]=Math.random();const sub=(i,j,d)=>{if(j-i<2)return;const m=(i+j)>>1;P[m]=(P[i]+P[j])/2+(Math.random()-.5)*d;sub(i,m,d*rough);sub(m,j,d*rough)};sub(0,n,1.1);
+  let lo=Math.min(...P),hi=Math.max(...P);return P.map(v=>Math.pow((v-lo)/Math.max(1e-6,hi-lo),1.35))}
+// 큰 봉우리 몇 개(비대칭 삼각형)를 겹쳐 산 모양을 잡고, 능선 잔결을 조금 더해요
+function smPeaks(n,N,pk){const D=smRidge(N,.55),P=new Float32Array(N+1);const X=[];for(let i=0;i<pk;i++)X.push((i+.5)/pk+(Math.random()-.5)*.6/pk);
+  const T=X.map((x,i)=>({x,h:.55+Math.random()*.45,wl:.5/pk+Math.random()*.9/pk,wr:.5/pk+Math.random()*.9/pk}));
+  for(let k=0;k<=N;k++){const x=k/N;let v=0;for(const t of T){const d=x-t.x,w=d<0?t.wl:t.wr,q=1-Math.abs(d)/w;if(q>0)v=Math.max(v,t.h*Math.pow(q,1.15))}P[k]=Math.max(0,v*.9+D[k]*.1)}return P}
+const SM_L=[{c:"#2A4062",sn:"#C3D4E8",o:.55,top:.02,bot:.62,sl:.38,pw:260},{c:"#1D3050",sn:"#DCE8F5",o:.8,top:.22,bot:.8,sl:.34,pw:330},{c:"#13223A",sn:"#F2F8FF",o:.95,top:.45,bot:.98,sl:.3,pw:440}];
+function smMount(){if(!SM.el)return;const W=innerWidth,H=innerHeight,Hs=Math.round(Math.min(H*.5,460)),N=256;if(!SM.rg||Math.abs(SM.rgW-W)>160){SM.rgW=W;SM.rg=SM_L.map(l=>({r:smPeaks(l,N,Math.max(1,Math.round(W/l.pw))),s:smRidge(N,.6)}))} /* 봉우리 수는 화면 넓이에 맞춰요(좁은 화면에서 바늘처럼 안 되게) */
+  let svg='<svg viewBox="0 0 '+W+" "+Hs+'" preserveAspectRatio="none" style="height:'+Hs+'px">';SM.surf=new Float32Array(Math.ceil(W/2)+2).fill(1e9);SM.peaks=[];
+  SM_L.forEach((l,li)=>{const R=SM.rg[li],yAt=k=>Hs*(l.top+(l.bot-l.top)*(1-R.r[k])),xs=k=>k/N*W;let d="M0 "+Hs,top=[];
+    for(let k=0;k<=N;k++){const x=xs(k),y=yAt(k);top.push([x,y]);d+=" L"+x.toFixed(1)+" "+y.toFixed(1)}d+=" L"+W+" "+Hs+" Z";svg+='<path d="'+d+'" fill="'+l.c+'"/>';
+    const ymin=Math.min(...top.map(p=>p[1])),ymax=Math.max(...top.map(p=>p[1])),sl=ymin+(ymax-ymin)*l.sl;let sd="M"+top[0][0]+" "+top[0][1],bk=[];
+    for(let k=0;k<=N;k++){const [x,y]=top[k],line=sl+(R.s[k]-.5)*Hs*.07;bk.push([x,Math.max(y,line)]);if(k)sd+=" L"+x.toFixed(1)+" "+y.toFixed(1)}
+    for(let k=N;k>=0;k--)sd+=" L"+bk[k][0].toFixed(1)+" "+bk[k][1].toFixed(1);svg+='<path class="sm-cap" d="'+sd+' Z" fill="'+l.sn+'" opacity="'+l.o+'"/>';
+    for(let k=2;k<N-1;k++){const y=top[k][1];if(y<top[k-1][1]&&y<=top[k+1][1]&&y<top[k-2][1]&&y<=top[k+2][1]&&y<sl)SM.peaks.push([top[k][0],H-Hs+y,li])}
+    for(let x=0;x<=W;x+=2){const k=x/W*N,k0=Math.floor(k),f=k-k0,y=yAt(Math.min(N,k0))*(1-f)+yAt(Math.min(N,k0+1))*f;const i=x>>1;SM.surf[i]=Math.min(SM.surf[i],H-Hs+y)}});
+  svg+="</svg>";const old=SM.el.querySelector("svg");const t=document.createElement("div");t.innerHTML=svg;const ns=t.firstChild;if(old)old.replaceWith(ns);else SM.el.insertBefore(ns,SM.cv);SM.caps=[...SM.el.querySelectorAll(".sm-cap")];SM.mw=W;SM.mh=H}
+const smSurf=x=>{const A=SM.surf;if(!A)return innerHeight;const i=Math.max(0,Math.min(A.length-1,Math.round(x/2)));return A[i]};
+function smSync(){if(smOn()){if(SM.el)return;const d=document.createElement("div");d.className="smfx";d.setAttribute("aria-hidden","true");SM.rg=null;SM.balls=[];
+    const au=document.createElement("canvas");au.className="sm-au";d.appendChild(au);SM.au=au;const cv=document.createElement("canvas");d.appendChild(cv);SM.cv=cv;
+    const b=document.querySelector(".bgart");if(b)b.after(d);else document.body.prepend(d);SM.el=d;smMount();smSize();SM.fl=[];const W=innerWidth,H=innerHeight;for(let i=0;i<Math.min(110,Math.round(W*H/14000));i++)SM.fl.push(smFlake(W,H,true));
+    if(!cbRed()){SM.last=performance.now();SM.raf=requestAnimationFrame(smTick)}else{smDraw();auDraw(0)}}
+  else{cancelAnimationFrame(SM.raf);SM.raf=0;if(SM.el){SM.el.remove();SM.el=null;SM.cv=null;SM.au=null;SM.balls=[]}}}
+function smSize(){const a=SM.au;if(a){a.width=Math.max(80,Math.round(innerWidth/4));a.height=Math.max(60,Math.round(innerHeight*.62/4))}const c=SM.cv;if(!c)return;const r=Math.min(1.5,devicePixelRatio||1);c.width=Math.round(innerWidth*r);c.height=Math.round(innerHeight*r);c.getContext("2d").setTransform(r,0,0,r,0,0)}
+let smRz=0;addEventListener("resize",()=>{if(!SM.el)return;smSize();clearTimeout(smRz);smRz=setTimeout(()=>{if(SM.el&&(SM.mw!==innerWidth||Math.abs(SM.mh-innerHeight)>60))smMount()},150);if(cbRed()){smDraw();auDraw(0)}});
 const smFlake=(W,H,any)=>{const z=Math.random();return {x:Math.random()*W,y:any?Math.random()*H:-6,r:.6+z*2.2,v:14+z*36,sw:Math.random()*Math.PI*2,sa:6+Math.random()*16,ss:.4+Math.random()*.8,o:.35+z*.55}};
 function smDraw(){const c=SM.cv;if(!c)return;const g=c.getContext("2d"),W=innerWidth,H=innerHeight;g.clearRect(0,0,W,H);g.fillStyle="#F4FAFF";
-  for(const f of SM.fl){g.globalAlpha=f.o;g.beginPath();g.arc(f.x+Math.sin(f.sw)*f.sa,f.y,f.r,0,Math.PI*2);g.fill()}g.globalAlpha=1}
+  for(const f of SM.fl){g.globalAlpha=f.o;g.beginPath();g.arc(f.x+Math.sin(f.sw)*f.sa,f.y,f.r,0,Math.PI*2);g.fill()}g.globalAlpha=1;
+  for(const o of SM.balls||[]){g.globalAlpha=o.al;const gr=g.createRadialGradient(o.x-o.r*.35,o.y-o.r*.4,o.r*.1,o.x,o.y,o.r);gr.addColorStop(0,"#FFFFFF");gr.addColorStop(.7,"#E3EEF9");gr.addColorStop(1,"#A9C0D8");g.fillStyle=gr;g.beginPath();g.arc(o.x,o.y,o.r,0,Math.PI*2);g.fill();
+    g.strokeStyle="rgba(150,175,205,.55)";g.lineWidth=Math.max(1,o.r*.08);g.beginPath();g.arc(o.x,o.y,o.r*.62,o.a,o.a+1.3);g.stroke();g.beginPath();g.arc(o.x,o.y,o.r*.35,o.a+3.2,o.a+4.1);g.stroke();g.fillStyle="#F4FAFF"}g.globalAlpha=1}
 function smTick(now){if(!SM.el)return;SM.raf=requestAnimationFrame(smTick);if(document.hidden){SM.last=now;return}const dt=Math.min(.05,(now-SM.last)/1000);SM.last=now;const W=innerWidth,H=innerHeight;
-  for(const f of SM.fl){f.y+=f.v*dt;f.sw+=f.ss*dt;if(f.y>H+6){Object.assign(f,smFlake(W,H,false))}}smDraw()}
+  for(const f of SM.fl){f.y+=f.v*dt;f.sw+=f.ss*dt;if(f.y>H+6){Object.assign(f,smFlake(W,H,false))}}smBalls(dt);smDraw();
+  const sg=Math.max(0,1-(now-SM.sg)/5200),sp=1+sg*1.6;SM.t+=dt*sp;SM.lv+=(Math.max(SM.lt,sg>0?1.25*Math.min(1,sg*3):0)-SM.lv)*Math.min(1,dt*1.6);auDraw(SM.t,sg)}
+// 3.7.30 오로라: 작은 캔버스(화면의 1/4)에 그려서 늘리면 저절로 부드럽게 번져요. 한 줄 끝낼 때마다 짙어지고(SM.lt), 다 치면 크게 일렁여요(SM.sg)
+const AU_C=[["rgba(90,255,170,","rgba(60,220,200,"],["rgba(70,230,210,","rgba(110,170,255,"],["rgba(150,120,255,","rgba(230,110,220,"]];
+function auDraw(t,sg){const c=SM.au;if(!c)return;const g=c.getContext("2d"),w=c.width,h=c.height;sg=sg||0;g.clearRect(0,0,w,h);const L=Math.min(1.25,SM.lv);if(L<=.01)return;g.globalCompositeOperation="lighter";
+  for(let b=0;b<3;b++){const base=h*(.3+b*.13)-sg*h*.08,amp=h*(.07+b*.025)*(1+sg*.9),len=h*(.28+b*.06)*(1+sg*.5),f=(2.2+b*.9)*Math.PI*2/w,f2=(5.3+b*1.7)*Math.PI*2/w,sp=.35+b*.12,col=AU_C[b];
+    for(let x=0;x<w;x+=1){const y=base+Math.sin(x*f+t*sp+b*2)*amp+Math.sin(x*f2-t*sp*1.7+b)*amp*.35,
+      a=L*(.35+b*-.05)*(.55+.45*Math.sin(x*f*2.7+t*1.3+b*4))*(.6+.4*Math.sin(x*.9*f-t*.5)),k=x/w;if(a<=.01)continue;
+      const gr=g.createLinearGradient(0,y-len,0,y+len*.12);gr.addColorStop(0,col[1]+"0)");gr.addColorStop(.75,(k<.5?col[0]:col[1])+(a*.55).toFixed(3)+")");gr.addColorStop(.93,col[0]+Math.min(1,a*1.1).toFixed(3)+")");gr.addColorStop(1,col[0]+"0)");g.fillStyle=gr;g.fillRect(x,y-len,1.2,len*1.12)}}
+  g.globalCompositeOperation="source-over"}
+// 3.7.31 배경을 누르면 눈덩이가 떨어져서 산비탈을 굴러 내려가며 점점 커져요. 골짜기에서 멈추면 천천히 녹아요
+document.addEventListener("pointerdown",e=>{if(!SM.el||!smOn()||cbRed()||!e.isTrusted)return;const t=e.target;if(t&&t.closest&&t.closest(".card,.stats,button,.btn,input,textarea,select,a,label,header,[role=button]"))return;
+  const B=SM.balls||(SM.balls=[]);if(B.length>=8)B.shift();const x=e.clientX,y=Math.min(e.clientY,smSurf(x)-5);B.push({x,y,vx:(Math.random()-.5)*30,vy:0,r:5,a:0,g:0,st:0,al:1})},{passive:true});
+function smBalls(dt){const B=SM.balls;if(!B||!B.length)return;const W=innerWidth;for(let i=B.length-1;i>=0;i--){const o=B[i];const sy=smSurf(o.x);
+    if(!o.g){o.vy+=900*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.y+o.r>=sy){o.y=sy-o.r;o.g=1;o.vx+=o.vy*.15*(Math.random()<.5?-1:1);o.vy=0}}
+    else{const sl=(smSurf(o.x+6)-smSurf(o.x-6))/12,ang=Math.atan(sl);o.vx+=Math.sin(ang)*Math.cos(ang)*900*dt;o.vx*=Math.pow(.55,dt);o.x+=o.vx*dt;o.y=smSurf(o.x)-o.r;
+      const sp=Math.abs(o.vx);o.a+=o.vx*dt/Math.max(3,o.r);if(o.r<46)o.r+=sp*dt*.045;if(sp<6&&Math.abs(sl)<.12){o.st+=dt;if(o.st>1.2)o.al-=dt*.6}else o.st=0}
+    if(o.al<=0||o.x<-60||o.x>W+60)B.splice(i,1)}}
+function smBegin(n){SM.n=Math.max(1,n|0);SM.k=0;SM.lt=.22}
 // 한 줄 끝내면 봉우리 하나가 반짝, 다 치면 옆에서 눈보라가 불어와요
-function smStep(last){if(!smOn()||cbRed()||!SM.caps.length)return;const pick=SM.caps[Math.floor(Math.random()*SM.caps.length)];
+function smStep(last){SM.k++;SM.lt=last?.22:.22+.78*Math.min(1,SM.k/Math.max(1,SM.n));if(last)SM.sg=performance.now();if(!smOn()||cbRed()||!SM.caps.length)return;const pick=SM.caps[Math.floor(Math.random()*SM.caps.length)];
+  {const P=(SM.peaks||[]).filter(q=>q[2]>0&&smVis(q[0],q[1])),q=P.length?P[Math.floor(Math.random()*P.length)]:null;if(q&&SM.el){const gl=document.createElement("b");gl.className="sm-gl";gl.style.left=(q[0]-14)+"px";gl.style.top=(q[1]-14)+"px";SM.el.appendChild(gl);gl.animate([{transform:"scale(0) rotate(0deg)",opacity:0},{transform:"scale(1) rotate(45deg)",opacity:1,offset:.4},{transform:"scale(0) rotate(90deg)",opacity:0}],{duration:1000,easing:"ease-in-out"}).onfinish=()=>gl.remove()}}
   if(pick.animate)pick.animate([{filter:"brightness(1)"},{filter:"brightness(1.6) drop-shadow(0 0 6px #fff)",offset:.35},{filter:"brightness(1)"}],{duration:1100,easing:"ease-in-out"});
   if(last)smGust()}
 function smGust(){if(!document.body.animate)return;const W=innerWidth,H=innerHeight;SM.caps.forEach((c,i)=>{if(c.animate)c.animate([{filter:"brightness(1)"},{filter:"brightness(1.5) drop-shadow(0 0 5px #fff)",offset:.4},{filter:"brightness(1)"}],{duration:1600,delay:i*60})});
   for(let k=0;k<70;k++){const i=document.createElement("i"),s=2+Math.random()*4.5;i.className="sm-gust";const y=Math.random()*H;i.style.cssText="left:-10px;top:"+y.toFixed(0)+"px;width:"+s.toFixed(1)+"px;height:"+s.toFixed(1)+"px";document.body.appendChild(i);
     const dy=(Math.random()-.3)*H*.35,w=(Math.random()-.5)*60;i.animate([{transform:"translate(0,0)",opacity:0},{opacity:.95,offset:.08},{transform:"translate("+(W*.55).toFixed(0)+"px,"+(dy*.5+w).toFixed(0)+"px)",opacity:.9,offset:.55},{transform:"translate("+(W+30)+"px,"+dy.toFixed(0)+"px)",opacity:0}],{duration:1400+Math.random()*1300,delay:Math.random()*900,easing:"cubic-bezier(.3,.2,.6,1)",fill:"backwards"}).onfinish=()=>i.remove()}}
+const smVis=(x,y)=>{const e=document.elementFromPoint(x,y);return !e||e===document.body||e===document.documentElement||!e.closest(".card,.stats,header")};
 let smN=0;
 function smKey(){if(!smOn()||smN>60||cbRed())return;const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
   let g=c.previousElementSibling;while(g&&g.classList.contains("auto"))g=g.previousElementSibling;
