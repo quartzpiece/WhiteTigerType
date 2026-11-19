@@ -111,6 +111,24 @@
 .ar-k{position:absolute;pointer-events:none;z-index:3;border-radius:50%!important}
 .skin[data-skin="aurora"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
   background:radial-gradient(ellipse 70% 30% at 40% 45%,rgba(92,255,176,.95),transparent 70%),radial-gradient(ellipse 60% 25% at 65% 30%,rgba(199,155,255,.85),transparent 70%),radial-gradient(circle at 75% 75%,#fff 0 .6px,transparent 1px),#04080E}
+/* 체스(제작자만): 판은 테마색에 맞춰요 */
+.ch-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.ch-btns{display:flex;gap:6px;flex-wrap:wrap}
+#ch-st{font-family:var(--display);color:var(--accent)}#ch-st.end{color:var(--fg)}
+.ch-wrap{display:grid;grid-template-columns:minmax(0,min(100%,520px)) minmax(120px,1fr);gap:14px;align-items:start}
+@media (max-width:640px){.ch-wrap{grid-template-columns:1fr}}
+.ch-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:2px solid var(--line);user-select:none;-webkit-user-select:none}
+.ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(20px,6.2vw,46px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 62%,var(--bg));font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif;font-variant-emoji:text}
+.ch-sq.dk{background:color-mix(in srgb,var(--accent) 48%,var(--bg))}
+.ch-sq.last{box-shadow:inset 0 0 0 100px color-mix(in srgb,var(--accent) 22%,transparent)}
+.ch-sq.sel{box-shadow:inset 0 0 0 3px var(--accent)}
+.ch-sq.chk{box-shadow:inset 0 0 0 100px rgba(230,60,60,.45)}
+.ch-sq.mv::after{content:"";position:absolute;width:26%;height:26%;border-radius:50%!important;background:color-mix(in srgb,var(--fg) 45%,transparent)}
+.ch-sq.cap::after{content:"";position:absolute;inset:6%;border-radius:50%!important;border:3px solid color-mix(in srgb,var(--fg) 45%,transparent)}
+.ch-sq .w{color:#FFFFFF;-webkit-text-stroke:1.2px #111;paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.45)}.ch-sq .b{color:#151515;-webkit-text-stroke:.6px rgba(255,255,255,.55);text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.ch-sq .co{position:absolute;font-size:10px;font-style:normal;font-family:var(--body);color:color-mix(in srgb,var(--bg) 70%,transparent);pointer-events:none}.ch-sq .co.f{right:3px;bottom:2px}.ch-sq .co.r{left:3px;top:2px}
+.ch-moves{margin:0;padding:0 0 0 2.2em;max-height:min(520px,60vh);overflow:auto;font-size:.9rem;display:grid;gap:2px;align-content:start}
+.ch-moves li span{display:inline-block;min-width:4.2em}
+.ch-promo{display:flex;gap:6px;align-items:center}.ch-promo .ch-sq{width:52px;height:52px;border:1px solid var(--line)}
 /* 3.6.13 발광(3.6.14 더 화려하게): 거의 검은 바탕. 포인트색이 청록·하늘·보라·분홍으로 바뀌며, 모든 글자와 테두리가 빛나요 */
 @property --lmc{syntax:"<color>";inherits:true;initial-value:#5CFFD6}
 @property --lmg{syntax:"<length>";inherits:true;initial-value:9px}
@@ -555,6 +573,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <button class="btn acct" id="shopbtn" type="button">상점</button>
       <button class="btn acct" id="invbtn" type="button">인벤토리</button>
       <button class="btn acct" id="recbtn" type="button">기록</button>
+      <button class="btn acct" id="chessbtn" type="button" hidden>체스</button>
       <button class="btn acct" id="acct" type="button" hidden>로그인</button>
       <span class="pts" id="pts">포인트: 0</span>
       <button class="btn" id="edit" type="button" hidden>지문 바꾸기</button>
@@ -705,6 +724,12 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <p class="hint" id="shop-msg" aria-live="polite"></p>
   </section>
 
+  <section class="card chess" id="chess" hidden>
+    <h2>체스</h2>
+    <div class="ch-top"><span id="ch-st" role="status">자유 배치</span><span class="ch-btns"><button class="btn acct" id="ch-new" type="button">새 게임</button><button class="btn acct" id="ch-undo" type="button">무르기</button><button class="btn acct" id="ch-flip" type="button">판 뒤집기</button></span></div>
+    <div class="ch-wrap"><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div><ol class="ch-moves" id="ch-moves"></ol></div>
+    <div class="ch-promo" id="ch-promo" hidden></div>
+  </section>
   <section class="card shop" id="inv" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">인벤토리</b></div>
     <span class="set-l" id="inv-tk-l">티켓</span>
@@ -1974,6 +1999,51 @@ async function useTicket10(){if(!srvHooks.gacha){$("gc-res").textContent="로그
       if(--left<=0){await wait(500);cl.style.visibility=""}};grid.append(t)});
   cl.onclick=()=>{g.remove();box.style.minHeight="";const q=achHold||[];achHold=null;if(q.length)achToast(q);drawInv()};
   g.append(grid,cl);box.append(g);const need=g.scrollHeight;if(box.clientHeight<need)box.style.minHeight=need+"px"; /* 좁은 화면에서 인벤토리가 짧으면 티켓이 잘리지 않게 늘려요 */try{grid.querySelector(".tk10-t").focus()}catch(e){}}
+
+// 체스(제작자만, 2026-11-19): 둘이서 번갈아 두는 판. 규칙: 캐슬링·앙파상·승진·체크·체크메이트·스테일메이트. 나중에 타자 게임과 이어 붙일 자리
+const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:false,last:null,promo:null,moves:[]};
+  const GL={K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞",P:"♟"},KO={K:"킹",Q:"퀸",R:"룩",B:"비숍",N:"나이트",P:"폰"};
+  const col=p=>p?(p===p.toUpperCase()?"w":"b"):"",up=p=>p.toUpperCase(),rc=i=>[i>>3,i&7],ix=(r,c)=>r*8+c,on=(r,c)=>r>=0&&r<8&&c>=0&&c<8,sqn=i=>"abcdefgh"[i&7]+(8-(i>>3));
+  function reset(){G.b=("rnbqkbnr"+"pppppppp"+"........".repeat(4)+"PPPPPPPP"+"RNBQKBNR").split("").map(x=>x==="."?"":x);G.turn="w";G.cs="KQkq";G.ep=-1;G.hist=[];G.sel=-1;G.last=null;G.promo=null;G.moves=[]}
+  function attacked(b,i,by){const [r,c]=rc(i);const pd=by==="w"?1:-1;for(const dc of[-1,1]){const rr=r+pd,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"P":"p"))return true}
+    for(const [dr,dc] of[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]){const rr=r+dr,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"N":"n"))return true}
+    for(const [dr,dc] of[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]){let rr=r+dr,cc=c+dc,d=1;while(on(rr,cc)){const p=b[ix(rr,cc)];if(p){if(col(p)===by){const u=up(p);if(u==="Q"||(u==="K"&&d===1)||(u==="B"&&dr&&dc)||(u==="R"&&(!dr||!dc)))return true}break}rr+=dr;cc+=dc;d++}}return false}
+  const kingAt=(b,c)=>b.indexOf(c==="w"?"K":"k");
+  function pseudo(i){const b=G.b,p=b[i],me=col(p),u=up(p),[r,c]=rc(i),out=[];const add=(t,x)=>out.push({f:i,t,...x});
+    if(u==="P"){const d=me==="w"?-1:1,st=me==="w"?6:1;if(on(r+d,c)&&!b[ix(r+d,c)]){add(ix(r+d,c));if(r===st&&!b[ix(r+2*d,c)])add(ix(r+2*d,c),{dbl:1})}
+      for(const dc of[-1,1]){const rr=r+d,cc=c+dc;if(!on(rr,cc))continue;const t=ix(rr,cc);if(b[t]&&col(b[t])!==me)add(t);else if(t===G.ep)add(t,{ep:1})}}
+    else if(u==="N"||u==="K"){const D=u==="N"?[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]:[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];for(const [dr,dc] of D){const rr=r+dr,cc=c+dc;if(on(rr,cc)&&col(b[ix(rr,cc)])!==me)add(ix(rr,cc))}
+      if(u==="K"){const op=me==="w"?"b":"w",row=me==="w"?7:0;if(i===ix(row,4)&&!attacked(b,i,op)){
+        if(G.cs.includes(me==="w"?"K":"k")&&!b[ix(row,5)]&&!b[ix(row,6)]&&!attacked(b,ix(row,5),op)&&!attacked(b,ix(row,6),op))add(ix(row,6),{cs:"k"});
+        if(G.cs.includes(me==="w"?"Q":"q")&&!b[ix(row,3)]&&!b[ix(row,2)]&&!b[ix(row,1)]&&!attacked(b,ix(row,3),op)&&!attacked(b,ix(row,2),op))add(ix(row,2),{cs:"q"})}}}
+    else{const D=u==="B"?[[1,1],[1,-1],[-1,1],[-1,-1]]:u==="R"?[[1,0],[-1,0],[0,1],[0,-1]]:[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];for(const [dr,dc] of D){let rr=r+dr,cc=c+dc;while(on(rr,cc)){const t=ix(rr,cc);if(!b[t])add(t);else{if(col(b[t])!==me)add(t);break}rr+=dr;cc+=dc}}}
+    return out}
+  function apply(b,m,pr){const n=b.slice(),p=n[m.f];n[m.t]=p;n[m.f]="";if(m.ep)n[m.t+(col(p)==="w"?8:-8)]="";if(m.cs){const row=m.f>>3;if(m.cs==="k"){n[ix(row,5)]=n[ix(row,7)];n[ix(row,7)]=""}else{n[ix(row,3)]=n[ix(row,0)];n[ix(row,0)]=""}}
+    if(up(p)==="P"&&(m.t>>3===0||m.t>>3===7))n[m.t]=col(p)==="w"?(pr||"Q"):(pr||"Q").toLowerCase();return n}
+  // 차례 없이 아무 말이나 움직여요(사용자 요청). 말마다 규칙대로만, 자기 킹이 공격받게 되는 수는 안 돼요
+  const legal=i=>{const p=G.b[i];if(!p)return[];const me=col(p),op=me==="w"?"b":"w";return pseudo(i).filter(m=>{const n=apply(G.b,m);return !attacked(n,kingAt(n,me),op)})};
+  const allLegal=c=>{const L=[];for(let i=0;i<64;i++)if(col(G.b[i])===c)L.push(...legal(i));return L};
+  const inChk=c=>{const k=kingAt(G.b,c);return k>=0&&attacked(G.b,k,c==="w"?"b":"w")};
+  function play(m,pr){const p=G.b[m.f],cap=G.b[m.t]||(m.ep?"P":"");G.hist.push({b:G.b,turn:G.turn,cs:G.cs,ep:G.ep,last:G.last,mv:G.moves.length});
+    G.b=apply(G.b,m,pr);let cs=G.cs;const rm=x=>{cs=cs.replace(x,"")};if(up(p)==="K")col(p)==="w"?(rm("K"),rm("Q")):(rm("k"),rm("q"));[[63,"K"],[56,"Q"],[7,"k"],[0,"q"]].forEach(([q,x])=>{if(m.f===q||m.t===q)rm(x)});G.cs=cs;
+    G.ep=m.dbl?(m.f+m.t)/2:-1;G.last=[m.f,m.t];G.sel=-1;
+    const oc=col(p)==="w"?"b":"w",chk=inChk(oc),none=chk&&!allLegal(oc).length;
+    const nm=m.cs?(m.cs==="k"?"O-O":"O-O-O"):(up(p)==="P"?"":up(p))+sqn(m.f)+(cap?"x":"-")+sqn(m.t)+(pr&&up(p)==="P"?"="+pr:"")+(none&&chk?"#":chk?"+":"");G.moves.push((col(p)==="w"?"백 ":"흑 ")+nm);draw()}
+  function status(){const st=$("ch-st"),T=[];let end=false;for(const c of["w","b"]){if(!inChk(c))continue;const who=c==="w"?"백":"흑";if(!allLegal(c).length){T.push("체크메이트 · "+(c==="w"?"흑":"백")+" 승");end=true}else T.push(who+" 체크")}
+    st.classList.toggle("end",end);st.textContent=T.length?T.join(" · "):"자유 배치"}
+  function draw(){const bd=$("ch-board");bd.innerHTML="";const L=G.sel>=0?legal(G.sel):[],T=new Map(L.map(m=>[m.t,m]));const CK=["w","b"].filter(inChk).map(c=>kingAt(G.b,c));
+    for(let v=0;v<64;v++){const i=G.flip?63-v:v,[r,c]=rc(i),p=G.b[i],q=document.createElement("button");q.type="button";q.className="ch-sq"+((r+c)%2?" dk":"")+(G.last&&G.last.includes(i)?" last":"")+(i===G.sel?" sel":"")+(CK.includes(i)?" chk":"")+(T.has(i)?(p||T.get(i).ep?" cap":" mv"):"");
+      q.setAttribute("aria-label",sqn(i)+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));if(p){const g=document.createElement("span");g.className=col(p);g.textContent=GL[up(p)]+"︎";q.append(g)}
+      if((G.flip?r===0:r===7)){const f=document.createElement("i");f.className="co f";f.textContent="abcdefgh"[c];q.append(f)}if((G.flip?c===7:c===0)){const f=document.createElement("i");f.className="co r";f.textContent=8-r;q.append(f)}
+      q.onclick=()=>tap(i);bd.append(q)}
+    const ml=$("ch-moves");ml.innerHTML="";for(const t of G.moves){const li=document.createElement("li");li.textContent=t;ml.append(li)}ml.scrollTop=ml.scrollHeight;status()}
+  function tap(i){if(G.promo)return;const p=G.b[i];if(G.sel>=0){const m=legal(G.sel).find(x=>x.t===i);if(m){if(up(G.b[m.f])==="P"&&(i>>3===0||i>>3===7)){askPromo(m);return}play(m);return}}
+    G.sel=p&&i!==G.sel?i:-1;draw()}
+  function askPromo(m){G.promo=m;const box=$("ch-promo");box.innerHTML='<span class="hint">승진:</span>';const me=col(G.b[m.f]);["Q","R","B","N"].forEach(x=>{const q=document.createElement("button");q.type="button";q.className="ch-sq";q.setAttribute("aria-label",KO[x]);const g=document.createElement("span");g.className=me;g.textContent=GL[x]+"︎";q.append(g);q.onclick=()=>{box.hidden=true;G.promo=null;play(m,x)};box.append(q)});box.hidden=false}
+  function undo(){const h=G.hist.pop();if(!h)return;G.b=h.b;G.turn=h.turn;G.cs=h.cs;G.ep=h.ep;G.last=h.last;G.moves.length=h.mv;G.sel=-1;G.promo=null;$("ch-promo").hidden=true;draw()}
+  reset();return {G,reset,draw,undo,legal,allLegal,play}})();
+$("chessbtn").onclick=()=>{if(!shopFree)return;const c=$("chess"),o=c.hidden;closePanels(o?"chess":null);c.hidden=!o;if(o)CH.draw()};
+$("ch-new").onclick=()=>{CH.reset();$("ch-promo").hidden=true;CH.draw()};$("ch-undo").onclick=()=>CH.undo();$("ch-flip").onclick=()=>{CH.G.flip=!CH.G.flip;CH.draw()};
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
@@ -2049,7 +2119,7 @@ function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[d
 const srvHooks={start:null,run:null,buy:null,wx:null,fb:null,gacha:null,tk:()=>0};
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
-function closePanels(except){["login","rank","fr","settings","daily","vs","shop","inv","books","rec"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
+function closePanels(except){["login","rank","fr","settings","daily","vs","shop","inv","books","rec","chess"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
   if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
 function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
@@ -2541,7 +2611,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-sus-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;$("chessbtn").hidden=!shopFree;if(!shopFree)$("chess").hidden=true;if(!shopFree){$("mg-out").innerHTML="";$("mg-sus-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
     if(!user){uid=null;nick="";SRV.tot=null;SRV.col="";acct.style.color="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
