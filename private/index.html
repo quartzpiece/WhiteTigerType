@@ -369,7 +369,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 #admin-list{min-height:220px;font-size:.95rem}
 #fb-text{min-height:90px}
 .mg-u{display:grid;gap:8px;border:1px solid var(--line);padding:10px}.mg-u .row{flex-wrap:wrap}.mg-ach{display:flex;flex-wrap:wrap;gap:6px}.mg-ach button{font-size:12px}
-.fb-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.fb-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}.fb-list[hidden]{display:none}
 .fb-list li{border:1px solid var(--line);background:var(--bg);padding:10px 12px;display:grid;gap:6px}
 .fb-list .fb-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;color:var(--muted);font-size:.85rem}
 .fb-list .fb-h b{color:var(--accent);font-weight:700}
@@ -507,7 +507,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.10</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.11</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -583,7 +583,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <div id="fb-mine-w" hidden><span class="set-l">내 건의</span><ol class="fb-list" id="fb-mine"></ol></div>
     </div>
     <div class="admin-box" id="fb-admin" hidden>
-      <div class="row" style="justify-content:space-between"><span class="set-l">건의함 (관리자)</span><button class="btn acct" id="fb-re" type="button">새로고침</button></div>
+      <div class="row" style="justify-content:space-between"><span class="set-l">건의함 (관리자)</span><span class="row"><button class="btn acct" id="fb-fold" type="button" aria-controls="fb-list">접기</button><button class="btn acct" id="fb-re" type="button">새로고침</button></span></div>
       <ol class="fb-list" id="fb-list"></ol>
     </div>
     <div class="admin-box" id="mg-admin" hidden>
@@ -2380,6 +2380,9 @@ async function initCloud(){if(!FB_CONFIG)return;
         draw();li.append(box,btns);list.appendChild(li)});
       if(!n){const li=document.createElement("li");li.textContent="건의 없음";list.appendChild(li)}}catch(e){list.innerHTML="";const li=document.createElement("li");li.textContent="불러올 수 없음 (규칙 확인)";list.appendChild(li)}}
   $("fb-re").onclick=loadFb;
+  // 3.7.11 건의함 접기(기기별 tt-fbfold)
+  {const fd=$("fb-fold"),set=v=>{$("fb-list").hidden=v;fd.textContent=v?"펼치기":"접기";fd.setAttribute("aria-expanded",String(!v))};set(!!store.get("tt-fbfold",false));
+    fd.onclick=()=>{const v=!$("fb-list").hidden;store.set("tt-fbfold",v);set(v)}}
   // 오늘의 문장 상금: 하루가 끝나면(한국 시각 밤 12시) 그날 1·2·3위에게 200·100·50포인트.
   // 서버가 없어서, 1~3위가 다음에 접속할 때 지난 날짜(최근 7일)를 확인해 받아요. 받은 날짜는 tt-aw에 남겨 한 번만 받아요
   const PRIZE=[200,100,50],PRIZE_FROM="2026-11-05";let awarding=false;
