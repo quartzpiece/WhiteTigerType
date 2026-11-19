@@ -261,10 +261,18 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .tk10{position:absolute;inset:0;z-index:4;display:grid;align-content:center;justify-items:center;gap:16px;padding:16px;overflow:auto;background:color-mix(in srgb,var(--bg) 88%,transparent)}
 .tk10-g{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:min(560px,100%)}
 @media (max-width:520px){.tk10-g{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.tk10-t{min-height:48px;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-family:var(--display);font-size:.95rem;cursor:pointer;padding:4px 6px;line-height:1.25;word-break:keep-all;animation:tkIn .25s ease-out backwards}
-.tk10-t:not(.open):hover{transform:translateY(-2px);box-shadow:0 0 14px var(--accent-soft)}
-.tk10-t.open{cursor:default;font-family:var(--body);font-size:.8rem;font-weight:700}.tk10-t.lose{border-color:#8A8A85;color:var(--muted,var(--fg));opacity:.8}.tk10-t.rare{box-shadow:0 0 0 3px var(--accent-soft),0 0 18px var(--accent)}
-.tk10-t:disabled{opacity:1}.tk10-t.lose:disabled{opacity:.8}
+.tk10-t{position:relative;min-height:48px;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-family:var(--display);font-size:.95rem;cursor:pointer;padding:4px 6px;line-height:1.25;word-break:keep-all;animation:tkIn .25s ease-out backwards}
+.tk10-t:not(.open):not(.ing):hover{transform:translateY(-2px);box-shadow:0 0 14px var(--accent-soft)}
+.tk10-t.ing{cursor:default;animation:tkShake .2s linear infinite}.tk10-t.ing.rare{animation:tkShake2 .16s linear infinite;box-shadow:0 0 0 3px var(--accent-soft),0 0 22px var(--accent);z-index:1}
+.tk10-t .tk10-l{display:inline-block}.tk10-t.go .tk10-l{animation:tkGo .35s ease-in forwards}.tk10-t.open .tk10-l{animation:tkPop .4s cubic-bezier(.2,1.6,.4,1) both}
+.tk10-t.open{cursor:default;font-family:var(--body);font-size:.8rem;font-weight:700;animation:none}.tk10-t.lose{border-color:#8A8A85;color:var(--muted,var(--fg))}.tk10-t.lose .tk10-l{opacity:.8}.tk10-t.win{box-shadow:0 0 12px var(--accent-soft)}.tk10-t.rare.open{box-shadow:0 0 0 3px var(--accent-soft),0 0 18px var(--accent)}.tk10-t.rare.open:not(.lose) .tk10-l{animation:tkPop .5s cubic-bezier(.2,1.6,.4,1) both,tkGlow 1.2s .5s ease-in-out infinite}
+.tk10-t.rare.lose.open{box-shadow:none}
+.tk10-t:disabled{opacity:1}
+.tk10-b{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:2}.tk10-b>*{position:absolute;left:0;top:0}
+.tk10-b .tkfx-r{width:28px;height:28px;margin:-14px 0 0 -14px;opacity:0;animation:tkRing10 .55s ease-out forwards}.tk10-b .tkfx-r2{animation-duration:.9s;animation-delay:.2s}.tk10-b.lose .tkfx-r{border-color:#8A8A85}
+.tk10-b .tkfx-s{width:6px;height:6px;margin:-3px 0 0 -3px;opacity:0;animation:tkSp .6s ease-out forwards}.tk10-b.rare .tkfx-s{animation-duration:1s}.tk10-b .tkfx-s.late{animation-delay:.3s}
+@keyframes tkRing10{0%{transform:scale(.3) rotate(45deg);opacity:1}100%{transform:scale(4) rotate(45deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.tk10-t.ing,.tk10-t.go .tk10-l,.tk10-t.open .tk10-l,.tk10-b>*{animation-duration:.01s!important;animation-delay:0s!important;animation-iteration-count:1!important}}
 /* 3.7.19 귀한 상품(1포인트·1000포인트·특별 테마/글꼴·닉네임 효과·징표): 결과가 오면 티켓이 더 빨리 떨다가(두 단계) 길게 터져요 */
 .tkfx.rare .tkfx-t{animation:tkShake2 .16s linear infinite;box-shadow:0 0 0 5px var(--accent-soft),0 0 36px var(--accent)}
 .tkfx.rare2 .tkfx-t{animation:tkShake3 .09s linear infinite;box-shadow:0 0 0 7px var(--accent-soft),0 0 56px var(--accent)}
@@ -293,6 +301,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .shop-list .sw{width:18px;height:18px;flex:none}
 .shop-list .nm{flex:1;min-width:0}
 .shop-list .pr{font-family:var(--display);color:var(--accent)}
+.shop-list li.tkrow{grid-column:1/-1}.tkrow .nm,.tkrow .pr,.tkrow .btn{white-space:nowrap}.tkrow #gc-go10{margin-left:-4px} /* 3.7.23 티켓 줄은 한 줄 전체: 버튼 두 개가 있어도 글자가 안 꺾여요 */
 /* 닉네임 효과(3.6.1): 발광(지금 닉네임 색으로 빛나요), 별자리 표시(이름 뒤에 작은 별자리), 금색(금빛이 흘러요) */
 .nx-glow{text-shadow:0 0 4px currentColor,0 0 10px currentColor,0 0 20px currentColor}
 .nx-stars{text-shadow:0 0 6px rgba(175,200,255,.55)}.nx-stars::after{content:"";display:inline-block;width:27px;height:13px;margin-left:4px;vertical-align:-1px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 14'%3E%3Cpath d='M26.9 1L29 6.1L21.3 10.3L17.6 7.2ZM17.6 7.2L11.6 8L6.7 8.4L1 13' stroke='%23AFC8FF' stroke-width='.7' fill='none' opacity='.8'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='26.9' cy='1.3' r='1.2'/%3E%3Ccircle cx='28.7' cy='6.1' r='1'/%3E%3Ccircle cx='21.3' cy='10.3' r='1'/%3E%3Ccircle cx='17.6' cy='7.2' r='.75'/%3E%3Ccircle cx='11.6' cy='8' r='1.2'/%3E%3Ccircle cx='6.7' cy='8.4' r='1.05'/%3E%3Ccircle cx='1.3' cy='12.7' r='1.15'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;text-shadow:none} /* 북두칠성(실제 별 위치), 3.6.2부터 닉네임 바로 오른쪽 */
@@ -527,7 +536,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.22</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.23</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1810,7 +1819,7 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
     const n=document.createElement("span");n.className="nm";n.textContent=name;if(fam){n.style.fontFamily='"'+fam+'",var(--body)';n.style.fontSize="1.1rem"}l.appendChild(n);
     if(right){l.appendChild(right)}const b=document.createElement("button");b.type="button";b.className="btn acct";b.textContent=btxt;if(fn)b.onclick=fn;else b.disabled=true;l.appendChild(b);return l};
   const lk=tkOn()&&srvHooks.lk?srvHooks.lk():0,ul=tkOn()&&srvHooks.ul?srvHooks.ul():0;
-  if(tk>0||lk>0||ul>0){const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";const l=li(TICKET.name,c,"사용",tk>0?useTicket:null);l.querySelector("button").id="gc-go";tkMark(l.querySelector(".nm"));{const b10=document.createElement("button");b10.type="button";b10.className="btn acct";b10.id="gc-go10";b10.textContent="10장 사용";if(tk>=10)b10.onclick=useTicket10;else b10.disabled=true;l.appendChild(b10)}u.appendChild(l)}
+  if(tk>0||lk>0||ul>0){const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";const l=li(TICKET.name,c,"사용",tk>0?useTicket:null);l.querySelector("button").id="gc-go";l.classList.add("tkrow");tkMark(l.querySelector(".nm"));{const b10=document.createElement("button");b10.type="button";b10.className="btn acct";b10.id="gc-go10";b10.textContent="10장 사용";if(tk>=10)b10.onclick=useTicket10;else b10.disabled=true;l.appendChild(b10)}u.appendChild(l)}
   [[lk,"행운의 징표","lk"],[ul,"불운의 징표","ul"]].forEach(([v,t,k])=>{if(v<1)return;const l=document.createElement("li");l.className="tok "+k;const n=document.createElement("span");n.className="nm";n.textContent=t;const c=document.createElement("span");c.className="pr";c.textContent=v+"개";l.append(n,c);u.appendChild(l)}); /* 3.5.36 징표는 티켓 칸 옆에 황금색·회색 */
   const skin=store.get("tt-skin","basic"),curF=store.get("tt-font","");
   const th=$("inv-th");th.innerHTML="";SHOP_THEMES.filter(t=>owned(t.id)).concat(SP_THEMES.filter(t=>spOk(t.id))).forEach(t=>{const o=document.querySelector('#settings .skin[data-skin="'+t.id+'"]');if(!o)return; // 3.5.29 테마는 설정처럼 아이콘만
@@ -1862,10 +1871,16 @@ async function useTicket10(){if(!srvHooks.gacha){$("gc-res").textContent="로그
   drawInv();try{shopSkins();applyFont()}catch(e){}drawList();applyBg();drawShop();
   const box=$("inv"),old=box.querySelector(".tk10");if(old)old.remove();const g=document.createElement("div");g.className="tk10";g.setAttribute("role","dialog");g.setAttribute("aria-label","티켓 10장");
   const grid=document.createElement("div");grid.className="tk10-g";const cl=document.createElement("button");cl.type="button";cl.className="btn acct tk10-x";cl.textContent="닫기";cl.style.visibility="hidden";
-  let busy=false,left=j.prizes.length;
-  j.prizes.forEach((pz,i)=>{const t=document.createElement("button");t.type="button";t.className="tk10-t";t.textContent=TICKET.name;t.setAttribute("aria-label",TICKET.name+" "+(i+1));
-    t.onclick=async()=>{if(busy||t.dataset.open)return;busy=true;t.dataset.open="1";const fx=tkFx();await wait(600);await tkReveal(fx,pz);
-      t.textContent=pz.name||pz.id||"?";t.classList.add("open",tkLose(pz)?"lose":tkRare(pz)?"rare":"win");t.disabled=true;busy=false;if(--left<=0)cl.style.visibility=""};grid.append(t)});
+  let left=j.prizes.length;const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  // 3.7.23 효과는 누른 티켓 그 자리에서 나오고, 여러 장을 한꺼번에 눌러도 돼요
+  const pop=(t,pz,rr,lose)=>{const bx=document.createElement("div");bx.className="tk10-b"+(lose?" lose":"")+(rr?" rare":"");bx.setAttribute("aria-hidden","true");const add=c=>{const e=document.createElement("div");e.className=c;bx.append(e);return e};add("tkfx-r");if(rr)add("tkfx-r tkfx-r2");
+    if(!lose){const n=rr?20:10;for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.random()*.4,d=(rr?55:38)+Math.random()*(rr?50:30),sp=add("tkfx-s"+(rr&&i%2?" late":""));sp.style.setProperty("--dx",Math.round(Math.cos(a)*d)+"px");sp.style.setProperty("--dy",Math.round(Math.sin(a)*d)+"px")}}
+    t.append(bx);setTimeout(()=>bx.remove(),1400)};
+  j.prizes.forEach((pz,i)=>{const t=document.createElement("button");t.type="button";t.className="tk10-t";const lb=document.createElement("span");lb.className="tk10-l";lb.textContent=TICKET.name;t.append(lb);t.setAttribute("aria-label",TICKET.name+" "+(i+1));
+    t.onclick=async()=>{if(t.dataset.open)return;t.dataset.open="1";const rr=tkRare(pz),lose=tkLose(pz);t.classList.add("ing");await wait(600);
+      if(rr&&!RM){t.classList.add("rare");await wait(2000)}
+      t.classList.add("go");await wait(350);pop(t,pz,rr,lose);t.classList.remove("ing","go");lb.textContent=pz.name||pz.id||"?";t.setAttribute("aria-label",lb.textContent);t.classList.add("open",lose?"lose":rr?"rare":"win");if(rr)t.classList.add("rare");t.disabled=true;
+      if(--left<=0){await wait(500);cl.style.visibility=""}};grid.append(t)});
   cl.onclick=()=>{g.remove();box.style.minHeight="";const q=achHold||[];achHold=null;if(q.length)achToast(q);drawInv()};
   g.append(grid,cl);box.append(g);const need=g.scrollHeight;if(box.clientHeight<need)box.style.minHeight=need+"px"; /* 좁은 화면에서 인벤토리가 짧으면 티켓이 잘리지 않게 늘려요 */try{grid.querySelector(".tk10-t").focus()}catch(e){}}
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
