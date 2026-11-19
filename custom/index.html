@@ -536,7 +536,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.26</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.27</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1228,8 +1228,11 @@ function prep(line){const t=[...line.normalize("NFC")],typ=[],idx=t.map(()=>-1);
   t.forEach((ch,i)=>{if(SKIP.test(ch))return;if(ch===" "&&(!typ.length||typ[typ.length-1].ch===" "))return;typ.push({ch,i})});
   while(typ.length&&typ[typ.length-1].ch===" ")typ.pop();
   typ.forEach((o,k)=>idx[o.i]=k);return{t,typ:typ.map(o=>o.ch),idx}}
+function caretAt(n){const el=$("typing");try{const val=el.value,e=el.selectionDirection==="backward"?el.selectionStart:el.selectionEnd;if(e==null||e>=val.length)return n;return Math.min(n,[...val.slice(0,e).normalize("NFC")].filter(ch=>!SKIP.test(ch)).length)}catch(x){return n}}
+// 화살표 키·마우스로 커서만 옮겨도 화면 커서가 따라와요
+{let cq=0;document.addEventListener("selectionchange",()=>{const el=$("typing");if(cq||!el||document.activeElement!==el)return;cq=requestAnimationFrame(()=>{cq=0;try{if(S.prep&&S.prep[S.i]&&!$("practice").hidden)paint()}catch(e){}})})}
 function typedNow(){return [...$("typing").value.normalize("NFC")].filter(ch=>!SKIP.test(ch))}
-function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
+function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;const cv=caretAt(v.length); /* 3.7.27 화살표 키로 옮긴 입력 커서 자리(칠 글자 기준) */
   let seen=0,pend=false;
   P.t.forEach((orig,j)=>{const i=P.idx[j];let cls="c";
     if(i<0){const passed=v.length>seen||(seen===t.length&&v.length>=t.length);cls+=passed?" ok":" skip"}
@@ -1248,12 +1251,12 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
     const add=(ch,cls)=>T.push({sp:ch===" ",h:'<span class="c '+cls+(ch===" "?" s":"")+'">'+E2(ch)+"</span>"});
     const caret=()=>{cared=true;const c='<i class="caret"></i>';let k=T.length-1;if(k>=0&&!T[k].sp){T[k].h+=c;return}T.push({sp:false,h:c})};
     P.t.forEach((orig,j)=>{const i=P.idx[j];
-      if(i<0){const passed=v.length>sn||(sn===t.length&&v.length>=t.length);if(!passed&&!cared&&sn===v.length)caret();add(orig,passed?"ok":"rest");return} // 커서는 마지막으로 친 글자 바로 뒤(아직 안 지나간 문장부호 앞)
-      sn=i+1;if(i===v.length&&!cared)caret();
+      if(i<0){const passed=v.length>sn||(sn===t.length&&v.length>=t.length);if(!passed&&!cared&&sn===cv)caret();add(orig,passed?"ok":"rest");return} // 커서는 마지막으로 친 글자 바로 뒤(아직 안 지나간 문장부호 앞)
+      sn=i+1;if(i===cv&&!cared)caret();
       if(i<v.length){const lastc=i===v.length-1,wait=lastc&&v[i]!==t[i]&&(S.composing||isPrefix(v[i],t[i])||carriesNext(v[i],t[i],t[i+1]));
         add(v[i],wait?"comp":"ok"+(v[i]!==t[i]?" typo":""))}
       else add(orig,"rest")});
-    for(let i=t.length;i<v.length;i++)add(v[i],"ok"+(v[i]!==" "?" typo":""));
+    for(let i=t.length;i<v.length;i++){if(i===cv&&!cared)caret();add(v[i],"ok"+(v[i]!==" "?" typo":""))}
     if(!cared)caret();
     // 커서만 있는 조각은 다음 어절 앞에 붙여요
     let h="",w="";const flush=()=>{if(w)h+='<span class="w">'+w+"</span>";w=""};
@@ -1263,7 +1266,7 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
   const inpEl=$("typing"),raw=[...inpEl.value.normalize("NFC")],pos=[];P.idx.forEach((k2,j)=>{if(k2>=0)pos[k2]=j});
   const E=ch=>ch===" "?"&nbsp;":esc(ch);let out="",prevJ=-1;
   const autoTo=end=>{for(let jj=prevJ+1;jj<end;jj++)out+='<i class="auto">'+E(P.t[jj])+"</i>"};
-  for(let i=0;i<v.length;i++){
+  for(let i=0;i<v.length;i++){if(i===cv)out+='<i class="caret"></i>';
     if(i<t.length){autoTo(pos[i]);prevJ=pos[i];
       const typo=v[i]!==t[i]&&!(i===v.length-1&&(S.composing||isPrefix(v[i],t[i])||carriesNext(v[i],t[i],t[i+1])));
       const comp=i===v.length-1&&S.composing;
@@ -1273,9 +1276,9 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
   let tail=0;for(let r=raw.length-1;r>=0&&SKIP.test(raw[r]);r--)tail++;
   if(v.length&&v.length<=t.length){let jj=prevJ+1,n=0;const done=v.length===t.length&&!pend;
     while(jj<P.t.length&&P.idx[jj]<0&&(done||n<tail)){out+='<i class="auto">'+E(P.t[jj])+"</i>";jj++;n++}}
-  out+='<i class="caret"></i>';
+  if(cv>=v.length)out+='<i class="caret"></i>';
   const mi=$("mirror");mi.innerHTML=out;
-  const over=mi.offsetWidth-(mi.parentElement.clientWidth-28);mi.style.transform="translateX("+(over>0?-over:0)+"px)";
+  const vis=mi.parentElement.clientWidth-28,over=mi.offsetWidth-vis;let sh=over>0?over:0;if(sh&&cv<v.length){const ce=mi.querySelector("i.caret");if(ce)sh=Math.max(0,Math.min(over,ce.offsetLeft-vis+24))}mi.style.transform="translateX("+(-sh)+"px)"; /* 커서가 앞쪽에 있으면 커서가 보이게 밀어요 */
   let lt=0,lc=0;const fin=pend?v.length-1:v.length;for(let i=0;i<fin;i++){lt++;if(v[i]===t[i])lc++}
   const ms=S.start?performance.now()-S.start:0;
   if(S.src&&S.src.vs&&vsHooks.prog)try{vsHooks.prog((S.i+Math.min(1,fin/Math.max(1,t.length)))/S.lines.length)}catch(e){}
