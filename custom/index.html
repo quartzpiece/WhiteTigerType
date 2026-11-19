@@ -536,7 +536,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.27</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.28</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1360,9 +1360,10 @@ const inp=$("typing");
 // 배열은 리눅스 한글 입력기 libhangul의 '세벌식 390' 표 그대로 (US 자판 글자 → 자모 또는 기호)
 // tt-kbl: "2" 두벌식, "390" 세벌식 390(사이트 입력기), "390os" 세벌식 390(내 컴퓨터 입력기). 기록은 390os도 세벌식 쪽
 // 3.5.29 세벌식 390 (내 입력기)는 잠시 멈춤: 버튼을 숨기고, 쓰던 사람은 사이트 입력기(세벌식 390)로 바꿔요. 다시 켜려면 OS390_OFF=false
+const MOB_KB=(()=>{try{return matchMedia("(pointer:coarse)").matches}catch(e){return false}})(); /* 3.7.28 폰·태블릿 화면 키보드면 세벌식 못 고름(두벌식만) */if(MOB_KB&&store.get("tt-kbl","2")!=="2")store.set("tt-kbl","2");
 const OS390_OFF=true;if(OS390_OFF&&store.get("tt-kbl","2")==="390os")store.set("tt-kbl","390");
-const KBL=()=>{const v=store.get("tt-kbl","2");return v==="390"||v==="390os"?"390":"2"};
-const IME_ON=()=>store.get("tt-kbl","2")==="390";
+const KBL=()=>{if(MOB_KB)return "2";const v=store.get("tt-kbl","2");return v==="390"||v==="390os"?"390":"2"};
+const IME_ON=()=>!MOB_KB&&store.get("tt-kbl","2")==="390";
 const K390={"!":0x11bd,"'":0x1110,"/":0x1169,"0":0x110f,"1":0x11c2,"2":0x11bb,"3":0x11b8,"4":0x116d,"5":0x1172,"6":0x1163,"7":0x1168,"8":0x1174,"9":0x116e,";":0x1107,"<":"2",">":"3","A":0x11ae,"B":"!","C":0x11b1,"D":0x11b0,"E":0x11bf,"F":0x11a9,"G":"/","H":"'","I":"8","J":"4","K":"5","L":"6","M":"1","N":"0","O":"9","P":">","Q":0x11c1,"R":0x1164,"S":0x11ad,"T":";","U":"7","V":0x11b6,"W":0x11c0,"X":0x11b9,"Y":"<","Z":0x11be,"a":0x11bc,"b":0x116e,"c":0x1166,"d":0x1175,"e":0x1167,"f":0x1161,"g":0x1173,"h":0x1102,"i":0x1106,"j":0x110b,"k":0x1100,"l":0x110c,"m":0x1112,"n":0x1109,"o":0x110e,"p":0x1111,"q":0x11ba,"r":0x1162,"s":0x11ab,"t":0x1165,"u":0x1103,"v":0x1169,"w":0x11af,"x":0x11a8,"y":0x1105,"z":0x11b7};
 const US_SH={Digit1:"!",Digit2:"@",Digit3:"#",Digit4:"$",Digit5:"%",Digit6:"^",Digit7:"&",Digit8:"*",Digit9:"(",Digit0:")",Minus:"_",Equal:"+",BracketLeft:"{",BracketRight:"}",Backslash:"|",Semicolon:":",Quote:'"',Comma:"<",Period:">",Slash:"?",Backquote:"~"};
 const US_NO={Minus:"-",Equal:"=",BracketLeft:"[",BracketRight:"]",Backslash:"\\",Semicolon:";",Quote:"'",Comma:",",Period:".",Slash:"/",Backquote:"`"};
@@ -1414,10 +1415,12 @@ inp.addEventListener("paste",e=>e.preventDefault());
 // 3.7.4: 붙여 넣기 막기. 끌어다 놓기, 폰 키보드의 클립보드·단어 추천처럼 paste가 안 뜨는 길도 막아요. 한 번에 3글자 넘게 늘면 되돌려요(3.7.5: 안내 문구는 안 띄움)
 // 3.7.7: 가짜 입력(콘솔·확장 프로그램이 만든 이벤트, 이벤트 없이 바꾼 글)도 되돌려요. inpPrev = 마지막으로 받아 준 입력칸 글
 var inpPrev="",inpSyn=false,KT=[],LS=[],inpLs=false;const inpNoPaste=()=>{}; // 3.7.8 LS: 새 줄 첫 입력이 KT의 몇 번째인지
+function h3Block(){try{h3Warn("세벌식: 한/영 키로 영문 상태로 전환")}catch(e){}if(h3Kill)return;h3Kill=setTimeout(()=>{h3Kill=0;if(inp.value!==inpPrev){inp.value=inpPrev}if(document.activeElement===inp){inp.blur();inp.focus({preventScroll:true})}},0)} /* 조합 중인 글자를 끊으려고 잠깐 포커스를 뺐다가 돌려요 */
 function inpFire(ev){inpSyn=true;try{inp.dispatchEvent(ev)}finally{inpSyn=false}}
-inp.addEventListener("beforeinput",e=>{const t=e.inputType||"",d=e.data||"";if(!e.isTrusted||/^insertFrom/.test(t)||t==="insertReplacementText"||(t==="insertText"||t==="insertCompositionText")&&[...d].length>2){e.preventDefault();inpNoPaste()}});
+const HANGUL=/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7a3]/;let h3Kill=0;
+inp.addEventListener("beforeinput",e=>{const t=e.inputType||"",d=e.data||"";if(e.isTrusted&&IME_ON()&&(t==="insertCompositionText"||HANGUL.test(d))){if(e.cancelable)e.preventDefault();h3Block();return} /* 3.7.28 세벌식(사이트 입력기)일 때 컴퓨터의 한글 입력기(두벌식)로 친 글자는 안 받아요 */if(!e.isTrusted||/^insertFrom/.test(t)||t==="insertReplacementText"||(t==="insertText"||t==="insertCompositionText")&&[...d].length>2){e.preventDefault();inpNoPaste()}});
 inp.addEventListener("drop",e=>e.preventDefault());inp.addEventListener("dragover",e=>e.preventDefault());
-document.addEventListener("input",e=>{if(e.target!==inp)return;const v=inp.value;if((!e.isTrusted&&!inpSyn)||[...v].length-[...inpPrev].length>2){e.stopImmediatePropagation();inp.value=inpPrev;inpNoPaste();return}inpPrev=v;
+document.addEventListener("input",e=>{if(e.target!==inp)return;const v=inp.value;if(e.isTrusted&&!inpSyn&&IME_ON()&&(e.inputType==="insertCompositionText"||HANGUL.test(e.data||"")||[...v].some((c,i)=>HANGUL.test(c)&&c!==[...inpPrev][i]))){e.stopImmediatePropagation();inp.value=inpPrev;h3Block();return}if((!e.isTrusted&&!inpSyn)||[...v].length-[...inpPrev].length>2){e.stopImmediatePropagation();inp.value=inpPrev;inpNoPaste();return}inpPrev=v;
   if(!S.t0){KT=[];LS=[];HD=[]}if(KT.length<20001){if(inpLs&&KT.length&&LS.length<400)LS.push(KT.length);KT.push(performance.now())}inpLs=false},true);
 // 3.7.14 키 누르는 시간(ms): 컴퓨터 키보드만(폰 화면 키보드는 누르는 시간이 안 잡혀요). Shift 같은 조합 키는 빼요
 var HD=[],KDN={};const HOLD_OK=(()=>{try{return !matchMedia("(pointer:coarse)").matches}catch(e){return true}})();
@@ -1529,14 +1532,14 @@ window.addEventListener("keydown",e=>{if(e.target!==inp||e.repeat||!pianoOn())re
 // 폰 화면 키보드는 어떤 키인지 안 알려 줘서, 친 글자로 음을 골라요
 inp.addEventListener("input",e=>{if(!pianoOn()||performance.now()-PN.last<80||!(e.inputType||"").startsWith("insert"))return;const ch=(e.data||"").slice(-1);if(!ch)return;
   if(ch===" "){pnNote(pnHz(-5),.6);return}pnNote(pnHz(ch.codePointAt(0)%17-3),.85)});
-function applyKbl(){$("kbl-390os").hidden=OS390_OFF;if(OS390_OFF&&store.get("tt-kbl","2")==="390os")store.set("tt-kbl","390");const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
+function applyKbl(){$("kbl-390os").hidden=OS390_OFF;$("kbl-row").hidden=MOB_KB;if(OS390_OFF&&store.get("tt-kbl","2")==="390os")store.set("tt-kbl","390");const v=store.get("tt-kbl","2"),m=v==="390"||v==="390os"?v:"2";$("kbl-msg").hidden=m!=="390";$("kbl-osmsg").hidden=m!=="390os";for(const [id,x] of [["kbl-2","2"],["kbl-390","390"],["kbl-390os","390os"]])$(id).setAttribute("aria-pressed",String(m===x));try{const w=$("kbl-warn");if(w&&m!=="390")w.hidden=true}catch(e){}
   if(!$("rec").hidden){REC_K=null;recKSet()}}
 function applyOvl(){const on=store.get("tt-ovl",false)===true;document.documentElement.classList.toggle("ovl",on);$("ovl-0").setAttribute("aria-pressed",String(!on));$("ovl-1").setAttribute("aria-pressed",String(on));try{if(!$("practice").hidden&&S.prep&&S.prep[S.i])paint()}catch(e){}}
 $("ovl-0").onclick=()=>{store.set("tt-ovl",false);applyOvl()};$("ovl-1").onclick=()=>{store.set("tt-ovl",true);applyOvl()};applyOvl();
 $("target").addEventListener("click",()=>{if(!$("practice").hidden)$("typing").focus({preventScroll:true})});
 $("practice").addEventListener("click",e=>{if(document.documentElement.classList.contains("ovl")&&!e.target.closest("button,a,input,select,textarea")&&!getSelection().toString())$("typing").focus({preventScroll:true})});
 $("kbl-2").onclick=()=>{store.set("tt-kbl","2");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
-$("kbl-390").onclick=()=>{store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
+$("kbl-390").onclick=()=>{if(MOB_KB)return;store.set("tt-kbl","390");try{h3Reset()}catch(e){}KS.run={};applyKbl()};
 $("kbl-390os").onclick=()=>{if(OS390_OFF)return;try{h3Reset()}catch(e){}store.set("tt-kbl","390os");S.composing=false;KS.run={};applyKbl()};
 function applyPiano(){const on=!!store.get("tt-piano",false),fx=store.get("tt-pianofx",true)!==false,row=$("piano-row");if(row){row.hidden=!on;$("pianobtn").textContent="피아노 소리: "+(fx?"켜짐":"꺼짐");$("pianobtn").setAttribute("aria-pressed",String(fx))}}
 $("pianobtn").onclick=()=>{store.set("tt-pianofx",store.get("tt-pianofx",true)===false);applyPiano();if(pianoOn())pnNote(pnHz(2),.8)};
