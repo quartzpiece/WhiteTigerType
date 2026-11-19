@@ -507,7 +507,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.9</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.10</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -590,6 +590,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
       <span class="set-l">사용자 관리 (관리자)</span>
       <div class="row"><input class="ptitle" id="mg-q" aria-label="찾을 닉네임" placeholder="닉네임 또는 uid" maxlength="40"><button class="btn acct" id="mg-find" type="button">찾기</button><span class="hint" id="mg-msg" aria-live="polite"></span></div>
       <div id="mg-out"></div>
+      <div class="row"><button class="btn acct" id="mg-sus" type="button">800타 이상 기록</button></div>
+      <div id="mg-sus-out"></div>
     </div>
     <p class="hint" style="margin:12px 0 0"><a href="https://quartzpiece.github.io/WhiteTigerType/about/" style="color:inherit">사이트 소개·사용법</a></p>
   </section>
@@ -1984,7 +1986,16 @@ async function initCloud(){if(!FB_CONFIG)return;
       return box}
     $("mg-find").onclick=async()=>{const q=$("mg-q").value.trim();if(!q){mgMsg("닉네임을 적어 주세요");return}mgMsg("찾는 중");mgOut.innerHTML="";const j=await api("/admin",{act:"find",q});
       if(!j){mgMsg("서버 연결 실패");return}if(j.err){mgMsg(j.err);return}mgMsg(j.list.length?"":"없어요");j.list.forEach(u=>mgOut.append(card(u)))};
-    $("mg-q").addEventListener("keydown",e=>{if(e.key==="Enter")$("mg-find").click()})}
+    $("mg-q").addEventListener("keydown",e=>{if(e.key==="Enter")$("mg-find").click()});
+    // 3.7.10 수상한 기록: 800타 이상(사용자 요청) 지문 랭킹·최고 타수를 사람별로. 열기 → 위와 같은 카드(차단하면 지문별 기록도 지워져요)
+    $("mg-sus").onclick=async()=>{const o=$("mg-sus-out");o.innerHTML="";mgMsg("찾는 중");const j=await api("/admin",{act:"sus",min:800});
+      if(!j){mgMsg("서버 연결 실패");return}if(j.err){mgMsg(j.err);return}mgMsg(j.list.length?"":"없어요");
+      const T={};PRESETS.forEach(p=>T[p.id]=p.title);
+      j.list.forEach(g=>{const box=el("div","mg-u"),h=el("div","row"),ob=el("button","btn acct","열기");ob.type="button";
+        h.append(el("b",null,g.nick||"(닉네임 없음)"),el("span","hint","최고 "+g.best+(g.ban?" · 차단됨":"")),ob);box.append(h);
+        g.runs.forEach(x=>box.append(el("div","hint",(T[x.pid]||x.pid)+" "+x.spd+" · "+x.acc+"%")));
+        ob.onclick=async()=>{mgMsg("찾는 중");const f=await api("/admin",{act:"find",q:g.uid});if(!f||f.err){mgMsg((f&&f.err)||"서버 연결 실패");return}mgMsg("");if(f.list[0]){ob.remove();box.append(card(f.list[0]))}else mgMsg("없어요")};
+        o.append(box)})}}
   async function pushRank(){if(!uid||SRV.tot===null)return;const F=SRV.frozen,tr=store.get("tt-title",""),pt=SRV.tot,nm=F?(typeof F.nick==="string"?F.nick:(nick||"")):(SRV.nick||nick||""),egg=F?F.egg===true:(!!SRV.egg&&store.get("tt-eggoff",false)!==true),tt=F?(typeof F.tt==="string"?F.tt:""):(tr&&(SRV.al.includes(tr)||SRV.inv.includes(tr))&&titleName(tr)?tr:""),ac=F?(Array.isArray(F.a)?F.a:[]):SRV.al.slice(),bs=F?(Number(F.b)||0):SRV.bst,cl=F?"":(colOk(SRV.col)?SRV.col:""),fx=F?"":(nfxOk(SRV.nfx)?SRV.nfx:""),key=nm+"|"+pt+"|"+egg+"|"+tt+"|"+ac.join(",")+"|"+bs+"|"+cl+"|"+fx;if(key===lastRank)return;
     const v={nick:nm,pt:pt,at:Date.now()};if(egg)v.egg=true;if(tt)v.tt=tt;if(ac.length)v.a=ac;if(bs)v.b=bs;if(cl)v.c=cl;if(fx)v.fx=fx; // b: 최고 타수(3.4.39, 친구 목록용). a: 얻은 업적 id(3.4.19, 업적별 달성 비율 계산용)
     try{await FS.setDoc(FS.doc(fdb,"rank",uid),v);lastRank=key}catch(e){ // 규칙이 업적 표시(tt)를 아직 안 받으면 그것만 빼고, 그래도 안 되면 egg도 빼고
@@ -2343,7 +2354,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;if(!shopFree){$("mg-out").innerHTML="";$("mg-sus-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
     if(!user){uid=null;nick="";SRV.tot=null;SRV.col="";acct.style.color="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
