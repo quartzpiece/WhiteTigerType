@@ -364,7 +364,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .rtabs{position:relative}.rtabs .rfo{margin-left:auto}
 .i-mk{display:inline-grid;place-items:center;width:1.4em;height:1.4em;margin-left:3px;border:1.5px solid #8E8E89;border-radius:50%!important;color:#8E8E89;-webkit-text-fill-color:#8E8E89;text-shadow:none;font-size:.68em;font-weight:700;font-style:italic;line-height:1;vertical-align:super;cursor:pointer;font-family:Georgia,serif}
 .i-pop{position:absolute;left:0;top:calc(100% + 6px);z-index:20;max-width:min(320px,100%);background:var(--surface);color:var(--fg);border:1px solid var(--accent);padding:10px 30px 10px 12px;font-size:.85rem;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.5)}
-.shop-list li:has(.tk-pop){position:relative}.card:has(.tk-pop){position:relative;z-index:30}.tk-pop{left:auto;right:0;width:min(300px,calc(100vw - 32px));max-width:none}.tk-pop table{width:100%;border-collapse:collapse;font-size:.82rem}.tk-pop td{padding:2px 0}.tk-pop td+td{text-align:right;padding-left:10px;white-space:nowrap}.tk-pop .hint{margin-top:6px;font-size:.75rem}
+.tk-pop{position:fixed;z-index:9999;right:auto;width:min(300px,calc(100vw - 16px));max-width:none;max-height:calc(100vh - 16px);overflow:auto}.tk-pop table{width:100%;border-collapse:collapse;font-size:.82rem}.tk-pop td{padding:2px 0}.tk-pop td+td{text-align:right;padding-left:10px;white-space:nowrap}.tk-pop .hint{margin-top:6px;font-size:.75rem}
 .i-pop .i-x{position:absolute;right:4px;top:2px;background:none;border:0;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:2px 6px}.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
@@ -508,7 +508,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.15</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.16</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1729,15 +1729,19 @@ const GACHA=[{id:"pt1000",name:"1000포인트",w:1,pt:1000},{id:"nick1",name:"�
   ...Array.from({length:75},(x,i)=>({id:"rp"+(i+1),name:(i+1)+"포인트",w:1,pt:i+1,rp:1}))];
 // 3.7.12 티켓 확률표: 티켓 이름 옆 i를 누르면 팝업(상점·인벤토리)
 function tkMark(n){const m=document.createElement("sup");m.className="i-mk";m.textContent="i";m.title="확률표";m.setAttribute("role","button");m.tabIndex=0;m.setAttribute("aria-label","티켓 확률표");
-  const go=e=>{e.preventDefault();e.stopPropagation();tkOdds(n.closest("li"))};m.onclick=go;m.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")go(e)};n.appendChild(m)}
-function tkOdds(li){const o=document.querySelector(".tk-pop"),same=o&&o.parentElement===li;if(o)o.remove();if(same||!li)return;
+  const go=e=>{e.preventDefault();e.stopPropagation();tkOdds(m)};m.onclick=go;m.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")go(e)};n.appendChild(m)}
+// 3.7.16 팝업은 body에 붙여 화면 맨 위에 띄워요(창 안에서 잘리지 않게). i 아래 자리가 모자라면 위로, 화면 밖으로 안 나가게
+function tkOdds(mk){const o=document.querySelector(".tk-pop"),same=o&&o._mk===mk;if(o)o.remove();if(same||!mk)return;
   const W=GACHA.reduce((a,g)=>a+g.w,0),pc=w=>(Math.round(w/W*10000)/100)+"%",p=document.createElement("div");p.className="i-pop tk-pop";p.setAttribute("role","dialog");p.setAttribute("aria-label","티켓 확률표");
   const t=document.createElement("table"),row=(a,b)=>{const r=t.insertRow();r.insertCell().textContent=a;r.insertCell().textContent=b};
-  const R=GACHA.filter(g=>g.rp);GACHA.filter(g=>!g.rp).forEach(g=>row(g.name,pc(g.w)));
+  const R=GACHA.filter(g=>g.rp),seen={}; // 3.7.16 묶음(특별 테마·특별 글꼴·닉네임 효과)은 이름 앞부분으로 한 줄, 확률은 합쳐서
+  GACHA.filter(g=>!g.rp).forEach(g=>{if(!g.grp){row(g.name,pc(g.w));return}if(seen[g.grp])return;seen[g.grp]=1;row(g.name.split(":")[0].trim(),pc(GACHA.filter(x=>x.grp===g.grp).reduce((a,x)=>a+x.w,0)))});
   if(R.length){const v=R.map(g=>g.pt);row(Math.min(...v)+"~"+Math.max(...v)+"포인트 (각 "+pc(R[0].w)+")",pc(R.reduce((a,g)=>a+g.w,0)))}
-  const h=document.createElement("div");h.className="hint";h.textContent="이미 가진 특별 상품은 안 나오고, 그 확률은 다른 상품이 나눠 가짐";
-  const x=document.createElement("button");x.type="button";x.className="i-x";x.setAttribute("aria-label","닫기");x.textContent="×";x.onclick=()=>p.remove();p.append(t,h,x);li.appendChild(p);
-  setTimeout(()=>{const off=ev=>{if(!p.isConnected){document.removeEventListener("pointerdown",off);return}if(!p.contains(ev.target)&&!ev.target.closest(".i-mk")){p.remove();document.removeEventListener("pointerdown",off)}};document.addEventListener("pointerdown",off)},0)}
+  const x=document.createElement("button");x.type="button";x.className="i-x";x.setAttribute("aria-label","닫기");x.textContent="×";x.onclick=()=>close();p.append(t,x);p._mk=mk;document.body.appendChild(p);
+  const place=()=>{if(!mk.isConnected||!mk.offsetParent){close();return}const r=mk.getBoundingClientRect(),VW=innerWidth,VH=innerHeight,pw=p.offsetWidth,ph=p.offsetHeight,g=8;
+    p.style.left=Math.max(g,Math.min(VW-pw-g,r.left-pw/2))+"px";p.style.top=(r.bottom+6+ph<=VH-g?r.bottom+6:Math.max(g,r.top-6-ph))+"px"};
+  const close=()=>{p.remove();removeEventListener("scroll",place,true);removeEventListener("resize",place)};place();addEventListener("scroll",place,{capture:true,passive:true});addEventListener("resize",place);
+  setTimeout(()=>{const off=ev=>{if(!p.isConnected){document.removeEventListener("pointerdown",off);return}if(!p.contains(ev.target)&&!ev.target.closest(".i-mk")){close();document.removeEventListener("pointerdown",off)}};document.addEventListener("pointerdown",off)},0)}
 // 3.5.26 닉네임 변경권: 상점 1000포인트(여러 장 가능), 닉네임을 바꿀 때 1장씩 써요(서버 pts.nc)
 const NICKPASS={id:"nickpass",name:"닉네임 변경권",pr:1000};
 // 닉네임 색상(서버 pts.col → 랭킹 rank.c): 색이 있으면 닉네임 글자를 그 색으로
