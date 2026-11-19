@@ -347,6 +347,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 @media (prefers-reduced-motion:no-preference){.nx-glow{animation:nxGlow 2.4s ease-in-out infinite}.nx-gold:not(button){animation:flow 4s linear infinite}}
 @keyframes nxGlow{50%{text-shadow:0 0 2px currentColor,0 0 6px currentColor,0 0 11px currentColor}}
 .nfx-pv{margin-left:6px;font-weight:700}
+.sk-slots{display:grid;gap:8px;margin-top:8px}.sk-slot{border:1px solid var(--line);background:var(--bg);padding:8px 10px;display:grid;gap:6px}.sk-slot.on{border-color:var(--accent)}.sk-slot .sk-h{display:flex;align-items:center;gap:10px;font-weight:700}.sk-slot .sk-h .btn{margin-left:auto}.sk-cells{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.sk-cell{border:1px dashed var(--line);padding:6px;display:grid;gap:4px;align-content:start;min-width:0}.sk-cell.full{border-style:solid;border-color:var(--accent)}.sk-cell b{font-size:.85rem}.sk-cell select{min-width:0;width:100%}.sk-cell .sk-v{font-weight:700}@media (max-width:520px){.sk-cells{grid-template-columns:1fr}}
 .shop-list li.tok{font-weight:700}.shop-list li.tok.lk{color:#E8C15A;border-color:#E8C15A;background:rgba(232,193,90,.1);box-shadow:0 0 10px rgba(232,193,90,.3)}.shop-list li.tok.ul{color:#8E8E89;border-color:#6A6A66;background:rgba(142,142,137,.08)}.shop-list li.tok .pr{color:inherit}
 .shop-list .btn{padding:6px 12px;font-size:.85rem}
 .shop-list .tks{padding:6px 9px;min-width:0}.shop-list .tkn{width:52px;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);padding:5px 4px;text-align:center;border-radius:0;-moz-appearance:textfield}.shop-list .tkn::-webkit-inner-spin-button,.shop-list .tkn::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -728,6 +729,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <ul class="shop-list" id="shop-titles"></ul>
     <span class="set-l" id="shop-tk-l" hidden>티켓<span class="hint" id="gc-test"> · 시험 중 (제작자만 보여요)</span></span>
     <ul class="shop-list" id="shop-tk" hidden></ul>
+    <span class="set-l" id="shop-sk-l" hidden>스킬<span class="hint"> · 시험 중 (제작자만 보여요)</span></span>
+    <ul class="shop-list" id="shop-sk" hidden></ul>
     <p class="shop-empty" id="shop-empty">준비 중</p>
     <p class="hint" id="shop-msg" aria-live="polite"></p>
   </section>
@@ -745,6 +748,9 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="row" style="justify-content:space-between"><b class="rank-h">인벤토리</b></div>
     <span class="set-l" id="inv-tk-l">티켓</span>
     <ul class="shop-list" id="inv-list"></ul>
+    <span class="set-l" id="inv-sk-l" hidden>스킬</span>
+    <ul class="shop-list" id="inv-sk" hidden></ul>
+    <div class="sk-slots" id="inv-sks" hidden></div>
     <span class="set-l" id="inv-th-l">테마</span>
     <div class="skins" id="inv-th" role="group" aria-label="산 테마"></div>
     <span class="set-l" id="inv-ft-l">글꼴</span>
@@ -1875,7 +1881,10 @@ const SHOP_THEMES=[{id:"green",name:"네온 그린 테마",c:"#3DDC84",pr:500},{
 const SHOP_TITLES=[];
 // 뽑기(3.5.22): 티켓은 상점에서 사고(서버 pts.tk), 뽑기는 서버가 GACHA 목록에서 골라요. sale:false 동안은 제작자 계정에서만 보이고 살 수 있어요
 // GACHA 항목: {id:"g-…",name:"보이는 이름",w:뽑힐 무게,item:"상점 물건 id"} 또는 {id,name,w,pt:쓸 수 있는 포인트}. 이미 가진 물건은 빼고 뽑아요
-const TICKET={id:"ticket",name:"티켓",pr:100,sale:true}; // 3.6.0 공개(사용자 요청)
+const TICKET={id:"ticket",name:"티켓",pr:100,sale:true};
+// 스킬(제작자 시험 중, sale:false 동안 제작자만): 스킬 티켓을 열면 토큰 하나(3급 75%, 2급 20%, 1급 5%), 토큰은 스킬 슬롯의 같은 급 칸에 끼워요(못 빼요). 슬롯은 처음 1칸, 더 살 수 있고 1개만 써요. 값은 임시
+const SKTICKET={id:"skticket",name:"스킬 티켓",pr:300,sale:false},SKSLOT={id:"skslot",name:"스킬 슬롯",pr:1000};
+const skOn=()=>SKTICKET.sale||shopFree,skName=k=>k[0]+"급 스킬 토큰("+k[2]+"번 스킬)"; // 3.6.0 공개(사용자 요청)
 // 사용자 지정(2026-11-18): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%, 특별 폰트 1%, 닉네임 색상 변경권 5%, 꽝 87%
 // hold = 아직 없는 상품(이름만 보이고 서버 pts.pz에 세어 둠, 나중에 만들면 줄 것), cc = 닉네임 색상 변경권(서버 pts.cc, 쓰는 기능은 아직)
 // 3.5.36 확률(사용자 지정): 1000포인트 1%, 닉네임 변경권 5%, 특별 테마 1%(별자리·금박 각 0.5%, 하나 가지면 다른 하나가 1%), 특별 폰트 1%, 색상 변경권 15%(3.6.1), 닉네임 효과 1%(3.6.1, 발광·별자리 표시·금색 각 1/3%), 불운·행운의 징표 각 0.5%, 1~75포인트 각 1%
@@ -2149,7 +2158,7 @@ function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-
     else{b.textContent=on?"빼기":"달기";b.onclick=()=>{store.set("tt-title",on?"":it.id);drawShop();if(rankHook)rankHook()}}
     li.appendChild(b);el.appendChild(li)})};
   mk(SHOP_THEMES,$("shop-themes"),true);mk(SHOP_FONTS,$("shop-fonts"),false,true);mk(SHOP_ETC,$("shop-etc"),false,false,true);mk(BOOKS.map(b=>({id:b.id,name:b.title+(b.author?" · "+b.author:""),pr:b.pr,book:1})),$("shop-books"),false,false,true);mk(SHOP_TITLES,$("shop-titles"),false);shopNick(pt);
-  [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha()}
+  [["shop-th-l","shop-themes",SHOP_THEMES],["shop-ft-l","shop-fonts",SHOP_FONTS],["shop-etc-l","shop-etc",SHOP_ETC],["shop-bk-l","shop-books",BOOKS],["shop-tt-l","shop-titles",SHOP_TITLES]].forEach(([l,u,L])=>{$(l).hidden=$(u).hidden=!L.length});$("shop-empty").hidden=!!(SHOP_THEMES.length||SHOP_FONTS.length||SHOP_ETC.length||SHOP_TITLES.length);drawGacha();drawSkShop()}
 // 3.5.26 닉네임 변경권: 상점 "기타"에 한 칸(여러 장), 인벤토리에 장수, 로그인 칸에 남은 장수
 function shopNick(pt){const u=$("shop-etc"),li=document.createElement("li"),n=document.createElement("span");n.className="nm";n.textContent=NICKPASS.name;li.appendChild(n);
   const p=document.createElement("span");p.className="pr";p.textContent=NICKPASS.pr;li.appendChild(p);
@@ -2171,6 +2180,26 @@ function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!
   b.onclick=()=>{upd();if(!srvHooks.buy||!srvHooks.buy(TICKET,tkQty))$("shop-msg").textContent="로그인해야 살 수 있어요"};
   li.append(st(-1,"−"),q,st(1,"+"),pr,b);u.appendChild(li);
   if(!$("inv").hidden)drawInv()}
+// 스킬(제작자 시험 중): 상점에 스킬 티켓·스킬 슬롯, 인벤토리에 티켓 열기·토큰·슬롯(같은 급 칸에 장착, 못 빼요, 1개만 사용)
+function drawSkShop(){const on=skOn(),u=$("shop-sk");$("shop-sk-l").hidden=u.hidden=!on;u.innerHTML="";if(!on)return;const pt=Number(store.get("tt-pt",0))||0;
+  [SKTICKET,SKSLOT].forEach(it=>{const li=document.createElement("li"),n=document.createElement("span");n.className="nm";n.textContent=it.name;const p=document.createElement("span");p.className="pr";p.textContent=it.pr;
+    const b=document.createElement("button");b.type="button";b.className="btn acct";b.id=it.id+"-buy";b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(it))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.append(n,p,b);u.appendChild(li)})}
+function drawSkInv(li){const u=$("inv-sk"),box=$("inv-sks");u.innerHTML="";box.innerHTML="";const on=skOn()&&srvHooks.on&&srvHooks.on();$("inv-sk-l").hidden=u.hidden=box.hidden=!on;if(!on)return;
+  const t=srvHooks.skt(),T=srvHooks.skk(),L=srvHooks.sks(),A=srvHooks.ska();
+  {const c=document.createElement("span");c.className="pr";c.textContent=t+"장";const l=li(SKTICKET.name,c,"열기",t>0?openSkill:null);l.querySelector("button").id="sk-open";u.appendChild(l)}
+  Object.keys(T).sort((a,b)=>b[0]-a[0]||a[2]-b[2]).forEach(k=>{const l=document.createElement("li");l.className="sk-tok g"+k[0];l.dataset.k=k;const n=document.createElement("span");n.className="nm";n.textContent=skName(k);const c=document.createElement("span");c.className="pr";c.textContent=T[k]+"개";l.append(n,c);u.appendChild(l)});
+  L.forEach((S,i)=>{const d=document.createElement("div");d.className="sk-slot"+(i===A?" on":"");d.dataset.s=i;const h=document.createElement("div");h.className="sk-h";const nm=document.createElement("span");nm.textContent="스킬 슬롯 "+(i+1);const ub=document.createElement("button");ub.type="button";ub.className="btn acct sk-use";
+    if(i===A){ub.textContent="사용 중";ub.disabled=true}else{ub.textContent="사용";ub.onclick=()=>skDo({act:"use",s:i},ub)}h.append(nm,ub);d.appendChild(h);
+    const cs=document.createElement("div");cs.className="sk-cells";[3,2,1].forEach(g=>{const c=document.createElement("div");c.className="sk-cell";c.dataset.g=g;const b=document.createElement("b");b.textContent=g+"급";c.appendChild(b);const v=S["g"+g];
+      if(v){c.classList.add("full");const x=document.createElement("span");x.className="sk-v";x.textContent=v+"번 스킬";c.appendChild(x)}
+      else{const ks=Object.keys(T).filter(k=>k[0]===String(g)).sort();if(!ks.length){const x=document.createElement("span");x.className="hint";x.textContent="비어 있음";c.appendChild(x)}
+        else{const sel=document.createElement("select");sel.className="ptitle";sel.setAttribute("aria-label","슬롯 "+(i+1)+" "+g+"급에 장착할 토큰");ks.forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k[2]+"번 스킬 ("+T[k]+"개)";sel.appendChild(o)});
+          const eb=document.createElement("button");eb.type="button";eb.className="btn acct sk-eq";eb.textContent="장착";eb.onclick=()=>{if(eb.dataset.ok!=="1"){eb.dataset.ok="1";eb.textContent="못 빼요 · 장착?";setTimeout(()=>{if(eb.isConnected){eb.dataset.ok="";eb.textContent="장착"}},3000);return}skDo({act:"equip",s:i,tok:sel.value},eb)};c.append(sel,eb)}}
+      cs.appendChild(c)});d.appendChild(cs);box.appendChild(d)})}
+async function skDo(o,b){if(!srvHooks.skill)return;if(b)b.disabled=true;const j=await srvHooks.skill(o);if(!j||j.err)$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";else $("gc-res").textContent="";drawInv()}
+async function openSkill(){if(!srvHooks.skill){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("sk-open");if(b)b.disabled=true;r.textContent="";const blk=tkBlock();
+  try{const fx=tkFx(SKTICKET.name),[j]=await Promise.all([srvHooks.skill({act:"open"}),wait(900)]);if(!j||j.err||!/^[123]-[123]$/.test(j.tok||"")){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
+    drawInv();if(j.tok[0]==="1")await fx.rare();await fx.burst(skName(j.tok))}finally{blk.remove();drawInv()}}
 let invTk=null; // 지난번 인벤토리에 보인 티켓 수(줄어들 때 숫자가 떨어지는 움직임)
 // 3.5.28 인벤토리: 티켓 + 산 테마·글꼴·사진 배경(상점과 같은 적용 버튼)
 function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="";const drop=invTk!==null&&tk<invTk;invTk=tk;
@@ -2181,6 +2210,7 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   const lk=tkOn()&&srvHooks.lk?srvHooks.lk():0,ul=tkOn()&&srvHooks.ul?srvHooks.ul():0;
   if(tk>0||lk>0||ul>0){const c=document.createElement("span");c.className="pr"+(drop?" tkdrop":"");c.textContent=tk+"장";const l=li(TICKET.name,c,"사용",tk>0?useTicket:null);l.querySelector("button").id="gc-go";l.classList.add("tkrow");tkMark(l.querySelector(".nm"));{const b10=document.createElement("button");b10.type="button";b10.className="btn acct";b10.id="gc-go10";b10.textContent="10장 사용";if(tk>=10)b10.onclick=useTicket10;else b10.disabled=true;l.appendChild(b10)}u.appendChild(l)}
   [[lk,"행운의 징표","lk"],[ul,"불운의 징표","ul"]].forEach(([v,t,k])=>{if(v<1)return;const l=document.createElement("li");l.className="tok "+k;const n=document.createElement("span");n.className="nm";n.textContent=t;const c=document.createElement("span");c.className="pr";c.textContent=v+"개";l.append(n,c);u.appendChild(l)}); /* 3.5.36 징표는 티켓 칸 옆에 황금색·회색 */
+  drawSkInv(li);
   const skin=store.get("tt-skin","basic"),curF=store.get("tt-font","");
   const th=$("inv-th");th.innerHTML="";SHOP_THEMES.filter(t=>owned(t.id)).concat(SP_THEMES.filter(t=>spOk(t.id))).forEach(t=>{const o=document.querySelector('#settings .skin[data-skin="'+t.id+'"]');if(!o)return; // 3.5.29 테마는 설정처럼 아이콘만
     const b=o.cloneNode(true);b.hidden=false;b.removeAttribute("id");b.setAttribute("aria-pressed",String(skin===t.id));b.onclick=()=>{setSkin(t.id);drawInv();if(!$("shop").hidden)drawShop()};th.appendChild(b)});
@@ -2195,7 +2225,7 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
     NFX.filter(x=>shopFree||owned(x.id)).forEach(x=>{const on=cur===x.id,l=li(x.name,null,on?"빼기":"달기",async()=>{if(!srvHooks.setNfx)return;const bt=l.querySelector("button");bt.disabled=true;const j=await srvHooks.setNfx(on?"":x.id);if(j&&j.err)$("gc-res").textContent=j.err;drawInv()},on);
       const nm=l.querySelector(".nm");nm.textContent="";const pv=document.createElement("span");pv.className="nfx-pv";pv.textContent=(srvHooks.on&&srvHooks.on()?$("acct").textContent:"")||"닉네임";paintNick(pv,srvHooks.col?srvHooks.col():"",x.id);nm.append(x.name.replace("닉네임 효과: ","")+" ",pv);nx.appendChild(l)})}
   [["inv-tk-l",u],["inv-th-l",th],["inv-ft-l",ft],["inv-bg-l",bg],["inv-nx-l",nx],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
-  $("inv-empty").hidden=!!(u.children.length||th.children.length||ft.children.length||bg.children.length||nx.children.length||et.children.length)}
+  $("inv-empty").hidden=!!(u.children.length||!$("inv-sk").hidden||th.children.length||ft.children.length||bg.children.length||nx.children.length||et.children.length)}
 // 닉네임 색상 변경권 쓰기: 서버가 RGB를 아무 값으로 정해 줘요
 async function useColor(){if(!srvHooks.ncolor){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";
   // 꽝과 같은 이펙트(조각 없이 고리만)를 바뀐 색으로, 글자는 내 닉네임. 도는 동안 화면 클릭·터치는 막아요
@@ -2496,10 +2526,11 @@ async function initCloud(){if(!FB_CONFIG)return;
   // 랭킹: rank/{uid} 에 닉네임과 포인트만 공개로 올려요 (모두 읽기, 본인만 쓰기)
   let lastRank="";
   // 서버(3.5.16~): 포인트·상점·업적은 워커 서버(pts/{uid})가 정해요. 랭킹 문서는 서버 값(SRV)만 쓸 수 있어요(규칙)
-  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null,tk:0,nc:0,cc:0,col:"",lk:0,ul:0,nfx:"",s8:{}};
+  const API="https://whitetigertype.suchanunity.workers.dev",SRV={tot:null,al:[],inv:[],egg:false,bst:0,frozen:null,nick:null,tk:0,nc:0,cc:0,col:"",lk:0,ul:0,nfx:"",s8:{},skt:0,skk:{},sks:[],ska:0};
   async function api(p,b){const u=auth.currentUser;if(!u)return null;try{const tk=await u.getIdToken(),r=await fetch(API+p,{method:"POST",headers:{authorization:"Bearer "+tk,"content-type":"application/json"},body:JSON.stringify(b||{})});let j=null;try{j=await r.json()}catch(e){}return r.ok?j:{err:(j&&j.err)||"서버 오류",code:r.status}}catch(e){return null}}
   // 서버가 준 값을 사이트에 반영: 포인트·산 것·업적(서버가 준 것만 남아요)
-  function srvApply(j){if(!j||j.err)return;if(j.s8&&typeof j.s8==="object"&&!Array.isArray(j.s8))SRV.s8=j.s8; /* 3.6.18 실력 점수 기록 */if(Number.isFinite(j.tot)){SRV.tot=j.tot;SRV.frozen=null;store.set("tt-tot",j.tot)}
+  function srvApply(j){if(!j||j.err)return;if(j.s8&&typeof j.s8==="object"&&!Array.isArray(j.s8))SRV.s8=j.s8; /* 3.6.18 실력 점수 기록 */if(Number.isFinite(j.tot)){ /* 스킬: 서버 값(처음 읽은 문서엔 없을 수도) */SRV.skt=Math.floor(Number(j.skt)||0);const K={},x=j.skk&&typeof j.skk==="object"?j.skk:{};for(const k in x)if(/^[123]-[123]$/.test(k)&&Math.floor(Number(x[k]))>0)K[k]=Math.floor(Number(x[k]));SRV.skk=K;SRV.sks=(Array.isArray(j.sks)&&j.sks.length?j.sks:[{}]).slice(0,10).map(o=>{const r={};[3,2,1].forEach(g=>{const v=Math.floor(Number(o&&o["g"+g])||0);r["g"+g]=v>=1&&v<=3?v:0});return r});const a=Math.floor(Number(j.ska)||0);SRV.ska=a>=0&&a<SRV.sks.length?a:0;
+    SRV.tot=j.tot;SRV.frozen=null;store.set("tt-tot",j.tot)}
     if(Number.isFinite(j.pt)){store.set("tt-pt",j.pt);showPts()}
     if(Array.isArray(j.inv)){SRV.inv=j.inv.slice();store.set("tt-inv",j.inv.slice())}
     if(Number.isFinite(j.bgs))store.set("tt-bgslots",j.bgs);
@@ -2536,6 +2567,7 @@ async function initCloud(){if(!FB_CONFIG)return;
     api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.gst=()=>srvOn()?{inv:Array.isArray(SRV.inv)?SRV.inv:[],cc:SRV.cc||0,nc:SRV.nc||0}:null; /* 3.7.17 확률표가 내 상태로 계산 */srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.nfx=()=>srvOn()?SRV.nfx:"";srvHooks.setNfx=id=>api("/nfx",{id}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{});srvHooks.apply=j=>{if(j&&!j.err)srvApply(j)}; /* 3.6.8: 색은 연출이 끝난 뒤 apply로 적용 */srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
+  srvHooks.skt=()=>srvOn()?SRV.skt:0;srvHooks.skk=()=>srvOn()?SRV.skk:{};srvHooks.sks=()=>srvOn()?SRV.sks:[];srvHooks.ska=()=>srvOn()?SRV.ska:0;srvHooks.skill=o=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/skill",o).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.gacha=n=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/gacha",n>1?{n}:{}).then(j=>{if(j&&!j.err)srvApply(j);return j})};
   srvHooks.fb=()=>{if(!srvOn())return;api("/fb",{}).then(j=>{if(j&&!j.err)srvApply(j)})};
   // 3.5.21 사용자 관리(관리자만): 서버 /admin으로 찾기·닉네임 바꾸기·업적 회수·차단
