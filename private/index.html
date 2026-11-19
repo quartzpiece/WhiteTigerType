@@ -507,7 +507,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.6</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.7</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1380,7 +1380,7 @@ function begin(src){S.src=src||null;S.dStarted=false;S.pid="";
   Object.assign(S,{at0:Date.now(),activeDone:0,t0:0,log:[],doneStrokes:0,okS:0,frozen:null,newBest:false,best:0,i:0,start:0,totalStrokes:0,totalMs:0,typed:0,correct:0});stats(0);
   $("lines").innerHTML=S.lines.map(l=>"<div"+(isHead(l)?' data-h="1"':"")+">"+esc(l)+"</div>").join("");
   show("practice");showLine()}
-function showLine(){S.start=0;$("typing").value="";try{h3Reset()}catch(e){}KS.last=0;
+function showLine(){S.start=0;$("typing").value="";inpPrev="";try{h3Reset()}catch(e){}KS.last=0;
   qText($("lineno"),(S.src?S.src.title+"  ·  ":"")+(S.i+1)+" / "+S.lines.length+" 줄");
   $("bar").style.width=(S.i/S.lines.length*100)+"%";cubeBar();
   [...$("lines").children].forEach((d,k)=>d.className=(k<S.i?"done":k===S.i?"now":"")+(d.dataset.h?" head":""));
@@ -1445,7 +1445,7 @@ function paint(){const P=S.prep[S.i],t=P.typ,v=typedNow();let html="",okS=0;
   const ms=S.start?performance.now()-S.start:0;
   if(S.src&&S.src.vs&&vsHooks.prog)try{vsHooks.prog((S.i+Math.min(1,fin/Math.max(1,t.length)))/S.lines.length)}catch(e){}
   S.live=[lt,lc];S.okS=okS;logStroke(performance.now());stats()}
-function submit(){const now=performance.now();if(now-S.last<120)return;S.last=now;S.live=[0,0];
+function submit(){if(inp.value!==inpPrev){inp.value=inpPrev;return}const now=performance.now();if(now-S.last<120)return;S.last=now;S.live=[0,0];
   const v=typedNow(),t=S.prep[S.i].typ;while(v.length&&v[v.length-1]===" ")v.pop();if(!v.length)return;
   let ok=0,okS=0;t.forEach((ch,i)=>{if(v[i]===ch){ok++;okS+=strokes(ch)}});
   S.typed+=Math.max(t.length,v.length);S.correct+=ok;if(S.tl)S.tl[S.i]=v.join("");
@@ -1474,7 +1474,7 @@ function finish(){$("bar").style.width="100%";cubeBar();
   const total=S.doneStrokes;let gain=Math.floor(total/10),note="";
   if((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)){const r=mineGain(total,S.lines.join(""));gain=r.gain;note=r.note}
   addPts(gain);
-  try{if(srvHooks.run)S.runP=srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre",ms:Math.max(1,Math.round(S.activeDone)),kb:KBL(),...(S.pid?{pid:S.pid}:{}),...(S.src&&S.src.book?{book:{id:S.src.book,para:S.src.para}}:{}),...(S.src&&S.src.vs&&vsHooks.code&&vsHooks.code()?{vs:vsHooks.code()}:{})})}catch(e){}
+  try{if(srvHooks.run)S.runP=srvHooks.run({lines:S.lines,typed:S.lines.map((_,i)=>(S.tl&&S.tl[i])||""),kind:((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre))?"mine":"pre",ms:Math.max(1,Math.round(S.activeDone)),kb:KBL(),iv:kIv(),...(S.pid?{pid:S.pid}:{}),...(S.src&&S.src.book?{book:{id:S.src.book,para:S.src.para}}:{}),...(S.src&&S.src.vs&&vsHooks.code&&vsHooks.code()?{vs:vsHooks.code()}:{})})}catch(e){}
   $("result-sub").textContent="최고 타수: "+S.best+"  ·  줄 수: "+S.lines.length+"  ·  총 타수: "+total+"  ·  포인트: +"+gain+note;
   try{if(!((!S.src&&!isPre(curId))||(S.src&&S.src.vs&&!S.src.pre)))pcAdd(S.lines.join("\n"),(S.src&&S.src.title)||$("ptitle").value||"지문")}catch(e){}
   if(!junk)try{const K=t=>new Date(t+9*3600e3).toISOString(),a=K(S.at0||0),z=K(Date.now());if(S.at0&&a.slice(11,16)==="23:59"&&z.slice(0,10)>a.slice(0,10)&&Date.now()-S.at0<6*3600e3)achGrant(["t-cinder"])}catch(e){}
@@ -1539,7 +1539,7 @@ const h3Render=()=>{const {cho,jung,jong}=H3;if(cho&&jung)return String.fromChar
   return (cho?CJ_CHO[cho-0x1100]:"")+(jung?CJ_JUNG[jung-0x1161]:"")+(jong?CJ_JONG[jong-0x11A7]:"")};
 function h3Reset(){H3.cho=H3.jung=H3.jong=0;H3.hist=[];H3.out="";if(IME_ON())S.composing=false}
 function h3Put(val,typ){const v=inp.value,pre=H3.out&&v.endsWith(H3.out)?v.slice(0,v.length-H3.out.length):v;H3.out=val;inp.value=pre+val;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(e){}
-  S.composing=!!val&&!!(H3.cho||H3.jung||H3.jong);inp.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:typ||"insertText",data:val||null}))}
+  S.composing=!!val&&!!(H3.cho||H3.jung||H3.jong);inpFire(new InputEvent("input",{bubbles:true,inputType:typ||"insertText",data:val||null}))}
 function h3Jamo(code){const snap={cho:H3.cho,jung:H3.jung,jong:H3.jong};let fresh=false;
   if(code<0x1161){ // 초성
     if(H3.cho&&!H3.jung&&!H3.jong&&h3c(H3.cho,code))H3.cho=h3c(H3.cho,code);else fresh=true;
@@ -1553,7 +1553,7 @@ function h3Jamo(code){const snap={cho:H3.cho,jung:H3.jung,jong:H3.jong};let fres
   if(!fresh)H3.hist.push(snap);else H3.hist=[];h3Put(h3Render());if(fresh){}}
 let h3WarnT=0;function h3Warn(t){let w=$("kbl-warn");if(!w){w=document.createElement("div");w.id="kbl-warn";w.className="hint kbl-warn";w.setAttribute("role","status");inp.closest(".typewrap").after(w)}
   w.textContent=t;w.hidden=false;clearTimeout(h3WarnT);h3WarnT=setTimeout(()=>{w.hidden=true},4000)}
-inp.addEventListener("keydown",e=>{if(!IME_ON()||e.ctrlKey||e.metaKey||e.altKey)return;
+inp.addEventListener("keydown",e=>{if(!e.isTrusted||!IME_ON()||e.ctrlKey||e.metaKey||e.altKey)return;
   if(e.isComposing||e.keyCode===229){if(e.code&&/^(Key|Digit)/.test(e.code))h3Warn("세벌식: 한/영 키로 영문 상태로 전환");else if(!e.code)h3Warn("세벌식은 컴퓨터 키보드만 지원");return}
   if(H3.out&&!inp.value.endsWith(H3.out))h3Reset();
   if(inp.selectionStart!==inp.value.length||inp.selectionEnd!==inp.value.length){if(H3.out)h3Reset()}
@@ -1563,7 +1563,7 @@ inp.addEventListener("keydown",e=>{if(!IME_ON()||e.ctrlKey||e.metaKey||e.altKey)
   const v=K390[ch];
   if(typeof v==="number"){e.preventDefault();h3Jamo(v);return}
   h3Reset();
-  if(typeof v==="string"){e.preventDefault();inp.value+=v;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(er){}inp.dispatchEvent(new InputEvent("input",{bubbles:true,inputType:"insertText",data:v}))}});
+  if(typeof v==="string"){e.preventDefault();inp.value+=v;const n=inp.value.length;try{inp.setSelectionRange(n,n)}catch(er){}inpFire(new InputEvent("input",{bubbles:true,inputType:"insertText",data:v}))}});
 inp.addEventListener("blur",()=>{if(H3.out)h3Reset()});
 inp.addEventListener("compositionstart",()=>S.composing=true);
 inp.addEventListener("compositionend",()=>{S.composing=false;paint()});
@@ -1571,14 +1571,18 @@ inp.addEventListener("input",()=>{if(S.src&&S.src.daily&&!S.dStarted&&inp.value)
   if(!S.start&&inp.value)S.start=performance.now();if(!S.t0&&inp.value){S.t0=S.start;S.log=[{t:0,c:0}];try{if(srvHooks.start)srvHooks.start()}catch(e){}}
   const v=typedNow();if(v.length>S.prep[S.i].typ.length&&v[v.length-1]===" "){submit();return}
   paint()});
-inp.addEventListener("keydown",e=>{if(e.key!=="Enter")return;e.preventDefault();if(e.isComposing||e.keyCode===229)setTimeout(submit,0);else submit()});
+inp.addEventListener("keydown",e=>{if(e.key!=="Enter")return;e.preventDefault();if(!e.isTrusted)return;if(e.isComposing||e.keyCode===229)setTimeout(submit,0);else submit()});
 inp.addEventListener("paste",e=>e.preventDefault());
 // 3.7.4: 붙여 넣기 막기. 끌어다 놓기, 폰 키보드의 클립보드·단어 추천처럼 paste가 안 뜨는 길도 막아요. 한 번에 3글자 넘게 늘면 되돌려요(3.7.5: 안내 문구는 안 띄움)
-let inpPrev="";const inpNoPaste=()=>{};
-inp.addEventListener("beforeinput",e=>{const t=e.inputType||"",d=e.data||"";if(/^insertFrom/.test(t)||t==="insertReplacementText"||(t==="insertText"||t==="insertCompositionText")&&[...d].length>2){e.preventDefault();inpNoPaste()}});
+// 3.7.7: 가짜 입력(콘솔·확장 프로그램이 만든 이벤트, 이벤트 없이 바꾼 글)도 되돌려요. inpPrev = 마지막으로 받아 준 입력칸 글
+var inpPrev="",inpSyn=false,KT=[];const inpNoPaste=()=>{};
+function inpFire(ev){inpSyn=true;try{inp.dispatchEvent(ev)}finally{inpSyn=false}}
+inp.addEventListener("beforeinput",e=>{const t=e.inputType||"",d=e.data||"";if(!e.isTrusted||/^insertFrom/.test(t)||t==="insertReplacementText"||(t==="insertText"||t==="insertCompositionText")&&[...d].length>2){e.preventDefault();inpNoPaste()}});
 inp.addEventListener("drop",e=>e.preventDefault());inp.addEventListener("dragover",e=>e.preventDefault());
-inp.addEventListener("keydown",()=>{inpPrev=inp.value},true);inp.addEventListener("focus",()=>{inpPrev=inp.value});
-document.addEventListener("input",e=>{if(e.target!==inp)return;const v=inp.value;if([...v].length-[...inpPrev].length>2){e.stopImmediatePropagation();inp.value=inpPrev;inpNoPaste();return}inpPrev=v},true);
+document.addEventListener("input",e=>{if(e.target!==inp)return;const v=inp.value;if((!e.isTrusted&&!inpSyn)||[...v].length-[...inpPrev].length>2){e.stopImmediatePropagation();inp.value=inpPrev;inpNoPaste();return}inpPrev=v;
+  if(!S.t0)KT=[];if(KT.length<5001)KT.push(performance.now())},true);
+// 3.7.7 리듬 검사용: 입력 사이 간격(ms)을 서버로 보내요. 서버가 너무 고르면(매크로) 기록에서 빼요
+function kIv(){const a=[];for(let i=1;i<KT.length;i++)a.push(Math.round(KT[i]-KT[i-1]));return a}
 // 키별 속도: 앞 키를 누르고 이 키를 누르기까지 걸린 시간. 1.5초 넘게 쉬면 빼요. 컴퓨터 키보드만(폰 화면 키보드는 어떤 키인지 안 알려 줘요)
 // 이번 연습은 KS.run, 여러 번 모은 기록은 tt-keys(이 기기에만) = {키: [합(ms), 횟수]}
 const KB_ROWS=[["Q","ㅂ"],["W","ㅈ"],["E","ㄷ"],["R","ㄱ"],["T","ㅅ"],["Y","ㅛ"],["U","ㅕ"],["I","ㅑ"],["O","ㅐ"],["P","ㅔ"],null,["A","ㅁ"],["S","ㄴ"],["D","ㅇ"],["F","ㄹ"],["G","ㅎ"],["H","ㅗ"],["J","ㅓ"],["K","ㅏ"],["L","ㅣ"],null,["Z","ㅋ"],["X","ㅌ"],["C","ㅊ"],["V","ㅍ"],["B","ㅠ"],["N","ㅜ"],["M","ㅡ"],null,["Space","스페이스"]];
@@ -2123,7 +2127,7 @@ $("rand").onclick=$("randnext").onclick=()=>begin(randomPara());
 if(NO_PRESETS){$("rand").hidden=true;$("rtab-ps").hidden=!PRESETS.length}
 $("edit").onclick=$("edit2").onclick=()=>{show("setup");ta.focus()};
 // 제목을 누르면 언제든 메인 화면(지문 고르는 칸)으로 돌아가요
-$("home").onclick=e=>{e.preventDefault();closePanels(null);S.start=0;$("typing").value="";show("setup");window.scrollTo(0,0)};
+$("home").onclick=e=>{e.preventDefault();closePanels(null);S.start=0;$("typing").value="";inpPrev="";show("setup");window.scrollTo(0,0)};
 
 // 아이디 로그인 (파이어베이스). 아이디는 내부적으로 '아이디@baekho-typing.app' 이메일로 바꿔 써요
 async function initCloud(){if(!FB_CONFIG)return;
@@ -2186,6 +2190,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   srvHooks.run=o=>{const P=S.tkP;S.tkP=null;if(!uid||!P)return Promise.resolve(null);const me=uid;
     return P.then(t=>t&&t.tk?api("/run",{tk:t.tk,nick:nick||"",...o}):null).then(j=>{if(j&&!j.err&&me===uid){srvApply(j);
       if(j.dailyTk)toast("오늘 첫 연습 · 티켓 +1");
+      if(j.bot)try{const r=$("result-sub");r.textContent=r.textContent.replace(/포인트: \+\d+/,"포인트: +0")+"  ·  기록 제외"}catch(e){}
       if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
   let buying=false; // 구매 요청이 끝나기 전에 또 누르면 무시해요(겹치면 서버에서 실패할 수 있어서)
   srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
