@@ -118,15 +118,15 @@
 .ch-in{font:inherit;font-size:1.15rem;width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--line);background:var(--bg);color:var(--fg)}.ch-in:focus{outline:none;border-color:var(--accent)}.ch-in.bad{border-color:#E64545;animation:chBad .25s}@keyframes chBad{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .ch-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:2px solid var(--line);user-select:none;-webkit-user-select:none}
 .ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(18px,5.4vw,40px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 20%,var(--bg))}
-.ch-sq.dk{background:color-mix(in srgb,var(--accent) 26%,var(--bg))}
+.ch-sq{container-type:inline-size}.ch-sq .wd.l2{word-break:break-all;padding:0 4%}.ch-sq.dk{background:color-mix(in srgb,var(--accent) 26%,var(--bg))}
 .ch-sq.last{box-shadow:inset 0 0 0 100px color-mix(in srgb,var(--accent) 22%,transparent)}
 .ch-sq.sel{box-shadow:inset 0 0 0 3px var(--accent)}
 .ch-sq.chk{box-shadow:inset 0 0 0 100px rgba(230,60,60,.45)}
 .ch-sq.mv::after{content:"";position:absolute;width:26%;height:26%;border-radius:50%!important;background:color-mix(in srgb,var(--fg) 45%,transparent)}
 .ch-sq.cap::after{content:"";position:absolute;inset:6%;border-radius:50%!important;border:3px solid color-mix(in srgb,var(--fg) 45%,transparent)}
-.ch-sq .pc{width:68%;height:68%;transform:translateY(-10%);stroke:var(--bg);stroke-width:1.4;stroke-linejoin:round;paint-order:stroke fill;overflow:visible}.ch-sq .pc.w{fill:var(--fg)}.ch-sq .pc.b{fill:var(--accent)}.ch-promo .ch-sq .pc{transform:none}
+.ch-sq .pc{width:60%;height:60%;transform:translateY(-17%);stroke:var(--bg);stroke-width:1.4;stroke-linejoin:round;paint-order:stroke fill;overflow:visible}.ch-sq .pc.w{fill:var(--fg)}.ch-sq .pc.b{fill:var(--accent)}.ch-promo .ch-sq .pc{transform:none}
 .ch-sq .co{position:absolute;font-size:10px;font-style:normal;font-family:var(--body);color:color-mix(in srgb,var(--fg) 50%,transparent);pointer-events:none}.ch-sq .co.f{right:3px;bottom:2px}.ch-sq .co.r{left:3px;top:2px}
-.ch-sq .wd{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-size:clamp(9px,2.3vw,13px);font-style:normal;font-weight:700;font-family:var(--body);line-height:1;color:color-mix(in srgb,var(--fg) 72%,transparent);pointer-events:none;white-space:nowrap}
+.ch-sq .wd{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-size:min(13px,calc(88cqw / var(--n,3)));font-style:normal;font-weight:700;font-family:var(--body);line-height:1.05;color:color-mix(in srgb,var(--fg) 72%,transparent);pointer-events:none;white-space:nowrap}
 .ch-promo{display:flex;gap:6px;align-items:center}.ch-promo .ch-sq{width:52px;height:52px;border:1px solid var(--line)}
 /* 3.6.13 발광(3.6.14 더 화려하게): 거의 검은 바탕. 포인트색이 청록·하늘·보라·분홍으로 바뀌며, 모든 글자와 테두리가 빛나요 */
 @property --lmc{syntax:"<color>";inherits:true;initial-value:#5CFFD6}
@@ -1413,6 +1413,8 @@ const PRESETS=[ANTHEM,{id:"preset-hist-2-01-3",title:"Ⅱ-01-3. 통일 정부 �
 산업화로 경제가 성장하고 물질적인 생활은 풍요로워졌지만, 그에 따른 자원의 고갈과 환경 문제가 대두했다. 특히 일자리를 찾아 인구가 도시로 집중하면서 각종 환경 오염도 급속하게 진행되었다. 공장 가동에 따른 오염 물질 배출, 도로와 주택 건설에 따른 녹지 공간 감소, 생활 하수에 따른 수질 오염, 자동차와 난방 연료 사용 증가에 따른 대기 오염, 생활 쓰레기 처리 문제 등이 대표적 사례였다. 지나친 개발로 생태계의 균형도 깨졌다. 이러한 가운데 1991년 두 차례에 걸쳐 독성 산업 물질인 페놀 원액이 낙동강에 흘러들어 대구 지역에 식수 공급이 중단되기도 했다. 낙동강 페놀 오염 사건은 환경 문제에 대한 사람들의 위기의식을 고조시켰다.
 
 이러한 문제를 해결하기 위해 우리나라는 일찍부터 노력해 왔다. 공해를 비롯한 환경 문제에 대응하기 위한 각종 법률을 마련했으며, 1980년에는 환경 문제 전담 기구로 환경청을 설치했다. 1992년에는 국가 환경 선언문도 발표했다. 또한 대대적인 산림 녹화 사업을 추진해 유례없는 성공을 거두었고 국립 공원과 개발 제한 구역을 설정했다. 오존층 보호를 위한 빈 협약과 바다 보호를 위한 런던 협약에 가입하는 등 환경 보전을 위한 국제적 노력에도 동참하고 있다. 아울러 환경 문제에 관심을 가진 시민 단체들의 다양한 환경 보호 활동도 더해지면서 오늘에 이르고 있다.`}];
+// 타자게임 칸 단어: 한국사 지문 속 단어(연도·숫자·띄어쓰기 있는 단어 빼고, 조사 뗌). 기본 지문 뺀 사이트에선 이 줄이 빠져요
+var HIST_W="가격 가공 가구 가능성 가담 가동 가발 가부장제 가입 가입자 가중 가치 가택 가혹 각계각층 각서 각종 각지 간부 간선제 간접 간첩단 간첩죄 간호사 감독 감소 감시 감축 강경 강압 강압적 강제 강화 개량 개발 개방 개선 개인 개인숭배 개입 개정 개정안 개최 개헌 개헌안 개혁 개혁법 거리 거부 거점 거창 건강 건물 건설 검거 격분 격차 결렬 결성 결의 결정 경공업 경무대 경부 경상도 경자유전 경쟁 경쟁력 경쟁자 경제 경제적 경찰 계속 계승 계엄군 계엄령 계획 고갈 고구마 고등학생 고령 고리대 고립 고문 고문치사 고속 고엽제 고위 고위층 고조 고지 고착화 고통 곡가제 곳곳 공간 공개 공개적 공급 공동 공무원 공방전 공산주의 공수 공식적 공약 공업 공원 공장 공포 공해 공화국 공화당 과도 과잉 과제 관계 관리 관심 광범위 광복 광부 광주 교육 교육대 교착 교체 교통 교환 구상 구성 구실 구역 구현 국가 국군 국내 국내외 국도 국립 국무총리 국민 국민적 국방비 국유화 국제 국제적 국제전 국토 국호 국회 국회의원 군경 군권 군대 군복 군부 군사 군사적 군인 군정 굴복 권력 권리 권한 궐기 귀속 귀환 규명 규모 규범 규정 규탄 균등 균형 그동안 극복 근거 근로 금속 금융 금지 급속 급증 긍정적 기간 기간산업 기계 기구 기념 기대 기록 기반 기술 기습적 기업 기여 기적 기조 기존 기준법 기회 긴급 김구 김규식 김대중 김영삼 김일성 김재규 김종필 김주열 나라 나포 낙동강 난방 남녀평등권 남북 남북한 남조선노동당 남침 남하 남한 납치 내각 내각제 내부 내외 내전 냉전 노덕술 노동 노동력 노동법 노동자 노동조합 노력 노선 노태우 녹지 녹화 논란 논리 논의 농경지 농기구 농민 농민층 농사 농산물 농성 농어촌 농업 농지 농촌 능동적 닉슨 다리 다수 다양 단계 단독 단원제 단임 단지 단체 단축 달동네 달성 담당 담화문 당선 당장 당초 대가 대가족 대구 대규모 대금 대기 대기업 대단지 대대적 대도시 대두 대량 대립 대법관 대상자 대선 대신 대외 대응 대의원 대전 대중 대중교통 대중문화 대책 대처 대통령 대통령직 대표자 대표적 대학교수 대학교수단 대학생 대한민국 대행 대화 대회 덕수궁 도로 도모 도발 도시 도시화 도약 도움 도입 도중 도청 독립 독립운동가 독성 독일 독자 독자적 독재 독점 독트린 돌파 돌풍 동대문 동백림 동베를린 동시 동아시아 동양 동원 동의 동일 동참 뒷받침 득표율 등장 땅값 라인 런던 마련 마무리 마산 마지막 막강 만장일치 만행 매각 매매 매수 면방직 명동 명목 명분 모스크바 모습 목소리 몰수 무기 무기한 무력 무리 무분별 무상 무역 무자비 무장 무장봉기 무차별 무차별적 무효 문맹률 문제 문화 물가 물자 물적 물질 물질적 미국 미국식 미군 미군정 미소 민간 민간인 민심 민족 민주 민주당 민주주의 민주화 민청학련 밑거름 바다 박정희 박종철 박차 박흥식 반공 반공주의 반대 반도체 반동분자 반란 반민 반민법 반민족 반발 반역자 발견 발달 발발 발생 발언 발전 발전소 발췌 발포 발표 방문 방법 방식 방어선 방위 방위군 방위선 방침 방해 배분 배상 배제 배출 배후 범시민 법관 법령 법률 법적 베트남 베트남인 변두리 변화 별관 별도 병력 보도 보상 보수 보안 보안법 보위 보전 보호 복구 본격적 본격화 봉기 부각 부결 부근 부담 부대 부동산 부마 부산 부상 부여 부정 부정적 부족 부통령 부통령직 부패 북조선 북진 북한 북한군 분계선 분노 분단 분립 분배 분신 분야 분열 분위기 분쟁 분출 불량배 불명 불법 불참 붕괴 브라운 비난 비무장 비밀 비밀리 비상 비상계엄 비중 비판 비판적 비협조적 비호 빈민 빈민촌 빨갱이 사건 사고방식 사과 사람 사령관 사례 사망 사망자 사무실 사무직 사사오입 사실 사실상 사업 사용 사제단 사태 사퇴 사항 사형 사회 사회단체 사회적 사회주의 사회주의적 산림 산업 산업화 삼청 상공업 상륙 상승 상처 상호 상환 상환금 새벽 생산 생산력 생산물 생산재 생태계 생활 생활필수품 서명 서비스업 서울 서울역 석방 석유 선거 선거구 선거인단 선고 선언 선언문 선정 선출 선택 선포 설정 설치 섬유 성공 성과 성당 성명 성명서 성사 성장 성장률 성향 세력 소각장 소규모 소극적 소득 소련 소련군 소비재 소식 소유 소작 소작농 소작제 소총회 소탕 송금 수단 수도권 수립 수상 수습 수용 수입 수준 수지 수질 수출 수행 수호 숙청 순천 스탈린 습격 승리 승인 시국 시기 시대 시도 시멘트 시민 시민군 시설 시신 시위 시위대 시작 시장 시중 시행 식량 식민 식민지 식수 신군부 신발 신부 신익희 신탁 신한 실권 실상 실시 실향민 실현 실형 심화 쓰레기 아시아 아파트 아픔 안보 안정 암살 압력 압록강 압승 앞바다 애치슨 야간 야당 약속 양국 양원제 양측 어려움 억압 억압적 억제 언론 언론사 언론인 여당 여론 여성 여수 여운형 역부족 역전 역할 연금 연료 연맹 연일 연임 연행 열망 영향 영향력 예정 오늘 오늘날 오랫동안 오염 오염도 오존층 오히라 완화 외곽 외교 외국 외면 외무대신 외무부 외상 외채 외화 요구 요소 요원 요청 우려 우리나라 우익 운동 운동가 울산 움직임 원동력 원료 원액 원조 원칙 위기 위기감 위기의식 위반 위원단 위원장 위원회 위축 위치 위협 유리 유상 유신 유엔 유엔군 유일 유입 유지 유착 유화 육성 윤보선 은폐 의견 의도 의류 의무 의복 의사 의석 의석수 의식 의심 의약품 의원 의존 의존성 이광수 이기붕 이날 이남 이념 이농 이름 이번 이북 이산가족 이승만 이시영 이용 이한열 인구 인근 인명 인민 인민군 인사 인적 인천 일대 일방적 일본 일본인 일시적 일자리 일제 임금 임기 임명 임명권 임시 입대 입장 자국 자금 자동차 자리 자본 자본가 자본주의 자원 자유 자유당 자유주의 자작농 자주적 자체 자치 자치적 자행 작업 작전 잔재 잠정적 장관 장기 장면 장시간 장악 재개 재건 재무장 재벌 재산 재선 재야인사 재정 재탈환 재판 쟁취 쟁탈전 저곡가 저금리 저급 저당 저유가 저임금 저항 적극 적극적 적대감 적십자 적용 적자 전개 전국 전날 전남대 전남도청 전담 전두환 전라북도 전면 전문 전반 전선 전세 전원 전자 전쟁 전쟁고아 전태일 전통적 전환 전후 절반 절정 절차 절충 점령 정경 정권 정당 정변 정보기관 정부 정부통령 정비 정세 정신력 정읍 정의 정의당 정전 정지 정책 정치 정치인 정치적 정화법 제거 제공 제당 제도 제명 제분 제안 제외 제일주의 제정 제주 제주도 제주도민 제철 제한 제헌 조만식 조봉암 조사 조선 조성 조약 조작 조직 조치 종신 종합 좌우 좌우익 좌익 주둔 주민 주식회사 주요 주장 주체 주택 주택난 주한 죽음 준비 준수 중공업 중국 중국군 중단 중도 중도파 중동 중복 중심제 중앙정보부 중앙정보부장 중요 중임 중지 중화학 즉시 증가 증권 지대 지도자 지령 지명 지방 지배 지속 지속적 지식인 지역 지연 지원 지위 지주 지지 지출 지하철 지휘권 직선제 직장 직접적 진격 진보 진보당 진보적 진상 진압 진영 진입로 진전 진정 진출 진행 질서 집권 집약적 집중 차관 차기 차단 차이 차지 착수 참여 참전 창당 창설 창원 채용 책임제 책정 처리 처리법 처벌 처벌법 처음 처형 천리마 천주교 철강 철도 철수 철폐 철회 첨단 청구 청년 청년단 청산 청와대 청원 체결 체불 체제 체포 초과 초대 초등 초래 초안 총생산 총선 총선거 총소득 총파업 총회 최고 최규하 최남선 최대 최루탄 최초 추대 추진 축소 축하금 출동 출마 출신 출입 충돌 취득 취임 치안 치열 친일 친일파 침략 타이완 탄압 탕감 태도 탱크 터전 토지 통과 통신 통일 통일론 통제 통제권 통치 통폐합 통합 통행금지 퇴진 투기 투입 투자 투쟁 투표 특별 특수 특위 특정 특혜 파견 파괴 파동 파병 판단 판자촌 페놀 편성 평등 평양 평화 평화적 폐간 폐쇄 폐지 폐허 포로 포함 포항 폭력 폭력적 폭행 표출 표현 푸에블로호 풍요 피살 피해 핑퐁 하루 하수 학교 학살 학생 한강 한국 한국군 한국인 한국적 한도 한때 한미 한반도 함평 합리화 합법 합의 합의점 합작 항만 항의 항쟁 해결 해당 해산 해안 해외여행 해제 해체 핵심 행동 행위 행위자 행적 행정 허락 허용 허정 헌법 헌법상 헌정 혁명 혁명당 혁신 현금 현행 혐의 협동조합 협동화 협력 협상 협상파 협약 협의 협정 형성 호헌 호황 혼란 혼잡 화학 화해 확대 확립 확보 확산 확장 확정 확충 환경 환경청 활동 활성화 활용 회담 회복 회수 회의 효력 후보 후원금 후유증 후퇴 휴교령 휴전 휴전선 휴회 흑자 희생 희생자".split(" ");
 PRESETS.push(...POEMS);
 const gone=store.get("tt-gone",[]);let added=null;
 lib.forEach(q=>{if(q.id==="preset-drama"&&q.title==="연극 동아리 협상")q.title="3-(1) 함께 만족하는 협상"});
@@ -2242,14 +2244,14 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   const pcSvg=(u,c)=>'<svg class="pc '+c+'" viewBox="0 0 40 40" aria-hidden="true">'+PS[u]+BASE+'</svg>';
   const KO={K:"킹",Q:"퀸",R:"룩",B:"비숍",N:"나이트",P:"폰"};
   const col=p=>p?(p===p.toUpperCase()?"w":"b"):"",up=p=>p.toUpperCase(),rc=i=>[i>>3,i&7],ix=(r,c)=>r*8+c,on=(r,c)=>r>=0&&r<8&&c>=0&&c<8,sqn=i=>"abcdefgh"[i&7]+(8-(i>>3));
-  function reset(){G.b=("rnbqkbnr"+"pppppppp"+"........".repeat(4)+"PPPPPPPP"+"RNBQKBNR").split("").map(x=>x==="."?"":x);G.turn="w";G.cs="KQkq";G.ep=-1;G.hist=[];G.sel=-1;G.last=null;G.promo=null;G.moves=[]}
+  function reset(){G.b=("rnbqkbnr"+"pppppppp"+"........".repeat(4)+"PPPPPPPP"+"RNBQKBNR").split("").map(x=>x==="."?"":x);G.turn="w";G.cs="KQkq";G.ep=-1;G.hist=[];G.sel=-1;G.last=null;G.promo=null;G.moves=[];G.over="";G.epc=""}
   function attacked(b,i,by){const [r,c]=rc(i);const pd=by==="w"?1:-1;for(const dc of[-1,1]){const rr=r+pd,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"P":"p"))return true}
     for(const [dr,dc] of[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]){const rr=r+dr,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"N":"n"))return true}
     for(const [dr,dc] of[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]){let rr=r+dr,cc=c+dc,d=1;while(on(rr,cc)){const p=b[ix(rr,cc)];if(p){if(col(p)===by){const u=up(p);if(u==="Q"||(u==="K"&&d===1)||(u==="B"&&dr&&dc)||(u==="R"&&(!dr||!dc)))return true}break}rr+=dr;cc+=dc;d++}}return false}
   const kingAt=(b,c)=>b.indexOf(c==="w"?"K":"k");
   function pseudo(i){const b=G.b,p=b[i],me=col(p),u=up(p),[r,c]=rc(i),out=[];const add=(t,x)=>out.push({f:i,t,...x});
     if(u==="P"){const d=me==="w"?-1:1,st=me==="w"?6:1;if(on(r+d,c)&&!b[ix(r+d,c)]){add(ix(r+d,c));if(r===st&&!b[ix(r+2*d,c)])add(ix(r+2*d,c),{dbl:1})}
-      for(const dc of[-1,1]){const rr=r+d,cc=c+dc;if(!on(rr,cc))continue;const t=ix(rr,cc);if(b[t]&&col(b[t])!==me)add(t);else if(t===G.ep)add(t,{ep:1})}}
+      for(const dc of[-1,1]){const rr=r+d,cc=c+dc;if(!on(rr,cc))continue;const t=ix(rr,cc);if(b[t]&&col(b[t])!==me)add(t);else if(t===G.ep&&G.epc&&G.epc!==me)add(t,{ep:1})}}
     else if(u==="N"||u==="K"){const D=u==="N"?[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]:[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];for(const [dr,dc] of D){const rr=r+dr,cc=c+dc;if(on(rr,cc)&&col(b[ix(rr,cc)])!==me)add(ix(rr,cc))}
       if(u==="K"){const op=me==="w"?"b":"w",row=me==="w"?7:0;if(i===ix(row,4)&&!attacked(b,i,op)){
         if(G.cs.includes(me==="w"?"K":"k")&&!b[ix(row,5)]&&!b[ix(row,6)]&&!attacked(b,ix(row,5),op)&&!attacked(b,ix(row,6),op))add(ix(row,6),{cs:"k"});
@@ -2259,37 +2261,42 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   function apply(b,m,pr){const n=b.slice(),p=n[m.f];n[m.t]=p;n[m.f]="";if(m.ep)n[m.t+(col(p)==="w"?8:-8)]="";if(m.cs){const row=m.f>>3;if(m.cs==="k"){n[ix(row,5)]=n[ix(row,7)];n[ix(row,7)]=""}else{n[ix(row,3)]=n[ix(row,0)];n[ix(row,0)]=""}}
     if(up(p)==="P"&&(m.t>>3===0||m.t>>3===7))n[m.t]=col(p)==="w"?(pr||"Q"):(pr||"Q").toLowerCase();return n}
   // 차례 없이 아무 말이나 움직여요(사용자 요청). 말마다 규칙대로만, 자기 킹이 공격받게 되는 수는 안 돼요
-  const legal=i=>{const p=G.b[i];if(!p)return[];const me=col(p),op=me==="w"?"b":"w";return pseudo(i).filter(m=>{const n=apply(G.b,m);return !attacked(n,kingAt(n,me),op)})};
+  // 킹을 실제로 잡으면 끝나요(사용자 요청): 자기 킹이 공격받게 되는 수도 둘 수 있어요
+  const legal=i=>{const p=G.b[i];if(!p||G.over)return[];return pseudo(i)};
   const allLegal=c=>{const L=[];for(let i=0;i<64;i++)if(col(G.b[i])===c)L.push(...legal(i));return L};
   const inChk=c=>{const k=kingAt(G.b,c);return k>=0&&attacked(G.b,k,c==="w"?"b":"w")};
   function play(m,pr){const p=G.b[m.f],cap=G.b[m.t]||(m.ep?"P":"");G.hist.push({b:G.b,turn:G.turn,cs:G.cs,ep:G.ep,last:G.last,mv:G.moves.length});
-    G.b=apply(G.b,m,pr);let cs=G.cs;const rm=x=>{cs=cs.replace(x,"")};if(up(p)==="K")col(p)==="w"?(rm("K"),rm("Q")):(rm("k"),rm("q"));[[63,"K"],[56,"Q"],[7,"k"],[0,"q"]].forEach(([q,x])=>{if(m.f===q||m.t===q)rm(x)});G.cs=cs;
-    G.ep=m.dbl?(m.f+m.t)/2:-1;G.last=[m.f,m.t];G.sel=-1;
+    if(up(G.b[m.t]||"")==="K")G.over=col(p);G.b=apply(G.b,m,pr);let cs=G.cs;const rm=x=>{cs=cs.replace(x,"")};if(up(p)==="K")col(p)==="w"?(rm("K"),rm("Q")):(rm("k"),rm("q"));[[63,"K"],[56,"Q"],[7,"k"],[0,"q"]].forEach(([q,x])=>{if(m.f===q||m.t===q)rm(x)});G.cs=cs;
+    G.ep=m.dbl?(m.f+m.t)/2:-1;G.epc=m.dbl?col(p):"";G.last=[m.f,m.t];reword(m.f,m.t);G.sel=-1;
     const oc=col(p)==="w"?"b":"w",chk=inChk(oc),none=chk&&!allLegal(oc).length;
     const nm=m.cs?(m.cs==="k"?"O-O":"O-O-O"):(up(p)==="P"?"":up(p))+sqn(m.f)+(cap?"x":"-")+sqn(m.t)+(pr&&up(p)==="P"?"="+pr:"")+(none&&chk?"#":chk?"+":"");G.moves.push((col(p)==="w"?"백 ":"흑 ")+nm);draw()}
-  function status(){const st=$("ch-st"),T=[];let end=false;for(const c of["w","b"]){if(!inChk(c))continue;const who=c==="w"?"백":"흑";if(!allLegal(c).length){T.push("체크메이트 · "+(c==="w"?"흑":"백")+" 승");end=true}else T.push(who+" 체크")}
+  function status(){const st=$("ch-st"),T=[];let end=!!G.over;if(G.over)T.push((G.over==="w"?"흑":"백")+" 킹을 잡았어요 · "+(G.over==="w"?"백":"흑")+" 승");else for(const c of["w","b"])if(inChk(c))T.push((c==="w"?"백":"흑")+" 체크");
     st.classList.toggle("end",end);st.textContent=T.join(" · ")}
   // 칸마다 정해 둔 단어(a8부터 h1까지, 말이 움직여도 칸에 그대로)
-  const WD="하늘 바다 구름 바람 나무 노을 햇살 이슬 별빛 달빛 안개 냇물 들꽃 숲길 바위 모래 사과 포도 수박 딸기 앵두 자두 참외 감귤 연필 공책 책상 의자 창문 시계 거울 우산 기차 버스 택시 배낭 지도 편지 엽서 선물 가족 친구 이웃 마을 학교 교실 운동 노래 사랑 우정 희망 용기 웃음 눈물 약속 기억 봄비 여름 가을 겨울 새벽 아침 저녁 한밤".split(" ");
+  const WD0="하늘 바다 구름 바람 나무 노을 햇살 이슬 별빛 달빛 안개 냇물 들꽃 숲길 바위 모래 사과 포도 수박 딸기 앵두 자두 참외 감귤 연필 공책 책상 의자 창문 시계 거울 우산 기차 버스 택시 배낭 지도 편지 엽서 선물 가족 친구 이웃 마을 학교 교실 운동 노래 사랑 우정 희망 용기 웃음 눈물 약속 기억 봄비 여름 가을 겨울 새벽 아침 저녁 한밤".split(" ");
+  const POOL=typeof HIST_W!=="undefined"&&HIST_W.length>=80?HIST_W:WD0;let WD=[];
+  const pickW=(no)=>{for(let k=0;k<500;k++){const w=POOL[Math.random()*POOL.length|0];if(!WD.includes(w)&&!no.includes(w))return w}return POOL.find(w=>!WD.includes(w)&&!no.includes(w))||""};
+  function deal(){WD=[];for(let i=0;i<64;i++)WD.push(pickW([]))}
+  function reword(a,b){const old=[WD[a],WD[b]];WD[a]="";WD[b]="";WD[a]=pickW(old);WD[b]=pickW(old)}
+  deal();
   function draw(){const bd=$("ch-board");bd.innerHTML="";const L=G.sel>=0?legal(G.sel):[],T=new Map(L.map(m=>[m.t,m]));const CK=["w","b"].filter(inChk).map(c=>kingAt(G.b,c));
     for(let v=0;v<64;v++){const i=G.flip?63-v:v,[r,c]=rc(i),p=G.b[i],q=document.createElement("button");q.type="button";q.className="ch-sq"+((r+c)%2?" dk":"")+(G.last&&G.last.includes(i)?" last":"")+(i===G.sel?" sel":"")+(CK.includes(i)?" chk":"")+(T.has(i)?(p||T.get(i).ep?" cap":" mv"):"");
-      q.setAttribute("aria-label",sqn(i)+" "+WD[i]+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));{const w=document.createElement("i");w.className="wd";w.textContent=WD[i];q.append(w)}if(p)q.insertAdjacentHTML("beforeend",pcSvg(up(p),col(p)));
+      q.setAttribute("aria-label",sqn(i)+" "+WD[i]+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));{const w=document.createElement("i");w.className="wd"+(WD[i].length>=5?" l2":"");w.style.setProperty("--n",WD[i].length>=5?Math.ceil(WD[i].length/2):Math.max(WD[i].length,3));w.textContent=WD[i];q.append(w)}if(p)q.insertAdjacentHTML("beforeend",pcSvg(up(p),col(p)));
       if((G.flip?r===0:r===7)){const f=document.createElement("i");f.className="co f";f.textContent="abcdefgh"[c];q.append(f)}if((G.flip?c===7:c===0)){const f=document.createElement("i");f.className="co r";f.textContent=8-r;q.append(f)}
-      q.onclick=()=>tap(i);bd.append(q)}
+      bd.append(q)}
     status()}
-  function tap(i){if(G.promo)return;const p=G.b[i];if(G.sel>=0){const m=legal(G.sel).find(x=>x.t===i);if(m){if(up(G.b[m.f])==="P"&&(i>>3===0||i>>3===7)){askPromo(m);return}play(m);return}}
-    G.sel=p&&i!==G.sel?i:-1;draw()}
   function askPromo(m){G.promo=m;const box=$("ch-promo");box.innerHTML='<span class="hint">승진:</span>';const me=col(G.b[m.f]);["Q","R","B","N"].forEach(x=>{const q=document.createElement("button");q.type="button";q.className="ch-sq";q.setAttribute("aria-label",KO[x]);q.innerHTML=pcSvg(x,me);q.onclick=()=>{box.hidden=true;G.promo=null;play(m,x)};box.append(q)});box.hidden=false}
   function undo(){const h=G.hist.pop();if(!h)return;G.b=h.b;G.turn=h.turn;G.cs=h.cs;G.ep=h.ep;G.last=h.last;G.moves.length=h.mv;G.sel=-1;G.promo=null;$("ch-promo").hidden=true;draw()}
   // 타자: 칸 단어를 치면 내 기물(백) 칸 고르기 → 고른 기물이 갈 수 있는 칸 단어를 치면 이동
-  function word(t){const i=WD.indexOf(t);if(i<0||G.promo)return false;const p=G.b[i];
+  function word(t){const i=WD.indexOf(t);if(i<0||G.promo||G.over)return false;const p=G.b[i];
     if(G.sel>=0){const m=legal(G.sel).find(x=>x.t===i);if(m){if(up(G.b[m.f])==="P"&&(i>>3===0||i>>3===7)){askPromo(m);draw();return true}play(m);return true}}
     if(p&&col(p)==="w"){G.sel=i;draw();return true}return null}
-  reset();return {G,reset,draw,undo,legal,allLegal,play,word,WD}})();
+  reset();return {G,reset,draw,undo,legal,allLegal,play,word,deal,has:t=>WD.includes(t),get WD(){return WD}}})();
 {const inp=$("ch-in");let bz=0;let bt=0;const bad=()=>{inp.classList.remove("bad");void inp.offsetWidth;inp.classList.add("bad");clearTimeout(bt);bt=setTimeout(()=>inp.classList.remove("bad"),600)};
-  const clr=()=>{bz=1;inp.blur();setTimeout(()=>{inp.value="";inp.focus({preventScroll:true});bz=0},0)};
-  inp.addEventListener("input",()=>{if(bz)return;const t=inp.value.trim();if(CH.WD.includes(t)){if(!CH.word(t))bad();clr()}});
-  inp.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&!e.isComposing){const t=inp.value.trim();if(t){e.preventDefault();if(!CH.WD.includes(t)||!CH.word(t))bad();clr()}}})}
+  const clr=()=>{bz=1;setTimeout(()=>{inp.value="";bz=0},0)};
+  const go=()=>{const t=inp.value.trim();if(!t){if(inp.value)inp.value="";return}if(!CH.has(t)||!CH.word(t))bad();clr()};
+  inp.addEventListener("input",()=>{if(!bz&&/\s$/.test(inp.value))go()});
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){if(!e.isComposing)e.preventDefault();setTimeout(()=>{if(!bz)go()},0)}})}
 $("ch-new").onclick=()=>{CH.reset();$("ch-promo").hidden=true;CH.draw()};
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
@@ -2710,7 +2717,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   function openVs(){closePanels("vs");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;vsCard.hidden=false;vsDraw()}
   vBtn.onclick=openVs;
   // 대전 → 타자게임(제작자만, 체스판 + 타자 입력창)
-  $("vs-game").onclick=()=>{if(!shopFree)return;closePanels("chess");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("chess").hidden=false;CH.draw();try{$("ch-in").focus({preventScroll:true})}catch(e){}};
+  $("vs-game").onclick=()=>{if(!shopFree)return;closePanels("chess");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("chess").hidden=false;CH.deal();CH.draw();try{$("ch-in").focus({preventScroll:true})}catch(e){}};
   $("ch-back").onclick=()=>{$("chess").hidden=true;openVs()};$("vs-back").onclick=()=>{vsCard.hidden=true;show("setup")};
   function vsDraw(){const inRoom=!!(VS.code&&VS.room);$("vs-lobby").hidden=inRoom;$("vs-games").hidden=!shopFree;$("vs-room").hidden=!inRoom;if(!uid){$("vs-make").disabled=$("vs-join").disabled=true;vMsg("로그인해야 할 수 있어요");}else{$("vs-make").disabled=$("vs-join").disabled=false}
     if(!inRoom)return;const R=VS.room,me=uid,host=R.host===me,L=vsPlayers(),play=R.st==="play";
