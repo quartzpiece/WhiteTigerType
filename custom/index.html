@@ -348,7 +348,11 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .daily-text{font-size:1.25rem;line-height:1.6;margin:0;word-break:keep-all;border-left:5px solid var(--accent);padding-left:14px}
 .rank-list li .ac{color:var(--muted);font-size:.85rem}
 .rank-list.daily-l li{grid-template-columns:2rem minmax(0,1fr) 3.2rem 3.2rem 3.6rem;gap:8px}
-.rank-list.sk-l li{grid-template-columns:2rem minmax(0,1fr) 3.2rem 3.6rem}
+.rank-list.sk-l li{grid-template-columns:2rem minmax(0,1fr) 3.6rem;position:relative}
+.rank-list.sk-l .sk-pt{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.rank-list .sk-det{left:auto;right:0;min-width:220px;padding-right:12px;padding-top:24px}
+.sk-det .sk-r{display:flex;justify-content:space-between;gap:16px}
+.sk-det .sk-r b{color:var(--accent);font-variant-numeric:tabular-nums}
 .rank-list.daily-l li>span:nth-child(n+3){text-align:right}
 .rank-list.daily-l li.hd{border:0;background:none;padding:0 11px;color:var(--muted);font-size:.8rem}
 .rank-list.daily-l li:nth-child(4) .no{color:var(--accent)}
@@ -503,7 +507,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.2</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.3</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -2033,11 +2037,20 @@ async function initCloud(){if(!FB_CONFIG)return;
     try{const fo=foOn();let D;if(fo)D=(await Promise.all(frIds().map(async id=>{try{const d=await FS.getDoc(FS.doc(fdb,"skill",id));return d.exists()?{id,v:d.data()||{}}:null}catch(e){return null}}))).filter(Boolean).sort((a,b)=>(Number(b.v.sc)||0)-(Number(a.v.sc)||0));
       else{D=[];(await FS.getDocs(FS.query(FS.collection(fdb,"skill"),FS.orderBy("sc","desc"),FS.limit(20)))).forEach(d=>D.push({id:d.id,v:d.data()||{}}))}
       if(rTab!=="sk")return;list.innerHTML="";let n=0;const mk=(c,x)=>{const e=document.createElement("span");e.className=c;e.textContent=x;return e};
-      const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","지문"),mk("","점수"));
+      const hd=document.createElement("li");hd.className="hd";hd.append(mk("",""),mk("","닉네임"),mk("","점수"));
       const rows=D.filter(r=>Number(r.v.sc)>0&&Number(r.v.n)>=SK_N),nm=await nickMap(rows.map(r=>r.id));
-      rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");rowFx(li,id,nm[id]);li.append(mk("no",n),nmEl(mk,nm[id],v,id),mk("ac",Math.floor(Number(v.n)||0)+"/8"),mk("pt",Math.round(Number(v.sc)||0)));list.appendChild(li)});
-      let me="";if(uid){const v=SK_PIDS.map(p=>Math.floor(Number(SRV.s8&&SRV.s8[p])||0)).filter(x=>x>0).sort((a,b)=>b-a);me=v.length>=SK_N?"내 점수: "+Math.round(v.slice(0,SK_N).reduce((a,x)=>a+x,0)/SK_N)+" ("+v.length+"/8)":"내 기록: "+v.length+"/"+SK_N+"지문"}
+      rows.forEach(({id,v})=>{if(!n)list.appendChild(hd);n++;const li=document.createElement("li");rowFx(li,id,nm[id]);const pe=mk("pt sk-pt",Math.round(Number(v.sc)||0));pe.setAttribute("role","button");pe.tabIndex=0;pe.title="5지문 기록 보기";pe.onclick=e=>{e.stopPropagation();skDet(li,id,v)};pe.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();skDet(li,id,v)}};li.append(mk("no",n),nmEl(mk,nm[id],v,id),pe);list.appendChild(li)});
+      let me="";if(uid){const v=SK_PIDS.map(p=>Math.floor(Number(SRV.s8&&SRV.s8[p])||0)).filter(x=>x>0).sort((a,b)=>b-a);me=v.length>=SK_N?"내 점수: "+Math.round(v.slice(0,SK_N).reduce((a,x)=>a+x,0)/SK_N):"내 기록: "+v.length+"/"+SK_N+"지문"}
       m.textContent=(n?"":(fo?"나와 친구의 기록이 아직 없어요":"아직 기록 없음"))+(me?(n?"":" · ")+me:(n?"로그인하면 랭킹에 올라감":""))}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
+  // 3.7.3 점수를 누르면 점수에 든 5지문과 그 타수(skill 문서 top, 내 줄은 서버 pts.s8)
+  function skDet(li,id,v){const o=document.querySelector(".sk-det"),same=o&&o.parentElement===li;if(o)o.remove();if(same)return;
+    const T={};[ANTHEM,...POEMS].forEach(p=>T[p.id]=p.title);let top=v&&v.top&&typeof v.top==="object"?Object.entries(v.top):[];
+    if(id===uid&&SRV.s8)top=SK_PIDS.map(p=>[p,Math.floor(Number(SRV.s8[p])||0)]).filter(x=>x[1]>0);
+    top=top.filter(([p,x])=>T[p]&&Number(x)>0).sort((a,b)=>b[1]-a[1]).slice(0,SK_N);
+    const d=document.createElement("div");d.className="i-pop sk-det";d.setAttribute("role","dialog");
+    if(top.length)top.forEach(([p,x])=>{const r=document.createElement("div");r.className="sk-r";const a=document.createElement("span");a.textContent=T[p];const b=document.createElement("b");b.textContent=Math.round(Number(x));r.append(a,b);d.appendChild(r)});else d.textContent="이 기록은 다음에 기본 지문을 치면 보여요";
+    const x=document.createElement("button");x.type="button";x.className="i-x";x.setAttribute("aria-label","닫기");x.textContent="×";x.onclick=e=>{e.stopPropagation();d.remove()};d.appendChild(x);li.appendChild(d);
+    setTimeout(()=>{const off=ev=>{if(!d.isConnected){document.removeEventListener("pointerdown",off);return}if(!d.contains(ev.target)&&!ev.target.closest(".sk-pt")){d.remove();document.removeEventListener("pointerdown",off)}};document.addEventListener("pointerdown",off)},0)}
   dailyHooks.preset=async(pid,spd,acc,ms)=>{if(!uid||!spd)return;const sub=$("result-sub");
     if(SK_PIDS.includes(pid))(S.runP||Promise.resolve(null)).then(j=>{const k=j&&j.skill;if(!k)return;sub.textContent+=k.up?"  ·  실력 기록 "+k.old+" → "+(j.spd||Math.round(spd))+(k.n>=SK_N?" (점수 "+k.sc+")":" ("+k.n+"/"+SK_N+"지문)"):k.ok?"":"  ·  실력 점수는 정확도 100%만"}).catch(()=>{});
     if(acc<80){sub.textContent+="  ·  정확도 80% 미만, 지문 랭킹 기록 안 함";return}
