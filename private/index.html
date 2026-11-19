@@ -357,7 +357,10 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .btn:disabled{opacity:.35;cursor:default}
 .dnav{gap:10px}.dnav .btn{padding:6px 12px}.dnav-d{font-family:var(--display);min-width:6.5em;text-align:center}
 .rsel{font:inherit;color:var(--fg);background:var(--bg);border:2px solid var(--line);padding:8px 10px;border-radius:0;width:100%;min-width:0}
-.rtabs .rfo{margin-left:auto}.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
+.rtabs{position:relative}.rtabs .rfo{margin-left:auto}
+.i-mk{display:inline-grid;place-items:center;width:1.4em;height:1.4em;margin-left:3px;border:1.5px solid currentColor;border-radius:50%;font-size:.68em;font-weight:700;font-style:italic;line-height:1;vertical-align:super;cursor:pointer;font-family:Georgia,serif}
+.i-pop{position:absolute;left:0;top:calc(100% + 6px);z-index:20;max-width:min(320px,100%);background:var(--surface);color:var(--fg);border:1px solid var(--accent);padding:10px 30px 10px 12px;font-size:.85rem;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.i-pop .i-x{position:absolute;right:4px;top:2px;background:none;border:0;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:2px 6px}.rtab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}
 .admin-box{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
 #admin-list{min-height:220px;font-size:.95rem}
 #fb-text{min-height:90px}
@@ -500,7 +503,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.0</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.1</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -674,7 +677,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card rank" id="rank" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">랭킹</b><button class="btn acct" id="rank-re" type="button">새로고침</button></div>
-    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button><button class="btn acct rtab" id="rtab-sk" type="button" aria-pressed="false">실력</button><button class="btn acct rtab rfo" id="rank-fo" type="button" aria-pressed="false" hidden>친구만</button></div>
+    <div class="rtabs"><button class="btn acct rtab" id="rtab-pt" type="button" aria-pressed="true">누적 포인트</button><button class="btn acct rtab" id="rtab-daily" type="button" aria-pressed="false">오늘의 문장</button><button class="btn acct rtab" id="rtab-ps" type="button" aria-pressed="false">지문</button><button class="btn acct rtab" id="rtab-sk" type="button" aria-pressed="false">실력<sup class="i-mk" id="sk-i" title="실력 점수 설명">i</sup></button><button class="btn acct rtab rfo" id="rank-fo" type="button" aria-pressed="false" hidden>친구만</button></div>
     <select class="rsel" id="rank-psel" aria-label="지문" hidden></select>
     <div class="row dnav" id="rank-dnav" hidden><button class="btn acct" id="rd-prev" type="button" aria-label="이전 날">◀</button><b class="dnav-d" id="rd-day"></b><button class="btn acct" id="rd-next" type="button" aria-label="다음 날">▶</button><button class="btn acct" id="rd-today" type="button">오늘로</button></div>
     <p class="hint" id="rank-dtext" hidden></p>
@@ -2238,7 +2241,11 @@ async function initCloud(){if(!FB_CONFIG)return;
         const c=document.createElement("span");c.className="pt";c.textContent=Math.floor(Number(v.pt)||0);li.append(a,b,c);list.appendChild(li)});
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):"아직 기록 없음"}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   rankBtn.onclick=()=>{const o=rankCard.hidden;closePanels(o?"rank":null);rankCard.hidden=!o;if(o)loadRank()};
-  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");$("rtab-sk").onclick=()=>setRTab("sk");$("rank-fo").onclick=()=>{rFo=!rFo;try{localStorage.setItem("tt-rfo",rFo?"1":"0")}catch(e){}$("rank-fo").setAttribute("aria-pressed",String(rFo));loadRank()};
+  $("rank-re").onclick=loadRank;$("rtab-pt").onclick=()=>setRTab("pt");$("rtab-daily").onclick=()=>{rDay="";setRTab("daily")};$("rtab-ps").onclick=()=>setRTab("ps");$("rtab-sk").onclick=e=>{if(e.target.closest("#sk-i")){e.stopPropagation();skInfo();return}setRTab("sk")};
+  // 3.7.1 실력 점수 설명 팝업(i 표시를 누르면)
+  function skInfo(){let p=$("sk-pop");if(p){p.remove();return}p=document.createElement("div");p.id="sk-pop";p.className="i-pop";p.setAttribute("role","dialog");p.textContent="기본 지문 중 5지문 최고 타수의 평균타수, 정확도 100%만 반영합니다.";
+    const x=document.createElement("button");x.type="button";x.className="i-x";x.setAttribute("aria-label","닫기");x.textContent="×";x.onclick=()=>p.remove();p.appendChild(x);$("rtab-sk").after(p);
+    setTimeout(()=>{const off=ev=>{if(!p.isConnected){document.removeEventListener("pointerdown",off);return}if(!p.contains(ev.target)&&!ev.target.closest("#sk-i")){p.remove();document.removeEventListener("pointerdown",off)}};document.addEventListener("pointerdown",off)},0)}$("rank-fo").onclick=()=>{rFo=!rFo;try{localStorage.setItem("tt-rfo",rFo?"1":"0")}catch(e){}$("rank-fo").setAttribute("aria-pressed",String(rFo));loadRank()};
   // 지문 랭킹: prank/{지문 id}/runs/{uid} = {nick, spd(평균 타수), acc, ms, at}. 기본 지문 그대로 끝까지, 정확도 80% 이상일 때 내 최고 기록만 남겨요
   const psel=$("rank-psel");PRESETS.forEach(o=>{const op=document.createElement("option");op.value=o.id;op.textContent=o.title;psel.appendChild(op)});
   psel.onchange=loadRank;
@@ -2253,7 +2260,7 @@ async function initCloud(){if(!FB_CONFIG)return;
       m.textContent=n?(uid?"":"로그인하면 랭킹에 올라감"):(fo?"나와 친구의 기록이 아직 없어요":"아직 기록 없음")}catch(e){list.innerHTML="";m.textContent="랭킹을 불러올 수 없음"}}
   // 3.6.18 실력 랭킹: skill/{uid} = {nick, sc, n, at}. 애국가·시 7편을 정확도 100%로 친 지문별 최고 타수 중 잘 친 5개 평균(5지문 이상만, 서버가 써요)
   const SK_PIDS=[ANTHEM.id,...POEMS.map(p=>p.id)],SK_N=5;
-  async function loadRankSk(){const list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l sk-l";t.hidden=false;t.textContent="애국가·시 7편 중 잘 친 5지문 평균 타수 · 정확도 100%만 · 5지문 이상 · 3.7.0 버전부터 반영";m.textContent="불러오는 중";
+  async function loadRankSk(){const list=$("rank-list"),m=$("rank-msg"),t=$("rank-dtext");list.className="rank-list daily-l sk-l";t.hidden=false;t.textContent="3.7.0 버전부터 반영";m.textContent="불러오는 중";
     try{const fo=foOn();let D;if(fo)D=(await Promise.all(frIds().map(async id=>{try{const d=await FS.getDoc(FS.doc(fdb,"skill",id));return d.exists()?{id,v:d.data()||{}}:null}catch(e){return null}}))).filter(Boolean).sort((a,b)=>(Number(b.v.sc)||0)-(Number(a.v.sc)||0));
       else{D=[];(await FS.getDocs(FS.query(FS.collection(fdb,"skill"),FS.orderBy("sc","desc"),FS.limit(20)))).forEach(d=>D.push({id:d.id,v:d.data()||{}}))}
       if(rTab!=="sk")return;list.innerHTML="";let n=0;const mk=(c,x)=>{const e=document.createElement("span");e.className=c;e.textContent=x;return e};
