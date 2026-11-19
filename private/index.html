@@ -115,7 +115,15 @@
 .ch-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.ch-btns{display:flex;gap:6px;flex-wrap:wrap}
 #ch-st{font-family:var(--display);color:var(--accent)}#ch-st.end{color:var(--fg)}
 .ch-wrap{display:grid;grid-template-columns:minmax(0,min(100%,520px));justify-content:center;gap:12px;align-items:start}
-.ch-lv[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.ch-ai{display:flex;gap:10px;align-items:baseline;min-height:1.6em}#ch-ai-t{font-weight:700}#ch-ai-t:not(:empty)::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.15em;background:var(--accent);animation:blink 1s steps(1) infinite}.ch-sq.asel{outline:3px dashed var(--fg);outline-offset:-4px}.ch-in:disabled{opacity:.5}
+.fl-lv[aria-pressed="true"],.ch-lv[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.ch-ai{display:flex;gap:10px;align-items:baseline;min-height:1.6em}#ch-ai-t,.fl-ait{font-weight:700}:is(#ch-ai-t,.fl-ait):not(:empty)::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.15em;background:var(--accent);animation:blink 1s steps(1) infinite}.ch-sq.asel{outline:3px dashed var(--fg);outline-offset:-4px}.ch-in:disabled{opacity:.5}
+.fl-bd{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;user-select:none;-webkit-user-select:none}
+.fl-t{aspect-ratio:1;display:grid;place-items:center;container-type:inline-size;border:2px solid var(--line);background:color-mix(in srgb,var(--fg) 12%,var(--bg));color:var(--fg);font-weight:700;line-height:1.1;text-align:center;padding:0 4%;word-break:break-all;transition:transform .25s,background-color .25s,color .25s}
+.fl-t span{font-size:min(16px,calc(84cqw / var(--n,3)))}
+.fl-t.m{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.fl-t.fp{animation:flFlip .35s ease-out}@keyframes flFlip{0%{transform:rotateY(90deg)}100%{transform:none}}
+.fl-t.at{outline:3px dashed var(--fg);outline-offset:-6px}
+.fl-sc{display:flex;justify-content:space-between;font-family:var(--display);font-size:1.2rem}.fl-sc b{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.fl-t.fp{animation:none}}
 .ch-in{font:inherit;font-size:1.15rem;width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--line);background:var(--bg);color:var(--fg)}.ch-in:focus{outline:none;border-color:var(--accent)}.ch-in.bad{border-color:#E64545;animation:chBad .25s}@keyframes chBad{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .ch-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:2px solid var(--line);user-select:none;-webkit-user-select:none}
 .ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(18px,5.4vw,40px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 20%,var(--bg))}
@@ -667,7 +675,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div id="vs-lobby">
       <p class="vs-txt">방을 만들어 코드를 알려 주거나, 받은 코드로 들어가요. 최대 4명.</p>
       <div class="row"><button class="btn primary" id="vs-make" type="button">방 만들기</button><input class="vs-in" id="vs-code-in" inputmode="numeric" maxlength="4" placeholder="코드" aria-label="방 코드"><button class="btn" id="vs-join" type="button">들어가기</button></div>
-      <div class="row" id="vs-games" hidden><button class="btn" id="vs-game" type="button">타자게임</button></div>
+      <div class="row" id="vs-games" hidden><button class="btn" id="vs-game" type="button">타자게임</button><button class="btn" id="vs-flip" type="button">판뒤집기</button></div>
     </div>
     <div id="vs-room" hidden>
       <div class="row" style="justify-content:space-between;align-items:flex-end"><span><span class="hint">방 코드</span><br><span class="vs-code" id="vs-code"></span></span><button class="btn acct" id="vs-leave" type="button">나가기</button></div>
@@ -724,6 +732,10 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <p class="hint" id="shop-msg" aria-live="polite"></p>
   </section>
 
+  <section class="card chess" id="flip" hidden>
+    <div class="row" style="justify-content:space-between"><b class="rank-h">판뒤집기</b><button class="btn acct" id="fl-back" type="button">뒤로가기</button></div>
+    <div class="ch-wrap"><div class="ch-top"><span id="fl-st" role="status"></span><span class="ch-btns"><button class="btn acct fl-lv" data-lv="0" type="button">쉬움</button><button class="btn acct fl-lv" data-lv="1" type="button">보통</button><button class="btn acct fl-lv" data-lv="2" type="button">어려움</button><button class="btn primary" id="fl-go" type="button">시작</button></span></div><div class="ch-ai"><span class="hint" id="fl-ai-l"></span><b id="ch-ai-t2" class="fl-ait"></b></div><div class="fl-sc" id="fl-sc"></div><div class="fl-bd" id="fl-bd"></div><input class="ch-in" id="fl-in" type="text" disabled autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="타자 입력"></div>
+  </section>
   <section class="card chess" id="chess" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">타자게임</b><button class="btn acct" id="ch-back" type="button">뒤로가기</button></div>
     <div class="ch-wrap"><div class="ch-top"><span id="ch-st" role="status"></span><span class="ch-btns"><button class="btn acct ch-lv" data-lv="0" type="button">쉬움</button><button class="btn acct ch-lv" data-lv="1" type="button">보통</button><button class="btn acct ch-lv" data-lv="2" type="button">어려움</button><button class="btn primary" id="ch-go" type="button">시작</button></span></div><div class="ch-ai"><span class="hint" id="ch-ai-l"></span><b id="ch-ai-t"></b></div><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div><input class="ch-in" id="ch-in" type="text" disabled autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="타자 입력"></div>
@@ -2318,6 +2330,38 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   const go=()=>{const t=inp.value.trim();if(!t){if(inp.value)inp.value="";return}if(!CH.has(t)||!CH.word(t))bad();clr()};
   inp.addEventListener("input",()=>{if(!bz&&/\s$/.test(inp.value))go()});
   inp.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){if(!e.isComposing)e.preventDefault();setTimeout(()=>{if(!bz)go()},0)}})}
+// 판뒤집기(제작자 전용): 칸 단어를 치고 엔터·스페이스 → AI 색 칸이면 내 색으로 뒤집히고 단어가 바뀌어요. AI는 정해진 타수로 내 칸을 뒤집어요. 60초 뒤 칸이 많은 쪽이 이겨요
+const FL=(()=>{const N=36,SEC=60,LV=[{s:200},{s:300},{s:400}];let lv=Math.min(2,Math.max(0,Number(store.get("tt-flv",1))||0));
+  const POOL=typeof HIST_W!=="undefined"&&HIST_W.length>=80?HIST_W:["하늘","바다","구름","바람","나무","노을","햇살","이슬","별빛","달빛","안개","냇물","들꽃","숲길","바위","모래","사과","포도","수박","딸기","앵두","자두","참외","감귤","연필","공책","책상","의자","창문","시계","거울","우산","기차","버스","택시","배낭","지도","편지","엽서","선물","가족","친구","이웃","마을","학교","교실","운동","노래"];
+  const G={o:[],w:[],on:false,end:0,tm:0,res:""},AI={tm:0,i:-1,w:"",t0:0};
+  const pick=no=>{for(let k=0;k<400;k++){const w=POOL[Math.random()*POOL.length|0];if(!G.w.includes(w)&&!no.includes(w))return w}return POOL.find(w=>!G.w.includes(w)&&!no.includes(w))||""};
+  function deal(){G.w=[];for(let i=0;i<N;i++)G.w.push(pick([]));const o=Array(N).fill("a").fill("m",0,N/2);for(let i=N-1;i>0;i--){const j=Math.random()*(i+1)|0;[o[i],o[j]]=[o[j],o[i]]}G.o=o}
+  const cnt=c=>G.o.filter(x=>x===c).length;
+  function flip(i,c){const old=G.w[i];G.o[i]=c;G.w[i]="";G.w[i]=pick([old]);draw(i)}
+  function draw(fp){const bd=$("fl-bd");bd.innerHTML="";G.w.forEach((w,i)=>{const t=document.createElement("div");t.className="fl-t"+(G.o[i]==="m"?" m":"")+(i===fp?" fp":"")+(G.on&&i===AI.i&&AI.w?" at":"");t.setAttribute("aria-label",w+(G.o[i]==="m"?" 내 칸":" AI 칸"));const sp=document.createElement("span");sp.style.setProperty("--n",w.length>=5?Math.ceil(w.length/2):Math.max(w.length,3));sp.textContent=w;t.append(sp);bd.append(t)});
+    $("fl-sc").innerHTML="<span>나 <b>"+cnt("m")+"</b></span><span>AI <b>"+cnt("a")+"</b></span>";ui()}
+  function ui(){document.querySelectorAll(".fl-lv").forEach(b=>{b.setAttribute("aria-pressed",String(Number(b.dataset.lv)===lv));b.disabled=G.on});$("fl-ai-l").textContent="AI "+LV[lv].s+"타";$("fl-go").textContent=G.on?"다시":"시작";$("fl-in").disabled=!G.on;
+    const st=$("fl-st");st.classList.toggle("end",!!G.res);st.textContent=G.on?"남은 시간 "+Math.max(0,Math.ceil((G.end-Date.now())/1000)):G.res}
+  const keys=w=>[...w].reduce((a,ch)=>a+strokes(ch),0)+1;
+  function aiStop(){clearInterval(AI.tm);clearTimeout(AI.tm);AI.tm=0;AI.i=-1;AI.w="";$("ch-ai-t2").textContent=""}
+  function aiNext(){if(!G.on)return;const M=[];G.o.forEach((c,i)=>{if(c==="m")M.push(i)});if(!M.length){AI.tm=setTimeout(aiNext,500);return}
+    const i=M[Math.random()*M.length|0],w=G.w[i],K=[...w].map(strokes),t0=performance.now(),dur=keys(w)*60000/LV[lv].s;AI.i=i;AI.w=w;draw();
+    AI.tm=setInterval(()=>{if(!G.on){aiStop();return}const el=performance.now()-t0,k=el*LV[lv].s/60000;let a=0,n=0;for(const x of K){if(a+x<=k){a+=x;n++}else break}$("ch-ai-t2").textContent=w.slice(0,n);
+      if(el>=dur){clearInterval(AI.tm);AI.tm=0;$("ch-ai-t2").textContent="";const ok=G.o[i]==="m"&&G.w[i]===w;AI.i=-1;AI.w="";if(ok)flip(i,"a");else draw();aiNext()}},40)}
+  function tick(){if(!G.on)return;if($("flip").hidden){stop();return}if(Date.now()>=G.end){finish();return}ui()}
+  function finish(){const m=cnt("m"),a=cnt("a");G.on=false;clearInterval(G.tm);aiStop();G.res=m>a?"나 승 · "+m+" : "+a:m<a?"AI 승 · "+m+" : "+a:"무승부 · "+m+" : "+a;draw()}
+  function start(){stop();deal();G.res="";G.on=true;G.end=Date.now()+SEC*1000;G.tm=setInterval(tick,200);draw();const inp=$("fl-in");inp.value="";try{inp.focus({preventScroll:true})}catch(e){}setTimeout(aiNext,300)}
+  function stop(){G.on=false;clearInterval(G.tm);aiStop();ui()}
+  function open(){stop();G.res="";deal();draw()}
+  function word(t){if(!G.on)return false;const i=G.w.indexOf(t);if(i<0||G.o[i]==="m")return false;if(AI.i===i){AI.i=-1}flip(i,"m");return true}
+  {const inp=$("fl-in");let bz=0,bt=0;const bad=()=>{inp.classList.remove("bad");void inp.offsetWidth;inp.classList.add("bad");clearTimeout(bt);bt=setTimeout(()=>inp.classList.remove("bad"),600)};
+    const clr=()=>{bz=1;setTimeout(()=>{inp.value="";bz=0},0)};
+    const go=()=>{const t=inp.value.trim();if(!t){if(inp.value)inp.value="";return}if(!word(t))bad();clr()};
+    inp.addEventListener("input",()=>{if(!bz&&/\s$/.test(inp.value))go()});
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){if(!e.isComposing)e.preventDefault();setTimeout(()=>{if(!bz)go()},0)}})}
+  document.querySelectorAll(".fl-lv").forEach(b=>b.onclick=()=>{if(G.on)return;lv=Number(b.dataset.lv);store.set("tt-flv",lv);ui()});
+  $("fl-go").onclick=start;
+  return {G,open,start,stop,word}})();
 $("ch-go").onclick=()=>CH.start();document.querySelectorAll(".ch-lv").forEach(b=>b.onclick=()=>CH.setLv(Number(b.dataset.lv)));
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
@@ -2394,7 +2438,7 @@ function dailyText(day){const n=dayNum(day);if(DAILY_FIX[day])return DAILY_FIX[d
 const srvHooks={start:null,run:null,buy:null,wx:null,fb:null,gacha:null,tk:()=>0};
 const dailyHooks={start:null,finish:null,preset:null};
 const vsHooks={prog:null,finish:null,pick:null,leave:null,picking:false};
-function closePanels(except){["login","rank","fr","settings","daily","vs","shop","inv","books","rec","chess"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
+function closePanels(except){["login","rank","fr","settings","daily","vs","shop","inv","books","rec","chess","flip"].forEach(id=>{if(id!==except)$(id).hidden=true});$("setbtn").setAttribute("aria-expanded",String(except==="settings"));
   if(except!=="daily"&&$("setup").hidden&&$("practice").hidden&&$("done").hidden)show("setup")}
 function showFx(){const on=store.get("tt-fx",true),b=$("fxbtn");b.textContent="무지개 테마 문장 완료 효과: "+(on?"켜짐":"꺼짐");b.setAttribute("aria-pressed",String(on))}
 // 설정 칸: 위쪽 "설정" 버튼으로 열고 닫아요. 로그인·랭킹 칸과는 하나만 열려요
@@ -2739,7 +2783,9 @@ async function initCloud(){if(!FB_CONFIG)return;
   vBtn.onclick=openVs;
   // 대전 → 타자게임(제작자만, 체스판 + 타자 입력창)
   $("vs-game").onclick=()=>{if(!shopFree)return;closePanels("chess");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("chess").hidden=false;CH.stop();CH.reset();CH.deal();$("ch-promo").hidden=true;CH.draw();CH.lvDraw();try{$("ch-in").focus({preventScroll:true})}catch(e){}};
-  $("ch-back").onclick=()=>{CH.stop();$("chess").hidden=true;openVs()};$("vs-back").onclick=()=>{vsCard.hidden=true;show("setup")};
+  $("ch-back").onclick=()=>{CH.stop();$("chess").hidden=true;openVs()};
+  $("vs-flip").onclick=()=>{if(!shopFree)return;closePanels("flip");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("flip").hidden=false;FL.open();try{$("fl-in").focus({preventScroll:true})}catch(e){}};
+  $("fl-back").onclick=()=>{FL.stop();$("flip").hidden=true;openVs()};$("vs-back").onclick=()=>{vsCard.hidden=true;show("setup")};
   function vsDraw(){const inRoom=!!(VS.code&&VS.room);$("vs-lobby").hidden=inRoom;$("vs-games").hidden=!shopFree;$("vs-room").hidden=!inRoom;if(!uid){$("vs-make").disabled=$("vs-join").disabled=true;vMsg("로그인해야 할 수 있어요");}else{$("vs-make").disabled=$("vs-join").disabled=false}
     if(!inRoom)return;const R=VS.room,me=uid,host=R.host===me,L=vsPlayers(),play=R.st==="play";
     $("vs-code").textContent=VS.code;
@@ -2889,7 +2935,7 @@ async function initCloud(){if(!FB_CONFIG)return;
   cloudHook=()=>{if(!uid||applying)return;clearTimeout(pushT);pushT=setTimeout(push,1200)};
   addEventListener("pagehide",()=>{if(pushT&&uid){clearTimeout(pushT);push()}});
   let fresh=false; // 방금 가입: 지금 기기의 기록을 새 아이디로 올려요
-  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;$("vs-games").hidden=!shopFree;if(!shopFree&&!$("chess").hidden){$("chess").hidden=true;show("setup")}if(!shopFree){$("mg-out").innerHTML="";$("mg-sus-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
+  AU.onAuthStateChanged(auth,async user=>{try{loadMine(false)}catch(e){}shopFree=!!user&&user.email.split("@")[0]===ADMIN;$("mg-admin").hidden=!shopFree;$("vs-games").hidden=!shopFree;if(!shopFree&&(!$("chess").hidden||!$("flip").hidden)){$("chess").hidden=true;$("flip").hidden=true;show("setup")}if(!shopFree){$("mg-out").innerHTML="";$("mg-sus-out").innerHTML="";$("mg-msg").textContent=""}if(!$("shop").hidden)drawShop();else drawGacha();try{ncDraw()}catch(e){}try{shopSkins();applyFont();if(spOk(store.get("tt-skin","basic"))||!user)setSkin(store.get("tt-skin","basic"))}catch(e){}
     if(!user){uid=null;nick="";SRV.tot=null;SRV.col="";acct.style.color="";try{frStop()}catch(e){}frBtn.hidden=true;frCard.hidden=true;$("rank-fo").hidden=true;$("login-form").hidden=false;$("login-on").hidden=true;acct.textContent="로그인";acct.classList.remove("egg");return}
     const id=user.email.split("@")[0];$("login-form").hidden=true;$("login-on").hidden=false;msg("");
     if(fresh)nick=pendNick||id;showNick(id);
