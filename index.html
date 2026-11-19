@@ -115,6 +115,7 @@
 .ch-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.ch-btns{display:flex;gap:6px;flex-wrap:wrap}
 #ch-st{font-family:var(--display);color:var(--accent)}#ch-st.end{color:var(--fg)}
 .ch-wrap{display:grid;grid-template-columns:minmax(0,min(100%,520px));justify-content:center;gap:12px;align-items:start}
+.ch-lv[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:700}.ch-ai{display:flex;gap:10px;align-items:baseline;min-height:1.6em}#ch-ai-t{font-weight:700}#ch-ai-t:not(:empty)::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.15em;background:var(--accent);animation:blink 1s steps(1) infinite}.ch-sq.asel{outline:3px dashed var(--fg);outline-offset:-4px}.ch-in:disabled{opacity:.5}
 .ch-in{font:inherit;font-size:1.15rem;width:100%;box-sizing:border-box;padding:10px 12px;border:2px solid var(--line);background:var(--bg);color:var(--fg)}.ch-in:focus{outline:none;border-color:var(--accent)}.ch-in.bad{border-color:#E64545;animation:chBad .25s}@keyframes chBad{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .ch-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:2px solid var(--line);user-select:none;-webkit-user-select:none}
 .ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(18px,5.4vw,40px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 20%,var(--bg))}
@@ -725,7 +726,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card chess" id="chess" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">타자게임</b><button class="btn acct" id="ch-back" type="button">뒤로가기</button></div>
-    <div class="ch-wrap"><div class="ch-top"><span id="ch-st" role="status"></span><span class="ch-btns"><button class="btn acct" id="ch-new" type="button">새 게임</button></span></div><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div><input class="ch-in" id="ch-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="타자 입력"></div>
+    <div class="ch-wrap"><div class="ch-top"><span id="ch-st" role="status"></span><span class="ch-btns"><button class="btn acct ch-lv" data-lv="0" type="button">쉬움</button><button class="btn acct ch-lv" data-lv="1" type="button">보통</button><button class="btn acct ch-lv" data-lv="2" type="button">어려움</button><button class="btn primary" id="ch-go" type="button">시작</button></span></div><div class="ch-ai"><span class="hint" id="ch-ai-l"></span><b id="ch-ai-t"></b></div><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div><input class="ch-in" id="ch-in" type="text" disabled autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="타자 입력"></div>
     <div class="ch-promo" id="ch-promo" hidden></div>
   </section>
   <section class="card shop" id="inv" hidden>
@@ -2013,7 +2014,7 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   const pcSvg=(u,c)=>'<svg class="pc '+c+'" viewBox="0 0 40 40" aria-hidden="true">'+PS[u]+BASE+'</svg>';
   const KO={K:"킹",Q:"퀸",R:"룩",B:"비숍",N:"나이트",P:"폰"};
   const col=p=>p?(p===p.toUpperCase()?"w":"b"):"",up=p=>p.toUpperCase(),rc=i=>[i>>3,i&7],ix=(r,c)=>r*8+c,on=(r,c)=>r>=0&&r<8&&c>=0&&c<8,sqn=i=>"abcdefgh"[i&7]+(8-(i>>3));
-  function reset(){G.b=("rnbqkbnr"+"pppppppp"+"........".repeat(4)+"PPPPPPPP"+"RNBQKBNR").split("").map(x=>x==="."?"":x);G.turn="w";G.cs="KQkq";G.ep=-1;G.hist=[];G.sel=-1;G.last=null;G.promo=null;G.moves=[];G.over="";G.epc=""}
+  function reset(){G.b=("rnbqkbnr"+"pppppppp"+"........".repeat(4)+"PPPPPPPP"+"RNBQKBNR").split("").map(x=>x==="."?"":x);G.turn="w";G.cs="KQkq";G.ep=-1;G.hist=[];G.sel=-1;G.last=null;G.promo=null;G.moves=[];G.over="";G.epc="";G.asel=-1;G.on=false}
   function attacked(b,i,by){const [r,c]=rc(i);const pd=by==="w"?1:-1;for(const dc of[-1,1]){const rr=r+pd,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"P":"p"))return true}
     for(const [dr,dc] of[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]]){const rr=r+dr,cc=c+dc;if(on(rr,cc)&&b[ix(rr,cc)]===(by==="w"?"N":"n"))return true}
     for(const [dr,dc] of[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]){let rr=r+dr,cc=c+dc,d=1;while(on(rr,cc)){const p=b[ix(rr,cc)];if(p){if(col(p)===by){const u=up(p);if(u==="Q"||(u==="K"&&d===1)||(u==="B"&&dr&&dc)||(u==="R"&&(!dr||!dc)))return true}break}rr+=dr;cc+=dc;d++}}return false}
@@ -2034,9 +2035,9 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   const legal=i=>{const p=G.b[i];if(!p||G.over)return[];return pseudo(i)};
   const allLegal=c=>{const L=[];for(let i=0;i<64;i++)if(col(G.b[i])===c)L.push(...legal(i));return L};
   const inChk=c=>{const k=kingAt(G.b,c);return k>=0&&attacked(G.b,k,c==="w"?"b":"w")};
-  function play(m,pr){const p=G.b[m.f],cap=G.b[m.t]||(m.ep?"P":"");G.hist.push({b:G.b,turn:G.turn,cs:G.cs,ep:G.ep,last:G.last,mv:G.moves.length});
+  function play(m,pr,ai){const p=G.b[m.f],cap=G.b[m.t]||(m.ep?"P":"");G.hist.push({b:G.b,turn:G.turn,cs:G.cs,ep:G.ep,last:G.last,mv:G.moves.length});
     if(up(G.b[m.t]||"")==="K")G.over=col(p);G.b=apply(G.b,m,pr);let cs=G.cs;const rm=x=>{cs=cs.replace(x,"")};if(up(p)==="K")col(p)==="w"?(rm("K"),rm("Q")):(rm("k"),rm("q"));[[63,"K"],[56,"Q"],[7,"k"],[0,"q"]].forEach(([q,x])=>{if(m.f===q||m.t===q)rm(x)});G.cs=cs;
-    G.ep=m.dbl?(m.f+m.t)/2:-1;G.epc=m.dbl?col(p):"";G.last=[m.f,m.t];reword(m.f,m.t);G.sel=-1;
+    G.ep=m.dbl?(m.f+m.t)/2:-1;G.epc=m.dbl?col(p):"";G.last=[m.f,m.t];reword(m.f,m.t);if(ai){G.asel=-1;if(G.sel===m.t)G.sel=-1}else{G.sel=-1;if(G.asel===m.t)G.asel=-1}if(G.over){G.on=false;aiStop()}
     const oc=col(p)==="w"?"b":"w",chk=inChk(oc),none=chk&&!allLegal(oc).length;
     const nm=m.cs?(m.cs==="k"?"O-O":"O-O-O"):(up(p)==="P"?"":up(p))+sqn(m.f)+(cap?"x":"-")+sqn(m.t)+(pr&&up(p)==="P"?"="+pr:"")+(none&&chk?"#":chk?"+":"");G.moves.push((col(p)==="w"?"백 ":"흑 ")+nm);draw()}
   function status(){const st=$("ch-st"),T=[];let end=!!G.over;if(G.over)T.push((G.over==="w"?"흑":"백")+" 킹을 잡았어요 · "+(G.over==="w"?"백":"흑")+" 승");else for(const c of["w","b"])if(inChk(c))T.push((c==="w"?"백":"흑")+" 체크");
@@ -2049,24 +2050,44 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
   function reword(a,b){const old=[WD[a],WD[b]];WD[a]="";WD[b]="";WD[a]=pickW(old);WD[b]=pickW(old)}
   deal();
   function draw(){const bd=$("ch-board");bd.innerHTML="";const L=G.sel>=0?legal(G.sel):[],T=new Map(L.map(m=>[m.t,m]));const CK=["w","b"].filter(inChk).map(c=>kingAt(G.b,c));
-    for(let v=0;v<64;v++){const i=G.flip?63-v:v,[r,c]=rc(i),p=G.b[i],q=document.createElement("button");q.type="button";q.className="ch-sq"+((r+c)%2?" dk":"")+(G.last&&G.last.includes(i)?" last":"")+(i===G.sel?" sel":"")+(CK.includes(i)?" chk":"")+(T.has(i)?(p||T.get(i).ep?" cap":" mv"):"");
+    for(let v=0;v<64;v++){const i=G.flip?63-v:v,[r,c]=rc(i),p=G.b[i],q=document.createElement("button");q.type="button";q.className="ch-sq"+((r+c)%2?" dk":"")+(G.last&&G.last.includes(i)?" last":"")+(i===G.sel?" sel":"")+(i===G.asel?" asel":"")+(CK.includes(i)?" chk":"")+(T.has(i)?(p||T.get(i).ep?" cap":" mv"):"");
       q.setAttribute("aria-label",sqn(i)+" "+WD[i]+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));{const w=document.createElement("i");w.className="wd"+(WD[i].length>=5?" l2":"");w.style.setProperty("--n",WD[i].length>=5?Math.ceil(WD[i].length/2):Math.max(WD[i].length,3));w.textContent=WD[i];q.append(w)}if(p)q.insertAdjacentHTML("beforeend",pcSvg(up(p),col(p)));
       if((G.flip?r===0:r===7)){const f=document.createElement("i");f.className="co f";f.textContent="abcdefgh"[c];q.append(f)}if((G.flip?c===7:c===0)){const f=document.createElement("i");f.className="co r";f.textContent=8-r;q.append(f)}
       bd.append(q)}
     status()}
-  function askPromo(m){G.promo=m;const box=$("ch-promo");box.innerHTML='<span class="hint">승진:</span>';const me=col(G.b[m.f]);["Q","R","B","N"].forEach(x=>{const q=document.createElement("button");q.type="button";q.className="ch-sq";q.setAttribute("aria-label",KO[x]);q.innerHTML=pcSvg(x,me);q.onclick=()=>{box.hidden=true;G.promo=null;play(m,x)};box.append(q)});box.hidden=false}
+  function askPromo(m){G.promo=m;const box=$("ch-promo");box.innerHTML='<span class="hint">승진:</span>';const me=col(G.b[m.f]);["Q","R","B","N"].forEach(x=>{const q=document.createElement("button");q.type="button";q.className="ch-sq";q.setAttribute("aria-label",KO[x]);q.innerHTML=pcSvg(x,me);q.onclick=()=>{box.hidden=true;G.promo=null;if(G.on&&up(G.b[m.f]||"")==="P"&&col(G.b[m.f])==="w"&&legal(m.f).some(z=>z.t===m.t))play(m,x);else draw()};box.append(q)});box.hidden=false}
   function undo(){const h=G.hist.pop();if(!h)return;G.b=h.b;G.turn=h.turn;G.cs=h.cs;G.ep=h.ep;G.last=h.last;G.moves.length=h.mv;G.sel=-1;G.promo=null;$("ch-promo").hidden=true;draw()}
   // 타자: 칸 단어를 치면 내 기물(백) 칸 고르기 → 고른 기물이 갈 수 있는 칸 단어를 치면 이동
-  function word(t){const i=WD.indexOf(t);if(i<0||G.promo||G.over)return false;const p=G.b[i];
+  function word(t){const i=WD.indexOf(t);if(i<0||G.promo||G.over||!G.on)return false;const p=G.b[i];
     if(G.sel>=0){const m=legal(G.sel).find(x=>x.t===i);if(m){if(up(G.b[m.f])==="P"&&(i>>3===0||i>>3===7)){askPromo(m);draw();return true}play(m);return true}}
     if(p&&col(p)==="w"){G.sel=i;draw();return true}return null}
-  reset();return {G,reset,draw,undo,legal,allLegal,play,word,deal,has:t=>WD.includes(t),get WD(){return WD}}})();
+  // AI(흑): 정해진 타수로 출발 칸 단어 + 엔터, 도착 칸 단어 + 엔터를 치는 데 걸리는 시간만큼 기다렸다가 둬요
+  const LV=[{n:"쉬움",s:200},{n:"보통",s:300},{n:"어려움",s:400}];let lv=Math.min(2,Math.max(0,Number(store.get("tt-chlv",1))||0));
+  const VAL={P:1,N:3,B:3.2,R:5,Q:9,K:200};
+  const evalB=b=>{let v=0;for(let i=0;i<64;i++){const p=b[i];if(!p)continue;const u=up(p),r=i>>3,c=i&7;let x=VAL[u]+(u==="P"?(col(p)==="b"?r-1:6-r)*.06:0)+((u==="N"||u==="B")&&r>1&&r<6&&c>1&&c<6?.15:0);v+=col(p)==="b"?x:-x}return v};
+  const gen=(b,c)=>{const sb=G.b,se=G.ep,sc=G.epc;G.b=b;if(b!==sb){G.ep=-1;G.epc=""}const L=[];try{for(let i=0;i<64;i++)if(col(b[i])===c)L.push(...pseudo(i))}finally{G.b=sb;G.ep=se;G.epc=sc}return L};
+  function aiPick(){const M=gen(G.b,"b");let best=null,bv=-1e9;for(const m of M){let v;if(up(G.b[m.t]||"")==="K")v=1e6;else{const b1=apply(G.b,m);const R=gen(b1,"w");v=1e9;if(R.some(r=>up(b1[r.t]||"")==="K"))v=-5e5;else{for(const r of R){const e=evalB(apply(b1,r));if(e<v)v=e}if(v===1e9)v=evalB(b1)}}v+=Math.random()*.3;if(v>bv){bv=v;best=m}}return best}
+  const keys=w=>[...w].reduce((a,ch)=>a+strokes(ch),0)+1;
+  const AI={tm:0,ph:0,m:null,w:"",t0:0,dur:0};
+  function aiStop(){clearInterval(AI.tm);AI.tm=0;AI.ph=0;AI.m=null;$("ch-ai-t").textContent=""}
+  function aiType(w,ph){AI.w=w;AI.ph=ph;AI.t0=performance.now();AI.dur=keys(w)*60000/LV[lv].s;const K=[...w].map(strokes);
+    clearInterval(AI.tm);AI.tm=setInterval(()=>{if($("chess").hidden){stop();return}const el=performance.now()-AI.t0,k=el*LV[lv].s/60000;let a=0,n=0;for(const x of K){if(a+x<=k){a+=x;n++}else break}$("ch-ai-t").textContent=w.slice(0,n);if(el>=AI.dur){clearInterval(AI.tm);AI.tm=0;$("ch-ai-t").textContent="";aiDone()}},40)}
+  function aiNext(){if(!G.on)return;const m=aiPick();if(!m){AI.tm=setTimeout(aiNext,800);return}AI.m=m;aiType(WD[m.f],1)}
+  function aiDone(){if(!G.on)return;const m=AI.m;
+    if(AI.ph===1){if(WD[m.f]!==AI.w||col(G.b[m.f])!=="b")return aiNext();G.asel=m.f;draw();let t=legal(m.f).find(z=>z.t===m.t);if(!t){aiNext();return}aiType(WD[m.t],2);return}
+    if(AI.ph===2){const ok=G.asel===m.f&&col(G.b[m.f])==="b"&&WD[m.t]===AI.w&&legal(m.f).find(z=>z.t===m.t);if(!ok){G.asel=-1;draw();return aiNext()}play(ok,"Q",1);if(G.on)aiNext()}}
+  function lvDraw(){document.querySelectorAll(".ch-lv").forEach(b=>{b.setAttribute("aria-pressed",String(Number(b.dataset.lv)===lv));b.disabled=G.on});$("ch-ai-l").textContent="AI "+LV[lv].s+"타";$("ch-go").textContent=G.on?"다시":"시작";$("ch-in").disabled=!G.on}
+  function start(){aiStop();reset();deal();G.on=true;$("ch-promo").hidden=true;draw();lvDraw();const inp=$("ch-in");inp.value="";try{inp.focus({preventScroll:true})}catch(e){}setTimeout(aiNext,300)}
+  function stop(){aiStop();G.on=false;G.asel=-1;lvDraw()}
+  function setLv(x){if(G.on)return;lv=x;store.set("tt-chlv",x);lvDraw()}
+  const _st=status;status=function(){_st();lvDraw()};
+  reset();return {G,reset,draw,undo,legal,allLegal,play,word,deal,start,stop,setLv,lvDraw,aiPick,has:t=>WD.includes(t),get WD(){return WD}}})();
 {const inp=$("ch-in");let bz=0;let bt=0;const bad=()=>{inp.classList.remove("bad");void inp.offsetWidth;inp.classList.add("bad");clearTimeout(bt);bt=setTimeout(()=>inp.classList.remove("bad"),600)};
   const clr=()=>{bz=1;setTimeout(()=>{inp.value="";bz=0},0)};
   const go=()=>{const t=inp.value.trim();if(!t){if(inp.value)inp.value="";return}if(!CH.has(t)||!CH.word(t))bad();clr()};
   inp.addEventListener("input",()=>{if(!bz&&/\s$/.test(inp.value))go()});
   inp.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){if(!e.isComposing)e.preventDefault();setTimeout(()=>{if(!bz)go()},0)}})}
-$("ch-new").onclick=()=>{CH.reset();$("ch-promo").hidden=true;CH.draw()};
+$("ch-go").onclick=()=>CH.start();document.querySelectorAll(".ch-lv").forEach(b=>b.onclick=()=>CH.setLv(Number(b.dataset.lv)));
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
@@ -2486,8 +2507,8 @@ async function initCloud(){if(!FB_CONFIG)return;
   function openVs(){closePanels("vs");["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;vsCard.hidden=false;vsDraw()}
   vBtn.onclick=openVs;
   // 대전 → 타자게임(제작자만, 체스판 + 타자 입력창)
-  $("vs-game").onclick=()=>{if(!shopFree)return;closePanels("chess");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("chess").hidden=false;CH.deal();CH.draw();try{$("ch-in").focus({preventScroll:true})}catch(e){}};
-  $("ch-back").onclick=()=>{$("chess").hidden=true;openVs()};$("vs-back").onclick=()=>{vsCard.hidden=true;show("setup")};
+  $("vs-game").onclick=()=>{if(!shopFree)return;closePanels("chess");vsCard.hidden=true;["setup","practice","done"].forEach(x=>$(x).hidden=true);$("edit").hidden=true;$("chess").hidden=false;CH.stop();CH.reset();CH.deal();$("ch-promo").hidden=true;CH.draw();CH.lvDraw();try{$("ch-in").focus({preventScroll:true})}catch(e){}};
+  $("ch-back").onclick=()=>{CH.stop();$("chess").hidden=true;openVs()};$("vs-back").onclick=()=>{vsCard.hidden=true;show("setup")};
   function vsDraw(){const inRoom=!!(VS.code&&VS.room);$("vs-lobby").hidden=inRoom;$("vs-games").hidden=!shopFree;$("vs-room").hidden=!inRoom;if(!uid){$("vs-make").disabled=$("vs-join").disabled=true;vMsg("로그인해야 할 수 있어요");}else{$("vs-make").disabled=$("vs-join").disabled=false}
     if(!inRoom)return;const R=VS.room,me=uid,host=R.host===me,L=vsPlayers(),play=R.st==="play";
     $("vs-code").textContent=VS.code;
