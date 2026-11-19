@@ -114,10 +114,9 @@
 /* 체스(제작자만): 판은 테마색에 맞춰요 */
 .ch-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.ch-btns{display:flex;gap:6px;flex-wrap:wrap}
 #ch-st{font-family:var(--display);color:var(--accent)}#ch-st.end{color:var(--fg)}
-.ch-wrap{display:grid;grid-template-columns:minmax(0,min(100%,520px)) minmax(120px,1fr);gap:14px;align-items:start}
-@media (max-width:640px){.ch-wrap{grid-template-columns:1fr}}
+.ch-wrap{display:grid;grid-template-columns:minmax(0,min(100%,520px));gap:14px;align-items:start}
 .ch-board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));aspect-ratio:1;border:2px solid var(--line);user-select:none;-webkit-user-select:none}
-.ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(20px,6.2vw,46px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 62%,var(--bg));font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif;font-variant-emoji:text}
+.ch-sq{position:relative;border:0;padding:0;margin:0;display:grid;place-items:center;font-size:clamp(18px,5.4vw,40px);line-height:1;cursor:pointer;min-width:0;min-height:0;overflow:hidden;background:color-mix(in srgb,var(--fg) 62%,var(--bg));font-family:"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif;font-variant-emoji:text}
 .ch-sq.dk{background:color-mix(in srgb,var(--accent) 48%,var(--bg))}
 .ch-sq.last{box-shadow:inset 0 0 0 100px color-mix(in srgb,var(--accent) 22%,transparent)}
 .ch-sq.sel{box-shadow:inset 0 0 0 3px var(--accent)}
@@ -126,8 +125,7 @@
 .ch-sq.cap::after{content:"";position:absolute;inset:6%;border-radius:50%!important;border:3px solid color-mix(in srgb,var(--fg) 45%,transparent)}
 .ch-sq .w{color:#FFFFFF;-webkit-text-stroke:1.2px #111;paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.45)}.ch-sq .b{color:#151515;-webkit-text-stroke:.6px rgba(255,255,255,.55);text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .ch-sq .co{position:absolute;font-size:10px;font-style:normal;font-family:var(--body);color:color-mix(in srgb,var(--bg) 70%,transparent);pointer-events:none}.ch-sq .co.f{right:3px;bottom:2px}.ch-sq .co.r{left:3px;top:2px}
-.ch-moves{margin:0;padding:0 0 0 2.2em;max-height:min(520px,60vh);overflow:auto;font-size:.9rem;display:grid;gap:2px;align-content:start}
-.ch-moves li span{display:inline-block;min-width:4.2em}
+.ch-sq>span{transform:translateY(-12%)}.ch-sq .wd{position:absolute;left:0;right:0;bottom:3%;text-align:center;font-size:clamp(9px,2.3vw,13px);font-style:normal;font-weight:700;font-family:var(--body);line-height:1;color:color-mix(in srgb,var(--bg) 82%,transparent);pointer-events:none;white-space:nowrap}
 .ch-promo{display:flex;gap:6px;align-items:center}.ch-promo .ch-sq{width:52px;height:52px;border:1px solid var(--line)}
 /* 3.6.13 발광(3.6.14 더 화려하게): 거의 검은 바탕. 포인트색이 청록·하늘·보라·분홍으로 바뀌며, 모든 글자와 테두리가 빛나요 */
 @property --lmc{syntax:"<color>";inherits:true;initial-value:#5CFFD6}
@@ -726,8 +724,8 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 
   <section class="card chess" id="chess" hidden>
     <h2>체스</h2>
-    <div class="ch-top"><span id="ch-st" role="status">자유 배치</span><span class="ch-btns"><button class="btn acct" id="ch-new" type="button">새 게임</button><button class="btn acct" id="ch-undo" type="button">무르기</button><button class="btn acct" id="ch-flip" type="button">판 뒤집기</button></span></div>
-    <div class="ch-wrap"><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div><ol class="ch-moves" id="ch-moves"></ol></div>
+    <div class="ch-top"><span id="ch-st" role="status"></span><span class="ch-btns"><button class="btn acct" id="ch-new" type="button">새 게임</button></span></div>
+    <div class="ch-wrap"><div class="ch-board" id="ch-board" role="grid" aria-label="체스판"></div></div>
     <div class="ch-promo" id="ch-promo" hidden></div>
   </section>
   <section class="card shop" id="inv" hidden>
@@ -2030,20 +2028,22 @@ const CH=(()=>{const G={b:null,turn:"w",cs:"KQkq",ep:-1,hist:[],sel:-1,flip:fals
     const oc=col(p)==="w"?"b":"w",chk=inChk(oc),none=chk&&!allLegal(oc).length;
     const nm=m.cs?(m.cs==="k"?"O-O":"O-O-O"):(up(p)==="P"?"":up(p))+sqn(m.f)+(cap?"x":"-")+sqn(m.t)+(pr&&up(p)==="P"?"="+pr:"")+(none&&chk?"#":chk?"+":"");G.moves.push((col(p)==="w"?"백 ":"흑 ")+nm);draw()}
   function status(){const st=$("ch-st"),T=[];let end=false;for(const c of["w","b"]){if(!inChk(c))continue;const who=c==="w"?"백":"흑";if(!allLegal(c).length){T.push("체크메이트 · "+(c==="w"?"흑":"백")+" 승");end=true}else T.push(who+" 체크")}
-    st.classList.toggle("end",end);st.textContent=T.length?T.join(" · "):"자유 배치"}
+    st.classList.toggle("end",end);st.textContent=T.join(" · ")}
+  // 칸마다 정해 둔 단어(a8부터 h1까지, 말이 움직여도 칸에 그대로)
+  const WD="하늘 바다 구름 바람 나무 노을 햇살 이슬 별빛 달빛 안개 냇물 들꽃 숲길 바위 모래 사과 포도 수박 딸기 앵두 자두 참외 감귤 연필 공책 책상 의자 창문 시계 거울 우산 기차 버스 택시 배낭 지도 편지 엽서 선물 가족 친구 이웃 마을 학교 교실 운동 노래 사랑 우정 희망 용기 웃음 눈물 약속 기억 봄비 여름 가을 겨울 새벽 아침 저녁 한밤".split(" ");
   function draw(){const bd=$("ch-board");bd.innerHTML="";const L=G.sel>=0?legal(G.sel):[],T=new Map(L.map(m=>[m.t,m]));const CK=["w","b"].filter(inChk).map(c=>kingAt(G.b,c));
     for(let v=0;v<64;v++){const i=G.flip?63-v:v,[r,c]=rc(i),p=G.b[i],q=document.createElement("button");q.type="button";q.className="ch-sq"+((r+c)%2?" dk":"")+(G.last&&G.last.includes(i)?" last":"")+(i===G.sel?" sel":"")+(CK.includes(i)?" chk":"")+(T.has(i)?(p||T.get(i).ep?" cap":" mv"):"");
-      q.setAttribute("aria-label",sqn(i)+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));if(p){const g=document.createElement("span");g.className=col(p);g.textContent=GL[up(p)]+"︎";q.append(g)}
+      q.setAttribute("aria-label",sqn(i)+" "+WD[i]+(p?" "+(col(p)==="w"?"백 ":"흑 ")+KO[up(p)]:""));{const w=document.createElement("i");w.className="wd";w.textContent=WD[i];q.append(w)}if(p){const g=document.createElement("span");g.className=col(p);g.textContent=GL[up(p)]+"︎";q.append(g)}
       if((G.flip?r===0:r===7)){const f=document.createElement("i");f.className="co f";f.textContent="abcdefgh"[c];q.append(f)}if((G.flip?c===7:c===0)){const f=document.createElement("i");f.className="co r";f.textContent=8-r;q.append(f)}
       q.onclick=()=>tap(i);bd.append(q)}
-    const ml=$("ch-moves");ml.innerHTML="";for(const t of G.moves){const li=document.createElement("li");li.textContent=t;ml.append(li)}ml.scrollTop=ml.scrollHeight;status()}
+    status()}
   function tap(i){if(G.promo)return;const p=G.b[i];if(G.sel>=0){const m=legal(G.sel).find(x=>x.t===i);if(m){if(up(G.b[m.f])==="P"&&(i>>3===0||i>>3===7)){askPromo(m);return}play(m);return}}
     G.sel=p&&i!==G.sel?i:-1;draw()}
   function askPromo(m){G.promo=m;const box=$("ch-promo");box.innerHTML='<span class="hint">승진:</span>';const me=col(G.b[m.f]);["Q","R","B","N"].forEach(x=>{const q=document.createElement("button");q.type="button";q.className="ch-sq";q.setAttribute("aria-label",KO[x]);const g=document.createElement("span");g.className=me;g.textContent=GL[x]+"︎";q.append(g);q.onclick=()=>{box.hidden=true;G.promo=null;play(m,x)};box.append(q)});box.hidden=false}
   function undo(){const h=G.hist.pop();if(!h)return;G.b=h.b;G.turn=h.turn;G.cs=h.cs;G.ep=h.ep;G.last=h.last;G.moves.length=h.mv;G.sel=-1;G.promo=null;$("ch-promo").hidden=true;draw()}
   reset();return {G,reset,draw,undo,legal,allLegal,play}})();
 $("chessbtn").onclick=()=>{if(!shopFree)return;const c=$("chess"),o=c.hidden;closePanels(o?"chess":null);c.hidden=!o;if(o)CH.draw()};
-$("ch-new").onclick=()=>{CH.reset();$("ch-promo").hidden=true;CH.draw()};$("ch-undo").onclick=()=>CH.undo();$("ch-flip").onclick=()=>{CH.G.flip=!CH.G.flip;CH.draw()};
+$("ch-new").onclick=()=>{CH.reset();$("ch-promo").hidden=true;CH.draw()};
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
   if(srvHooks.buy&&srvHooks.buy(it))return; /* 3.5.17: 로그인하면 서버가 포인트를 빼고 산 것을 적어요 */const inv=store.get("tt-inv",[]);
