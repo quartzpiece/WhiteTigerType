@@ -507,7 +507,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.3</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.4</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -723,7 +723,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <div class="row" style="justify-content:space-between"><span class="lineno" id="lineno"></span></div>
     <div class="vs-bars" id="vs-bars" hidden></div>
     <div class="target" id="target" aria-live="polite"></div>
-    <div class="typewrap"><input class="typing" id="typing" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="입력"><div class="mirror" aria-hidden="true"><span id="mirror"></span></div></div>
+    <div class="typewrap"><input class="typing" id="typing" autocomplete="off" autocapitalize="off" spellcheck="false" autocorrect="off" aria-label="입력"><div class="mirror" aria-hidden="true"><span id="mirror"></span></div></div>
     <div class="prog"><i id="bar"></i></div>
     <div class="lines" id="lines"></div>
   </section>
@@ -1573,6 +1573,12 @@ inp.addEventListener("input",()=>{if(S.src&&S.src.daily&&!S.dStarted&&inp.value)
   paint()});
 inp.addEventListener("keydown",e=>{if(e.key!=="Enter")return;e.preventDefault();if(e.isComposing||e.keyCode===229)setTimeout(submit,0);else submit()});
 inp.addEventListener("paste",e=>e.preventDefault());
+// 3.7.4: 붙여 넣기 막기. 끌어다 놓기, 폰 키보드의 클립보드·단어 추천처럼 paste가 안 뜨는 길도 막아요. 한 번에 3글자 넘게 늘면 되돌려요
+let inpPrev="";const inpNoPaste=()=>h3Warn("붙여 넣기는 안 돼요");
+inp.addEventListener("beforeinput",e=>{const t=e.inputType||"",d=e.data||"";if(/^insertFrom/.test(t)||t==="insertReplacementText"||(t==="insertText"||t==="insertCompositionText")&&[...d].length>2){e.preventDefault();inpNoPaste()}});
+inp.addEventListener("drop",e=>e.preventDefault());inp.addEventListener("dragover",e=>e.preventDefault());
+inp.addEventListener("keydown",()=>{inpPrev=inp.value},true);inp.addEventListener("focus",()=>{inpPrev=inp.value});
+document.addEventListener("input",e=>{if(e.target!==inp)return;const v=inp.value;if([...v].length-[...inpPrev].length>2){e.stopImmediatePropagation();inp.value=inpPrev;inpNoPaste();return}inpPrev=v},true);
 // 키별 속도: 앞 키를 누르고 이 키를 누르기까지 걸린 시간. 1.5초 넘게 쉬면 빼요. 컴퓨터 키보드만(폰 화면 키보드는 어떤 키인지 안 알려 줘요)
 // 이번 연습은 KS.run, 여러 번 모은 기록은 tt-keys(이 기기에만) = {키: [합(ms), 횟수]}
 const KB_ROWS=[["Q","ㅂ"],["W","ㅈ"],["E","ㄷ"],["R","ㄱ"],["T","ㅅ"],["Y","ㅛ"],["U","ㅕ"],["I","ㅑ"],["O","ㅐ"],["P","ㅔ"],null,["A","ㅁ"],["S","ㄴ"],["D","ㅇ"],["F","ㄹ"],["G","ㅎ"],["H","ㅗ"],["J","ㅓ"],["K","ㅏ"],["L","ㅣ"],null,["Z","ㅋ"],["X","ㅌ"],["C","ㅊ"],["V","ㅍ"],["B","ㅠ"],["N","ㅜ"],["M","ㅡ"],null,["Space","스페이스"]];
