@@ -287,6 +287,8 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .tkfx-t{width:150px;height:66px;border:3px solid var(--accent);background:var(--bg);box-shadow:0 0 0 4px var(--accent-soft),0 0 24px var(--accent-soft);display:grid;place-items:center;font-family:var(--display);font-size:1.25rem;color:var(--accent);position:relative;animation:tkIn .25s ease-out,tkShake .45s .25s ease-in-out infinite}
 .tkfx-t::before{content:"";position:absolute;left:72%;top:8px;bottom:8px;border-left:2px dashed var(--accent)}
 .tkfx.go .tkfx-t{animation:tkGo .45s ease-in forwards}
+.tkfx.sk .tkfx-t{width:200px;padding-right:56px;white-space:nowrap}#shop-sk .nm{white-space:nowrap} /* 스킬 티켓: 글자가 점선 왼쪽에 들어가게 */
+.tk10-t.sk:not(.open){padding-right:30%}.tk10-t.sk:not(.open)::before{content:"";position:absolute;left:72%;top:6px;bottom:6px;border-left:2px dashed var(--accent)}
 .tkfx-r{width:44px;height:44px;border:3px solid var(--accent);opacity:0}
 .tkfx.go .tkfx-r{animation:tkRing .6s .3s ease-out forwards}
 .tkfx-s{width:9px;height:9px;background:var(--accent);opacity:0}
@@ -746,15 +748,17 @@ input.typing:focus{outline:none;border-color:var(--accent)}
   </section>
   <section class="card shop" id="inv" hidden>
     <div class="row" style="justify-content:space-between"><b class="rank-h">인벤토리</b></div>
+    <div class="rtabs" id="inv-tabs" hidden><button class="btn acct rtab" id="inv-tab-i" type="button" aria-pressed="true">아이템</button><button class="btn acct rtab" id="inv-tab-s" type="button" aria-pressed="false">스킬</button></div>
     <span class="set-l" id="inv-tk-l">티켓</span>
     <ul class="shop-list" id="inv-list"></ul>
-    <span class="set-l" id="inv-sk-l" hidden>스킬</span>
-    <ul class="shop-list" id="inv-sk" hidden></ul>
-    <div class="sk-slots" id="inv-sks" hidden></div>
     <span class="set-l" id="inv-nx-l">닉네임 효과</span>
     <ul class="shop-list" id="inv-nx"></ul>
     <span class="set-l" id="inv-etc-l">기타</span>
     <ul class="shop-list" id="inv-etc"></ul>
+    <span class="set-l" id="inv-sk-l" hidden>스킬 토큰</span>
+    <ul class="shop-list" id="inv-sk" hidden></ul>
+    <span class="set-l" id="inv-sks-l" hidden>스킬 슬롯</span>
+    <div class="sk-slots" id="inv-sks" hidden></div>
     <p class="shop-empty" id="inv-empty" hidden>비어 있음</p>
     <p class="gc-res" id="gc-res" aria-live="polite"></p>
   </section>
@@ -1946,10 +1950,16 @@ function drawGacha(){const on=tkOn();$("shop-tk-l").hidden=$("shop-tk").hidden=!
 // 스킬(제작자 시험 중): 상점에 스킬 티켓·스킬 슬롯, 인벤토리에 티켓 열기·토큰·슬롯(같은 급 칸에 장착, 못 빼요, 1개만 사용)
 function drawSkShop(){const on=skOn(),u=$("shop-sk");$("shop-sk-l").hidden=u.hidden=!on;u.innerHTML="";if(!on)return;const pt=Number(store.get("tt-pt",0))||0;
   [SKTICKET,SKSLOT].forEach(it=>{const li=document.createElement("li"),n=document.createElement("span");n.className="nm";n.textContent=it.name;const p=document.createElement("span");p.className="pr";p.textContent=it.pr;
-    const b=document.createElement("button");b.type="button";b.className="btn acct";b.id=it.id+"-buy";b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;b.onclick=()=>{if(!srvHooks.buy||!srvHooks.buy(it))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.append(n,p,b);u.appendChild(li)})}
-function drawSkInv(li){const u=$("inv-sk"),box=$("inv-sks");u.innerHTML="";box.innerHTML="";const on=skOn()&&srvHooks.on&&srvHooks.on();$("inv-sk-l").hidden=u.hidden=box.hidden=!on;if(!on)return;
+    const b=document.createElement("button");b.type="button";b.className="btn acct";b.id=it.id+"-buy";b.textContent="구매";b.disabled=!shopFree&&pt<it.pr;li.appendChild(n);
+    if(it===SKTICKET){ /* 티켓처럼 장수 고르기(1~100장) */const q=document.createElement("input");q.type="number";q.min="1";q.max="100";q.value=String(skQty);q.className="tkn";q.id="sk-qty";q.setAttribute("aria-label","살 장수");
+      const upd=()=>{let v=Math.floor(Number(q.value));if(!(v>=1))v=1;if(v>100)v=100;skQty=v;p.textContent=it.pr*v;b.disabled=!shopFree&&pt<it.pr*v};
+      const st=(d,x)=>{const e=document.createElement("button");e.type="button";e.className="btn acct tks";e.textContent=x;e.setAttribute("aria-label",d>0?"한 장 더":"한 장 덜");e.onclick=()=>{q.value=String(Math.min(100,Math.max(1,skQty+d)));upd()};return e};
+      q.oninput=upd;q.onchange=()=>{upd();q.value=String(skQty)};upd();li.append(st(-1,"−"),q,st(1,"+"))}
+    b.onclick=()=>{const k=it===SKTICKET?skQty:1;if(!srvHooks.buy||!srvHooks.buy(it,k))$("shop-msg").textContent="로그인해야 살 수 있어요"};li.append(p,b);u.appendChild(li)})}
+let skQty=1;
+function drawSkInv(li){const u=$("inv-sk"),box=$("inv-sks");u.innerHTML="";box.innerHTML="";const on=skOn()&&srvHooks.on&&srvHooks.on();$("inv-sk-l").hidden=$("inv-sks-l").hidden=u.hidden=box.hidden=!on;if(!on)return;
   const t=srvHooks.skt(),T=srvHooks.skk(),L=srvHooks.sks(),A=srvHooks.ska();
-  {const c=document.createElement("span");c.className="pr";c.textContent=t+"장";const l=li(SKTICKET.name,c,"열기",t>0?openSkill:null);l.querySelector("button").id="sk-open";u.appendChild(l)}
+  {const c=document.createElement("span");c.className="pr";c.textContent=t+"장";const l=li(SKTICKET.name,c,"열기",t>0?openSkill:null);l.querySelector("button").id="sk-open";l.classList.add("tkrow");const b10=document.createElement("button");b10.type="button";b10.className="btn acct";b10.id="sk-open10";b10.textContent="10장 사용";if(t>=10)b10.onclick=openSkill10;else b10.disabled=true;l.appendChild(b10);$("inv-list").appendChild(l)} /* 스킬 티켓은 아이템 페이지의 티켓 칸에 */
   Object.keys(T).sort((a,b)=>b[0]-a[0]||a[2]-b[2]).forEach(k=>{const l=document.createElement("li");l.className="sk-tok g"+k[0];l.dataset.k=k;const n=document.createElement("span");n.className="nm";n.textContent=skName(k);const c=document.createElement("span");c.className="pr";c.textContent=T[k]+"개";l.append(n,c);u.appendChild(l)});
   L.forEach((S,i)=>{const d=document.createElement("div");d.className="sk-slot"+(i===A?" on":"");d.dataset.s=i;const h=document.createElement("div");h.className="sk-h";const nm=document.createElement("span");nm.textContent="스킬 슬롯 "+(i+1);const ub=document.createElement("button");ub.type="button";ub.className="btn acct sk-use";
     if(i===A){ub.textContent="사용 중";ub.disabled=true}else{ub.textContent="사용";ub.onclick=()=>skDo({act:"use",s:i},ub)}h.append(nm,ub);d.appendChild(h);
@@ -1960,10 +1970,15 @@ function drawSkInv(li){const u=$("inv-sk"),box=$("inv-sks");u.innerHTML="";box.i
           const eb=document.createElement("button");eb.type="button";eb.className="btn acct sk-eq";eb.textContent="장착";eb.onclick=()=>{if(eb.dataset.ok!=="1"){eb.dataset.ok="1";eb.textContent="못 빼요 · 장착?";setTimeout(()=>{if(eb.isConnected){eb.dataset.ok="";eb.textContent="장착"}},3000);return}skDo({act:"equip",s:i,tok:sel.value},eb)};c.append(sel,eb)}}
       cs.appendChild(c)});d.appendChild(cs);box.appendChild(d)})}
 async function skDo(o,b){if(!srvHooks.skill)return;if(b)b.disabled=true;const j=await srvHooks.skill(o);if(!j||j.err)$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";else $("gc-res").textContent="";drawInv()}
+async function openSkill10(){if(!srvHooks.skill){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";const b=$("sk-open10");if(b)b.disabled=true;
+  const blk=tkBlock();let j;try{j=await srvHooks.skill({act:"open",n:10})}finally{blk.remove()}
+  if(!j||j.err||!Array.isArray(j.toks)){r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
+  drawInv();tk10Open(j.toks,SKTICKET.name,"sk",k=>k[0]==="1",()=>false,skName,()=>drawInv())}
 async function openSkill(){if(!srvHooks.skill){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("sk-open");if(b)b.disabled=true;r.textContent="";const blk=tkBlock();
   try{const fx=tkFx(SKTICKET.name),[j]=await Promise.all([srvHooks.skill({act:"open"}),wait(900)]);if(!j||j.err||!/^[123]-[123]$/.test(j.tok||"")){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
     drawInv();if(j.tok[0]==="1")await fx.rare();await fx.burst(skName(j.tok))}finally{blk.remove();drawInv()}}
-let invTk=null; // 지난번 인벤토리에 보인 티켓 수(줄어들 때 숫자가 떨어지는 움직임)
+let invTk=null,invPg="i"; // invPg: 인벤토리 페이지(i 아이템, s 스킬)
+$("inv-tab-i").onclick=()=>{invPg="i";drawInv()};$("inv-tab-s").onclick=()=>{invPg="s";drawInv()}; // 지난번 인벤토리에 보인 티켓 수(줄어들 때 숫자가 떨어지는 움직임)
 // 3.5.28 인벤토리: 티켓·스킬·닉네임 효과·기타 (테마·글꼴·배경 사진은 설정에만)
 function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="";const drop=invTk!==null&&tk<invTk;invTk=tk;
   const li=(name,right,btxt,fn,on,sw,fam)=>{const l=document.createElement("li");if(on)l.className="on";
@@ -1982,8 +1997,10 @@ function drawInv(){const tk=tkOn()?srvHooks.tk():0,u=$("inv-list");u.innerHTML="
   { /* 3.6.1 닉네임 효과: 가진 것(제작자는 모두) 중 하나를 달고 빼요. 이름 칸에 그 효과를 미리 보여 줘요 */const cur=srvHooks.nfx?srvHooks.nfx():"";
     NFX.filter(x=>shopFree||owned(x.id)).forEach(x=>{const on=cur===x.id,l=li(x.name,null,on?"빼기":"달기",async()=>{if(!srvHooks.setNfx)return;const bt=l.querySelector("button");bt.disabled=true;const j=await srvHooks.setNfx(on?"":x.id);if(j&&j.err)$("gc-res").textContent=j.err;drawInv()},on);
       const nm=l.querySelector(".nm");nm.textContent="";const pv=document.createElement("span");pv.className="nfx-pv";pv.textContent=(srvHooks.on&&srvHooks.on()?$("acct").textContent:"")||"닉네임";paintNick(pv,srvHooks.col?srvHooks.col():"",x.id);nm.append(x.name.replace("닉네임 효과: ","")+" ",pv);nx.appendChild(l)})}
-  [["inv-tk-l",u],["inv-nx-l",nx],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=!x.children.length});
-  $("inv-empty").hidden=!!(u.children.length||!$("inv-sk").hidden||nx.children.length||et.children.length)}
+  /* 스킬 페이지(제작자 시험 중): 스킬 토큰·스킬 슬롯은 "스킬" 탭에만 */const skp=skOn()&&!!(srvHooks.on&&srvHooks.on());if(!skp)invPg="i";$("inv-tabs").hidden=!skp;$("inv-tab-i").setAttribute("aria-pressed",String(invPg==="i"));$("inv-tab-s").setAttribute("aria-pressed",String(invPg==="s"));
+  {const si=invPg==="s",sk=$("inv-sk");$("inv-sk-l").hidden=sk.hidden=!si||!skp||!sk.children.length;$("inv-sks-l").hidden=$("inv-sks").hidden=!si||!skp}
+  [["inv-tk-l",u],["inv-nx-l",nx],["inv-etc-l",et]].forEach(([l,x])=>{$(l).hidden=x.hidden=invPg!=="i"||!x.children.length});
+  $("inv-empty").hidden=invPg==="s"?!!(skp):!!(u.children.length||nx.children.length||et.children.length)}
 // 닉네임 색상 변경권 쓰기: 서버가 RGB를 아무 값으로 정해 줘요
 async function useColor(){if(!srvHooks.ncolor){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";
   // 꽝과 같은 이펙트(조각 없이 고리만)를 바뀐 색으로, 글자는 내 닉네임. 도는 동안 화면 클릭·터치는 막아요
@@ -1992,7 +2009,7 @@ async function useColor(){if(!srvHooks.ncolor){$("gc-res").textContent="로그�
     try{const fx=tkFx("색상 변경권",j.col,old);await wait(900);await fx.burst(($("acct").textContent||"").trim()||"닉네임",true)}finally{srvHooks.apply(j);drawInv();if(rankHook)rankHook()}}finally{blk.remove()}}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function tkFx(label,col,prev){const dv=(c,x)=>{const e=document.createElement("div");e.className=c;if(x!=null)e.textContent=x;return e};const box=$("inv"),old=box.querySelector(".tkfx");if(old)old.remove();
-  const f=dv("tkfx");if(col){f.classList.add("lose","colr");f.style.setProperty("--fxc",col);if(colOk(prev))f.style.setProperty("--fxt",prev)} /* 티켓 모양은 예전 닉네임 색, 터질 때 고리·글자는 새 색 */f.setAttribute("aria-hidden","true");f.append(dv("tkfx-r"));
+  const f=dv("tkfx");if(label===SKTICKET.name)f.classList.add("sk");if(col){f.classList.add("lose","colr");f.style.setProperty("--fxc",col);if(colOk(prev))f.style.setProperty("--fxt",prev)} /* 티켓 모양은 예전 닉네임 색, 터질 때 고리·글자는 새 색 */f.setAttribute("aria-hidden","true");f.append(dv("tkfx-r"));
   for(let i=0;i<12;i++){const a=i/12*Math.PI*2+Math.random()*.4,d=90+Math.random()*70,sp=dv("tkfx-s");sp.style.setProperty("--dx",Math.round(Math.cos(a)*d)+"px");sp.style.setProperty("--dy",Math.round(Math.sin(a)*d)+"px");f.append(sp)}
   const t=dv("tkfx-t",label||TICKET.name),p=dv("tkfx-p");f.append(t,p);box.append(f);
   return {async rare(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;f.classList.add("rare");await wait(2000); /* 3.7.21 두 번째(더 빠른) 단계 빼고 첫 떨림만 2초 */
@@ -2017,19 +2034,22 @@ async function useTicket10(){if(!srvHooks.gacha){$("gc-res").textContent="로그
   const blk=tkBlock();let j;achHold=[];try{j=await srvHooks.gacha(10)}finally{blk.remove()}
   if(!j||j.err||!Array.isArray(j.prizes)){r.textContent=(j&&j.err)||"서버 연결 실패";const q=achHold||[];achHold=null;if(q.length)achToast(q);drawInv();return}
   drawInv();try{shopSkins();applyFont()}catch(e){}drawList();applyBg();drawShop();
-  const box=$("inv"),old=box.querySelector(".tk10");if(old)old.remove();const g=document.createElement("div");g.className="tk10";g.setAttribute("role","dialog");g.setAttribute("aria-label","티켓 10장");
+  tk10Open(j.prizes,TICKET.name,"",tkRare,tkLose,pz=>pz.name||pz.id||"?",()=>{const q=achHold||[];achHold=null;if(q.length)achToast(q);drawInv()})}
+// 10장 깔기(뽑기 티켓·스킬 티켓 같이 써요): 하나씩 누르면 그 자리에서 열려요. 다 열면 닫기
+function tk10Open(list,label,cls,isRare,isLose,nameOf,onClose){
+  const box=$("inv"),old=box.querySelector(".tk10");if(old)old.remove();const g=document.createElement("div");g.className="tk10";g.setAttribute("role","dialog");g.setAttribute("aria-label",label+" "+list.length+"장");
   const grid=document.createElement("div");grid.className="tk10-g";const cl=document.createElement("button");cl.type="button";cl.className="btn acct tk10-x";cl.textContent="닫기";cl.style.visibility="hidden";
-  let left=j.prizes.length;const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  let left=list.length;const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
   // 3.7.23 효과는 누른 티켓 그 자리에서 나오고, 여러 장을 한꺼번에 눌러도 돼요
   const pop=(t,pz,rr,lose)=>{const bx=document.createElement("div");bx.className="tk10-b"+(lose?" lose":"")+(rr?" rare":"");bx.setAttribute("aria-hidden","true");const add=c=>{const e=document.createElement("div");e.className=c;bx.append(e);return e};add("tkfx-r");if(rr)add("tkfx-r tkfx-r2");
     if(!lose){const n=rr?20:10;for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.random()*.4,d=(rr?55:38)+Math.random()*(rr?50:30),sp=add("tkfx-s"+(rr&&i%2?" late":""));sp.style.setProperty("--dx",Math.round(Math.cos(a)*d)+"px");sp.style.setProperty("--dy",Math.round(Math.sin(a)*d)+"px")}}
     t.append(bx);setTimeout(()=>bx.remove(),1400)};
-  j.prizes.forEach((pz,i)=>{const t=document.createElement("button");t.type="button";t.className="tk10-t";const lb=document.createElement("span");lb.className="tk10-l";lb.textContent=TICKET.name;t.append(lb);t.setAttribute("aria-label",TICKET.name+" "+(i+1));
-    t.onclick=async()=>{if(t.dataset.open)return;t.dataset.open="1";const rr=tkRare(pz),lose=tkLose(pz);t.classList.add("ing");await wait(600);
+  list.forEach((pz,i)=>{const t=document.createElement("button");t.type="button";t.className="tk10-t"+(cls?" "+cls:"");const lb=document.createElement("span");lb.className="tk10-l";lb.textContent=label;t.append(lb);t.setAttribute("aria-label",label+" "+(i+1));
+    t.onclick=async()=>{if(t.dataset.open)return;t.dataset.open="1";const rr=isRare(pz),lose=isLose(pz);t.classList.add("ing");await wait(600);
       if(rr&&!RM){t.classList.add("rare");await wait(2000)}
-      t.classList.add("go");await wait(350);pop(t,pz,rr,lose);t.classList.remove("ing","go");lb.textContent=pz.name||pz.id||"?";t.setAttribute("aria-label",lb.textContent);t.classList.add("open",lose?"lose":rr?"rare":"win");if(rr)t.classList.add("rare");t.disabled=true;
+      t.classList.add("go");await wait(350);pop(t,pz,rr,lose);t.classList.remove("ing","go");lb.textContent=nameOf(pz);t.setAttribute("aria-label",lb.textContent);t.classList.add("open",lose?"lose":rr?"rare":"win");if(rr)t.classList.add("rare");t.disabled=true;
       if(--left<=0){await wait(500);cl.style.visibility=""}};grid.append(t)});
-  cl.onclick=()=>{g.remove();box.style.minHeight="";const q=achHold||[];achHold=null;if(q.length)achToast(q);drawInv()};
+  cl.onclick=()=>{g.remove();box.style.minHeight="";onClose()};
   g.append(grid,cl);box.append(g);const need=g.scrollHeight;if(box.clientHeight<need)box.style.minHeight=need+"px"; /* 좁은 화면에서 인벤토리가 짧으면 티켓이 잘리지 않게 늘려요 */try{grid.querySelector(".tk10-t").focus()}catch(e){}}
 
 // 체스(제작자만, 2026-11-19): 둘이서 번갈아 두는 판. 규칙: 캐슬링·앙파상·승진·체크·체크메이트·스테일메이트. 나중에 타자 게임과 이어 붙일 자리
@@ -2321,8 +2341,8 @@ async function initCloud(){if(!FB_CONFIG)return;
       if(j.bot)try{const r=$("result-sub");r.textContent=r.textContent.replace(/포인트: \+\d+/,"포인트: +0")+"  ·  기록 제외"}catch(e){}
       if(Array.isArray(j.found)&&j.found.length){const m={egg:"✦",snow:"❄",rain:"☂",piano:"♪"};try{$("result-sub").textContent+=j.found.map(k=>m[k]?"  ·  "+m[k]:"").join("")}catch(e){}}}return j})};
   let buying=false; // 구매 요청이 끝나기 전에 또 누르면 무시해요(겹치면 서버에서 실패할 수 있어서)
-  srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0;
-    api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
+  srvHooks.buy=(it,n)=>{if(!srvOn())return false;const m=$("shop-msg");if(buying){m.textContent="구매 중";return true}buying=true;m.textContent="구매 중";const tk0=SRV.tk||0,sk0=SRV.skt||0;
+    api("/buy",n>1?{id:it.id,n}:{id:it.id}).then(j=>{buying=false;if(j&&!j.err){srvApply(j);const got=it.id===TICKET.id&&Number.isFinite(j.tk)?j.tk-tk0:0;m.textContent=it.id===SKTICKET.id&&Number.isFinite(j.skt)?it.name+" "+(j.skt-sk0)+"장 구매 완료":it.id===TICKET.id?it.name+" "+got+"장 구매 완료"+(n>1&&got<n?" (서버가 예전 버전이라 "+got+"장만)":""):it.name+" 구매 완료";drawList();applyBg();drawShop()}else m.textContent=(j&&j.err)||"서버 연결 실패"});return true};
   srvHooks.wx=(lat,lon)=>{if(!srvOn())return;api("/wx",{lat,lon}).then(j=>{if(j&&!j.err)srvApply(j)})};
   srvHooks.gst=()=>srvOn()?{inv:Array.isArray(SRV.inv)?SRV.inv:[],cc:SRV.cc||0,nc:SRV.nc||0}:null; /* 3.7.17 확률표가 내 상태로 계산 */srvHooks.tk=()=>srvOn()?SRV.tk:0;srvHooks.nc=()=>srvOn()?SRV.nc:0;srvHooks.nfx=()=>srvOn()?SRV.nfx:"";srvHooks.setNfx=id=>api("/nfx",{id}).then(j=>{if(j&&!j.err)srvApply(j);return j});srvHooks.lk=()=>srvOn()?SRV.lk:0;srvHooks.ul=()=>srvOn()?SRV.ul:0;srvHooks.cc=()=>srvOn()?SRV.cc:0;srvHooks.col=()=>srvOn()?SRV.col:"";srvHooks.ncolor=()=>api("/ncolor",{});srvHooks.apply=j=>{if(j&&!j.err)srvApply(j)}; /* 3.6.8: 색은 연출이 끝난 뒤 apply로 적용 */srvHooks.on=()=>srvOn();srvHooks.rank=()=>{lastRank="";pushRank().catch(()=>{})};srvHooks.eggoff=off=>api("/eggoff",{off}).then(j=>{if(j&&!j.err)srvApply(j);return j});
   srvHooks.skt=()=>srvOn()?SRV.skt:0;srvHooks.skk=()=>srvOn()?SRV.skk:{};srvHooks.sks=()=>srvOn()?SRV.sks:[];srvHooks.ska=()=>srvOn()?SRV.ska:0;srvHooks.skill=o=>{if(!srvOn())return Promise.resolve({err:"로그인해야 쓸 수 있어요"});return api("/skill",o).then(j=>{if(j&&!j.err)srvApply(j);return j})};
