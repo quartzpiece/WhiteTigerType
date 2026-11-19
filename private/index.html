@@ -99,6 +99,20 @@
 .gd-rain{position:fixed;top:-12px;z-index:61;pointer-events:none;background:linear-gradient(135deg,#FFF4C2,#E8C15A 50%,#A8761F)}
 .skin[data-skin="gold"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
   background:linear-gradient(135deg,#8A5F16,#F7E08A 40%,#C9952F 58%,#FFF4C2 70%,#A8761F)}
+/* 3.7.29 설산: 밤하늘 아래 눈 덮인 산. 포인트는 얼음빛, 배경엔 눈이 내리고, 글자를 칠 때마다 눈이 톡 흩날리고, 한 줄 끝내면 봉우리가 반짝, 다 치면 눈보라 */
+:root[data-skin="snowmt"]{--bg:#08111F; --surface:#0F1B2E; --card:rgba(12,22,38,.84); --fg:#EAF2FB; --muted:#8EA2BA; --line:#22344F;
+  --accent:#BFE3FF; --accent-soft:#17304A; --ok:#BFE3FF; --bad:#08111F; --bad-soft:#EAF2FB}
+:root[data-skin="snowmt"] h1{background:linear-gradient(100deg,#9DB8D6,#FFFFFF 22%,#BFE3FF 40%,#F4FAFF 55%,#9DB8D6 75%,#FFFFFF) 0 50%/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+:root[data-skin="snowmt"] h1 .ver{-webkit-text-fill-color:var(--muted);color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){:root[data-skin="snowmt"] h1{animation:flow 9s linear infinite}}
+.smfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse 70% 40% at 70% 8%,rgba(120,170,230,.16),transparent 70%),radial-gradient(ellipse 50% 30% at 20% 20%,rgba(150,120,220,.08),transparent 70%)}
+.smfx svg{position:absolute;left:0;bottom:0;width:100%;height:min(48vh,440px)}
+.smfx canvas{position:absolute;inset:0;width:100%;height:100%}
+.smfx .sm-cap{transition:filter .2s}
+.sm-k{position:absolute;pointer-events:none;z-index:3;border-radius:50%!important;background:#F4FAFF;box-shadow:0 0 4px rgba(200,230,255,.9)}
+.sm-gust{position:fixed;z-index:61;pointer-events:none;border-radius:50%!important;background:#F4FAFF;box-shadow:0 0 5px rgba(200,230,255,.8)}
+.skin[data-skin="snowmt"]::before{content:"";position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;border-radius:50%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Crect width='17' height='17' fill='%2308111F'/%3E%3Cpath d='M0 17 L6 7 L9 11 L12 6 L17 13 L17 17Z' fill='%233A5578'/%3E%3Cpath d='M6 7 L4.2 10 L6 9.2 L7.4 9.6Z M12 6 L10.3 8.8 L12 8.2 L13.6 8.6Z' fill='%23F4FAFF'/%3E%3Ccircle cx='4' cy='3.5' r='.7' fill='%23fff'/%3E%3Ccircle cx='13.5' cy='2.5' r='.5' fill='%23BFE3FF'/%3E%3C/svg%3E") center/cover}
 /* 3.6.13 발광(3.6.14 더 화려하게): 거의 검은 바탕. 포인트색이 청록·하늘·보라·분홍으로 바뀌며, 모든 글자와 테두리가 빛나요 */
 @property --lmc{syntax:"<color>";inherits:true;initial-value:#5CFFD6}
 @property --lmg{syntax:"<length>";inherits:true;initial-value:9px}
@@ -536,7 +550,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.28</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호를 위한 커스텀 타자</a><span class="ver">ver 3.7.29</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -584,6 +598,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
         <button class="skin" type="button" data-skin="stars" data-sp="1" hidden aria-label="특별 테마: 별자리" style="--sw-point:transparent;--sw-base:#060914"></button>
         <button class="skin" type="button" data-skin="gold" data-sp="1" hidden aria-label="특별 테마: 금박" style="--sw-point:transparent;--sw-base:#0B0906"></button>
         <button class="skin" type="button" data-skin="lumi" data-sp="1" hidden aria-label="특별 테마: 발광" style="--sw-point:transparent;--sw-base:#04070A"></button>
+        <button class="skin" type="button" data-skin="snowmt" data-sp="1" hidden aria-label="특별 테마: 설산" style="--sw-point:transparent;--sw-base:#08111F"></button>
         <button class="skin" type="button" data-skin="baekho" aria-label="백호 테마" style="--sw-point:#FFFFFF;--sw-base:#4B4B49"></button>
       </div>
     </div>
@@ -824,7 +839,7 @@ const cbRed=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").match
 function cbColor(){document.documentElement.style.setProperty("--cc",CUBE_C[CB.ci%6])}
 function cubeBegin(n){try{stBegin(n)}catch(e){}cbReset();CB.joy=0;CB.ci=0;cbColor();let pa=-1;
   for(let k=0;k<n;k++){let a;do a=Math.floor(Math.random()*3);while(a===pa);pa=a;const m={a,l:[-1,0,1][Math.floor(Math.random()*3)],d:Math.random()<.5?1:-1};cbTurn(m);CB.mv.push(m)}}
-function cubeStep(last){try{stStep(last);if(last)gdRain()}catch(e){}try{lmStep(last)}catch(e){}if(CB.an){cbTurn(CB.an.m);CB.an=null}
+function cubeStep(last){try{stStep(last);if(last)gdRain()}catch(e){}try{smStep(last)}catch(e){}try{lmStep(last)}catch(e){}if(CB.an){cbTurn(CB.an.m);CB.an=null}
   const m=CB.mv.pop();CB.ci++;cbColor();if(!m)return;const inv={a:m.a,l:m.l,d:-m.d};
   if(CB.run&&!cbRed())CB.an={m:inv,t:0,dur:.34};else cbTurn(inv);
   if(last&&!CB.mv.length)CB.joy=1.7}
@@ -865,7 +880,7 @@ function cbTick(now){if(!CB.run)return;requestAnimationFrame(cbTick);if(document
       ctx.fillStyle="rgb("+C.map(x=>Math.min(255,Math.round(x*g))).join(",")+")";const sp2=quad(hs);ctx.beginPath();sp2.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill()}}}
 let cloudHook=null,eggHook=null,rankHook=null,achStatsHook=null,achQuiet=null,shopFree=false; // shopFree: 제작자(admin)는 포인트 없이 사요
 // 특별 테마(3.5.32): 상점에는 없고 제작자 계정에서만 보여요(설정·인벤토리)
-const SP_THEMES=[{id:"stars",name:"특별 테마: 별자리"},{id:"gold",name:"특별 테마: 금박"},{id:"lumi",name:"특별 테마: 발광"}];
+const SP_THEMES=[{id:"stars",name:"특별 테마: 별자리"},{id:"gold",name:"특별 테마: 금박"},{id:"lumi",name:"특별 테마: 발광"},{id:"snowmt",name:"특별 테마: 설산"}];
 const spOk=k=>SP_THEMES.some(t=>t.id===k)&&(shopFree||owned(k)); // 3.5.36 티켓으로 얻으면 누구나
 // 별자리 테마(3.5.34): 실제 별자리(적경 시, 적위 도, 등급)와 선. 지문 줄 수에 맞춰 별자리를 여러 개 고르고, 한 줄에 별 하나씩 켜요.
 // 별자리 하나를 다 켜면 선을 잇고 작게 줄여 빈 곳으로 옮기고, 지문을 다 치면 이름이 나와요
@@ -1061,6 +1076,41 @@ function gdKey(){if(!gdOn()||gdN>60||cbRed())return;const box=document.querySele
 function gdRain(){if(!gdOn()||cbRed()||!document.body.animate)return;const W=innerWidth,H=innerHeight;
   for(let k=0;k<34;k++){const i=document.createElement("i"),s=3+Math.random()*6;i.className="gd-rain";i.style.cssText="left:"+(Math.random()*W).toFixed(0)+"px;width:"+s.toFixed(1)+"px;height:"+(s*(.5+Math.random()*.5)).toFixed(1)+"px";document.body.appendChild(i);
     const sw=(Math.random()-.5)*80,rt=(Math.random()-.5)*900|0;i.animate([{transform:"translate(0,0) rotate(0deg)",opacity:0},{opacity:1,offset:.1},{transform:"translate("+sw.toFixed(0)+"px,"+(H*.6).toFixed(0)+"px) rotate("+(rt/2|0)+"deg)",opacity:.9,offset:.7},{transform:"translate("+(-sw/2).toFixed(0)+"px,"+(H+20)+"px) rotate("+rt+"deg)",opacity:0}],{duration:1500+Math.random()*1200,delay:Math.random()*600,easing:"ease-in",fill:"backwards"}).onfinish=()=>i.remove()}}
+// 3.7.29 설산 테마: 아래쪽에 눈 덮인 산(세 겹, 들어올 때마다 모양이 조금씩 달라요), 캔버스에 눈이 천천히 내려요
+const smOn=()=>document.documentElement.dataset.skin==="snowmt";const SM={el:null,cv:null,raf:0,fl:[],last:0,caps:[]};
+function smRange(n,base,amp,seed){const P=[];let x=0;P.push([0,base]);const st=1000/n;for(let i=0;i<=n;i++){const px=i*st+(Math.random()-.5)*st*.5,h=base-amp*(.35+Math.random()*.65);P.push([Math.max(0,Math.min(1000,px)),h]);if(i<n)P.push([Math.min(1000,px+st*.5),base-amp*(.1+Math.random()*.35)])}P.push([1000,base]);return P}
+function smSync(){if(smOn()){if(SM.el)return;const d=document.createElement("div");d.className="smfx";d.setAttribute("aria-hidden","true");
+    const L=[{n:5,b:400,a:300,c:"#16253D",cap:"#C9D9EC",o:.55},{n:4,b:400,a:230,c:"#1E3150",cap:"#DDE9F6",o:.8},{n:3,b:400,a:150,c:"#29405F",cap:"#F2F8FF",o:1}];
+    let svg='<svg viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice">';SM.caps=[];
+    L.forEach((l,li)=>{const P=smRange(l.n,l.b,l.a);svg+='<path d="M'+P.map(p=>p[0].toFixed(0)+" "+p[1].toFixed(0)).join(" L")+' Z" fill="'+l.c+'"/>';
+      for(let i=1;i<P.length-1;i++){const [x,y]=P[i],pl=P[i-1],pr=P[i+1];if(!(y<pl[1]&&y<pr[1]))continue;const dep=Math.min(46,(l.b-y)*.28);if(dep<10)continue;
+        const lx=x+(pl[0]-x)*dep/Math.max(1,pl[1]-y),rx=x+(pr[0]-x)*dep/Math.max(1,pr[1]-y),yy=y+dep,m1=x+(lx-x)*.5,m2=x+(rx-x)*.5;
+        svg+='<path class="sm-cap" d="M'+x.toFixed(0)+" "+y.toFixed(0)+" L"+lx.toFixed(0)+" "+yy.toFixed(0)+" L"+m1.toFixed(0)+" "+(yy-dep*.28).toFixed(0)+" L"+x.toFixed(0)+" "+(yy-dep*.12).toFixed(0)+" L"+m2.toFixed(0)+" "+(yy-dep*.3).toFixed(0)+" L"+rx.toFixed(0)+" "+yy.toFixed(0)+' Z" fill="'+l.cap+'" opacity="'+l.o+'"/>'}});
+    svg+="</svg>";d.innerHTML=svg;const cv=document.createElement("canvas");d.appendChild(cv);SM.cv=cv;SM.caps=[...d.querySelectorAll(".sm-cap")];
+    const b=document.querySelector(".bgart");if(b)b.after(d);else document.body.prepend(d);SM.el=d;smSize();SM.fl=[];const W=innerWidth,H=innerHeight;for(let i=0;i<Math.min(110,Math.round(W*H/14000));i++)SM.fl.push(smFlake(W,H,true));
+    if(!cbRed()){SM.last=performance.now();SM.raf=requestAnimationFrame(smTick)}else smDraw()}
+  else{cancelAnimationFrame(SM.raf);SM.raf=0;if(SM.el){SM.el.remove();SM.el=null;SM.cv=null}}}
+function smSize(){const c=SM.cv;if(!c)return;const r=Math.min(1.5,devicePixelRatio||1);c.width=Math.round(innerWidth*r);c.height=Math.round(innerHeight*r);c.getContext("2d").setTransform(r,0,0,r,0,0)}
+addEventListener("resize",()=>{if(SM.el){smSize();if(cbRed())smDraw()}});
+const smFlake=(W,H,any)=>{const z=Math.random();return {x:Math.random()*W,y:any?Math.random()*H:-6,r:.6+z*2.2,v:14+z*36,sw:Math.random()*Math.PI*2,sa:6+Math.random()*16,ss:.4+Math.random()*.8,o:.35+z*.55}};
+function smDraw(){const c=SM.cv;if(!c)return;const g=c.getContext("2d"),W=innerWidth,H=innerHeight;g.clearRect(0,0,W,H);g.fillStyle="#F4FAFF";
+  for(const f of SM.fl){g.globalAlpha=f.o;g.beginPath();g.arc(f.x+Math.sin(f.sw)*f.sa,f.y,f.r,0,Math.PI*2);g.fill()}g.globalAlpha=1}
+function smTick(now){if(!SM.el)return;SM.raf=requestAnimationFrame(smTick);if(document.hidden){SM.last=now;return}const dt=Math.min(.05,(now-SM.last)/1000);SM.last=now;const W=innerWidth,H=innerHeight;
+  for(const f of SM.fl){f.y+=f.v*dt;f.sw+=f.ss*dt;if(f.y>H+6){Object.assign(f,smFlake(W,H,false))}}smDraw()}
+// 한 줄 끝내면 봉우리 하나가 반짝, 다 치면 옆에서 눈보라가 불어와요
+function smStep(last){if(!smOn()||cbRed()||!SM.caps.length)return;const pick=SM.caps[Math.floor(Math.random()*SM.caps.length)];
+  if(pick.animate)pick.animate([{filter:"brightness(1)"},{filter:"brightness(1.6) drop-shadow(0 0 6px #fff)",offset:.35},{filter:"brightness(1)"}],{duration:1100,easing:"ease-in-out"});
+  if(last)smGust()}
+function smGust(){if(!document.body.animate)return;const W=innerWidth,H=innerHeight;SM.caps.forEach((c,i)=>{if(c.animate)c.animate([{filter:"brightness(1)"},{filter:"brightness(1.5) drop-shadow(0 0 5px #fff)",offset:.4},{filter:"brightness(1)"}],{duration:1600,delay:i*60})});
+  for(let k=0;k<70;k++){const i=document.createElement("i"),s=2+Math.random()*4.5;i.className="sm-gust";const y=Math.random()*H;i.style.cssText="left:-10px;top:"+y.toFixed(0)+"px;width:"+s.toFixed(1)+"px;height:"+s.toFixed(1)+"px";document.body.appendChild(i);
+    const dy=(Math.random()-.3)*H*.35,w=(Math.random()-.5)*60;i.animate([{transform:"translate(0,0)",opacity:0},{opacity:.95,offset:.08},{transform:"translate("+(W*.55).toFixed(0)+"px,"+(dy*.5+w).toFixed(0)+"px)",opacity:.9,offset:.55},{transform:"translate("+(W+30)+"px,"+dy.toFixed(0)+"px)",opacity:0}],{duration:1400+Math.random()*1300,delay:Math.random()*900,easing:"cubic-bezier(.3,.2,.6,1)",fill:"backwards"}).onfinish=()=>i.remove()}}
+let smN=0;
+function smKey(){if(!smOn()||smN>60||cbRed())return;const box=document.querySelector(".typewrap"),c=document.querySelector(".mirror i.caret");if(!box||!c||!box.animate)return;
+  let g=c.previousElementSibling;while(g&&g.classList.contains("auto"))g=g.previousElementSibling;
+  const B=box.getBoundingClientRect(),C=(g||c).getBoundingClientRect(),cx=C.left-B.left+(g?C.width/2:0),cy=C.top-B.top+C.height/2,n=4+Math.floor(Math.random()*3);
+  for(let k=0;k<n;k++){const s=2+Math.random()*3,a=-Math.PI/2+(Math.random()-.5)*2.4,r=10+Math.random()*20,dx=Math.cos(a)*r,dy=Math.sin(a)*r,i=document.createElement("i");i.className="sm-k";
+    i.style.cssText="left:"+(cx-s/2).toFixed(1)+"px;top:"+(cy-s/2).toFixed(1)+"px;width:"+s.toFixed(1)+"px;height:"+s.toFixed(1)+"px";box.appendChild(i);smN++;
+    const sw=(Math.random()-.5)*16;i.animate([{transform:"translate(0,0)",opacity:1},{transform:"translate("+dx.toFixed(0)+"px,"+dy.toFixed(0)+"px)",opacity:1,offset:.4},{transform:"translate("+(dx+sw).toFixed(0)+"px,"+(dy+26).toFixed(0)+"px)",opacity:0}],{duration:900+Math.random()*500,easing:"ease-out"}).onfinish=()=>{i.remove();smN--}}}
 // 이스터에그(무지갯빛·눈·비·피아노): 3.5.24부터 서버가 판정해요(글은 서버에만 있어요). 사이트는 서버가 준 값(pts.egg, pts.eg)만 따라요
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(cloudHook&&[LIBK,"tt-pt","tt-egg","tt-snow","tt-snowfx","tt-rain","tt-rainfx","tt-piano","tt-pianofx","tt-bookp","tt-mycap","tt-aw","tt-dd","tt-pc","tt-pcn","tt-fm","tt-bst","tt-bkr","tt-bkc","tt-bkm","tt-tot","tt-inv","tt-title","tt-font","tt-bgdim","tt-cardop","tt-bgslots","tt-bgrot","tt-tdim","tt-tcardop","tt-runs","tt-runc","tt-keys","tt-keys3","tt-keyse","tt-ach"].includes(k))cloudHook()}};
 
@@ -1909,7 +1959,7 @@ async function bgSet(i,d){bgImg[i]=d;
 // 덮개·창: 사진 배경일 땐 tt-bgdim/tt-cardop, 아니면 테마용 tt-tdim/tt-tcardop(null = 테마 기본)
 const numOr=(v,d)=>{const n=Number(v);return v===null||v===undefined||v===""||!Number.isFinite(n)?d:n};
 const isPhoto=()=>document.documentElement.classList.contains("photo-bg");
-const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"||k==="glitch"||k==="stars"?{dim:0,card:84}:k==="gold"||k==="lumi"?{dim:0,card:86}:{dim:0,card:100}};
+const themeDef=()=>{const k=document.documentElement.dataset.skin;return k==="baekho"?{dim:45,card:74}:k==="cube"||k==="glitch"||k==="stars"?{dim:0,card:84}:k==="gold"||k==="lumi"||k==="snowmt"?{dim:0,card:86}:{dim:0,card:100}};
 function applyBg(){const R=document.documentElement;bgPaint();const ph=isPhoto(),df=themeDef();let dim,card;
   if(ph){dim=Math.min(85,Math.max(20,numOr(store.get("tt-bgdim",60),60)));card=Math.min(100,Math.max(0,numOr(store.get("tt-cardop",80),80)));R.classList.add("seethru");R.classList.remove("tdim");R.style.setProperty("--bgdim",String(dim/100));R.style.setProperty("--cardop",card+"%")}
   else{const td=numOr(store.get("tt-tdim",null),null),tc=numOr(store.get("tt-tcardop",null),null);dim=td===null?df.dim:Math.min(85,Math.max(0,td));card=tc===null?df.card:Math.min(100,Math.max(0,tc));
@@ -2044,7 +2094,7 @@ function glSync(){clearTimeout(GL.t);clearTimeout(GL.r);document.documentElement
   const goR=()=>{if(document.documentElement.dataset.skin!=="glitch")return;if(!document.hidden)glRects();GL.r=setTimeout(goR,3000+Math.random()*3000)};GL.r=setTimeout(goR,1000+Math.random()*2000)}
 function setSkin(k){const want=k,shopT=SHOP_THEMES.some(t=>t.id===k)||SP_THEMES.some(t=>t.id===k);if(!["basic","baekho"].includes(k)&&!(shopT&&(owned(k)||spOk(k))))k="basic";
   if(k==="basic")document.documentElement.removeAttribute("data-skin");else document.documentElement.setAttribute("data-skin",k);
-  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}try{stSync();gdSync();lmSync()}catch(e){}}
+  document.querySelectorAll(".skin").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.skin===k)));store.set("tt-skin",shopT?want:k);try{applyBg()}catch(e){}try{cubeSync();cubeBar()}catch(e){}try{glSync()}catch(e){}try{stSync();gdSync();lmSync()}catch(e){}try{smSync()}catch(e){}}
 document.querySelectorAll(".skin").forEach(b=>{b.onclick=()=>setSkin(b.dataset.skin);b.dataset.tip=(b.getAttribute("aria-label")||"").replace(/ 테마$/,"")});
 function drawShop(){const pt=Number(store.get("tt-pt",0))||0,skin=store.get("tt-skin","basic"),cur=store.get("tt-title","");$("shop-pts").textContent="포인트: "+pt;
   const curF=store.get("tt-font","");if(SHOP_FONTS.length)loadFont(SHOP_FONTS);
@@ -2240,6 +2290,7 @@ $("fxkbtn").onclick=()=>{store.set("tt-fxk",!store.get("tt-fxk",false));showFxk(
 // 한 타 효과: 글자를 칠 때마다 방금 친 글자 가운데에서 작은 네모 고리가 퍼져요 (무지개 테마, 설정에서 켜기)
 let fxkN=0;
 inp.addEventListener("input",e=>{if(!gdOn()||e.inputType&&e.inputType.startsWith("delete"))return;requestAnimationFrame(gdKey)});
+inp.addEventListener("input",e=>{if(!smOn()||e.inputType&&e.inputType.startsWith("delete"))return;requestAnimationFrame(smKey)});
 inp.addEventListener("input",e=>{if(!lmOn()||e.inputType&&e.inputType.startsWith("delete"))return;requestAnimationFrame(lmKey)});
 inp.addEventListener("input",e=>{if(document.documentElement.dataset.skin!=="rainbow"||!store.get("tt-fxk",false)||fxkN>24)return;
   if(e.inputType&&e.inputType.startsWith("delete"))return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(x){}
