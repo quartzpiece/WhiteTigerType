@@ -264,6 +264,7 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 .tkfx.rare.go .tkfx-r{animation:tkRing 1.1s .35s ease-out forwards}.tkfx.rare.go .tkfx-r2{animation:tkRing 1.3s .6s ease-out forwards}
 .tkfx.rare.go .tkfx-s{animation:tkSp 1.2s .35s ease-out forwards}.tkfx.rare.go .tkfx-s.late{animation-delay:.75s}
 .tkfx.rare.show .tkfx-p{animation:tkPop .6s cubic-bezier(.2,1.6,.4,1) forwards,tkGlow 1.2s .6s ease-in-out infinite}
+.tkfx.rare.lose.show .tkfx-p{animation:tkFade .45s ease-out forwards} /* 3.7.20 1포인트는 떨림은 길게, 터질 땐 예전처럼 회색 */
 @keyframes tkShake2{0%,100%{transform:rotate(0) scale(1.06)}25%{transform:rotate(-8deg) scale(1.1)}75%{transform:rotate(8deg) scale(1.1)}}
 @keyframes tkShake3{0%,100%{transform:translateX(0) rotate(0) scale(1.14)}25%{transform:translateX(-4px) rotate(-11deg) scale(1.18)}75%{transform:translateX(4px) rotate(11deg) scale(1.18)}}
 @keyframes tkGlow{50%{text-shadow:0 0 18px var(--accent)}}
@@ -518,7 +519,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.19</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.20</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -1831,7 +1832,7 @@ function tkFx(label,col,prev){const dv=(c,x)=>{const e=document.createElement("d
   const t=dv("tkfx-t",label||TICKET.name),p=dv("tkfx-p");f.append(t,p);box.append(f);
   return {async rare(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;f.classList.add("rare");await wait(1000);f.classList.add("rare2");await wait(1100);
       const r2=dv("tkfx-r tkfx-r2");f.prepend(r2);for(let i=0;i<24;i++){const a=i/24*Math.PI*2+Math.random()*.3,d=140+Math.random()*120,sp=dv("tkfx-s"+(i%2?" late":""));sp.style.setProperty("--dx",Math.round(Math.cos(a)*d)+"px");sp.style.setProperty("--dy",Math.round(Math.sin(a)*d)+"px");f.append(sp)}},
-    async burst(name,lose){if(lose)f.classList.add("lose");const rr=f.classList.contains("rare");f.classList.add("go");await wait(rr?600:420);p.textContent=name;f.classList.add("show");await wait(lose?700:rr?2600:1300);f.classList.add("out");await wait(350);f.remove()},
+    async burst(name,lose){if(lose)f.classList.add("lose");const rr=f.classList.contains("rare");f.classList.add("go");await wait(rr?600:420);p.textContent=name;f.classList.add("show");await wait(rr?(lose?1600:2600):lose?700:1300);f.classList.add("out");await wait(350);f.remove()},
     stop(){f.classList.add("out");setTimeout(()=>f.remove(),350)}}}
 async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res"),b=$("gc-go");if(b)b.disabled=true;r.classList.remove("pop");r.textContent="";
   // 티켓을 여는 동안은 화면 전체 터치·클릭을 막아요(끝나면 풀어요)
@@ -1840,7 +1841,7 @@ async function useTicket(){if(!srvHooks.gacha){$("gc-res").textContent="로그�
   achHold=[];const fx=tkFx(),[j]=await Promise.all([srvHooks.gacha(),wait(900)]);
   if(!j||j.err){fx.stop();r.textContent=(j&&j.err)||"서버 연결 실패";drawInv();return}
   const pz=j.prize||{},nm=pz.name||pz.id||"?",gi=GACHA.find(g=>g.id===pz.id)||{},rare=pz.id==="rp1"||pz.id==="pt1000"||["sp-theme","sp-font","nick-fx"].includes(gi.grp)||gi.lk>0||gi.ul>0||pz.lk>0||pz.ul>0; /* 3.7.19 귀한 상품 */
-  if(rare)await fx.rare();drawInv();const done=fx.burst(nm,!rare&&(!!pz.none||pz.id==="none"||!!pz.rp||/^rp\d+$/.test(String(pz.id||"")))); /* 3.5.36 랜덤 포인트는 꽝 이펙트(3.5.38 예전 서버라 rp 표시가 없어도 id로 알아봐요) */try{shopSkins();applyFont()}catch(e){}await wait(420); // 결과는 이펙트에서만 보여 줘요(아래 "결과:" 줄은 뺌)
+  if(rare)await fx.rare();drawInv();const done=fx.burst(nm,(!!pz.none||pz.id==="none"||!!pz.rp||/^rp\d+$/.test(String(pz.id||"")))); /* 3.5.36 랜덤 포인트는 꽝 이펙트(3.5.38 예전 서버라 rp 표시가 없어도 id로 알아봐요) */try{shopSkins();applyFont()}catch(e){}await wait(420); // 결과는 이펙트에서만 보여 줘요(아래 "결과:" 줄은 뺌)
   drawList();applyBg();drawShop();await done}finally{blk.remove();const q=achHold||[];achHold=null;if(q.length)achToast(q)}}
 $("invbtn").onclick=()=>{const c=$("inv"),o=c.hidden;closePanels(o?"inv":null);c.hidden=!o;if(o){$("gc-res").textContent="";drawInv()}};
 function buy(it){const pt=Number(store.get("tt-pt",0))||0;if((it.multi?bgSlots()>=it.max||(it.need&&!owned(it.need)):owned(it.id))||(!shopFree&&pt<it.pr))return;
