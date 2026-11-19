@@ -536,7 +536,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <div class="wrap">
   <header>
-    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.23</span></h1>
+    <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.24</span></h1>
     <div class="hright">
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
@@ -969,6 +969,34 @@ function gdSync(){if(gdOn()){if(GD.el)return;const d=document.createElement("div
       d.appendChild(i)}
     const b=document.querySelector(".bgart");if(b)b.after(d);else document.body.prepend(d);GD.el=d;clearTimeout(GD.t);GD.t=setTimeout(gdGlint,800)}
   else{clearTimeout(GD.t);if(GD.el){GD.el.remove();GD.el=null}}}
+// 3.7.24 배경의 금 조각을 누르면 튕겨 나가요. 창(카드)이나 화면 가장자리에 닿으면 튕기고, 천천히 멈추면 다시 떠다녀요
+const GK={on:new Set(),raf:0,last:0};
+document.addEventListener("pointerdown",e=>{if(!GD.el||!gdOn()||cbRed()||!e.isTrusted)return;const t=e.target;if(t&&t.closest&&t.closest(".card,.stats,button,.btn,input,textarea,select,a,label,header,[role=button]"))return;
+  let best=null,bd=1e9;GD.el.querySelectorAll("i").forEach(f=>{const q=f.getBoundingClientRect(),cx=q.left+q.width/2,cy=q.top+q.height/2,d=Math.hypot(e.clientX-cx,e.clientY-cy),r=Math.max(22,Math.max(q.width,q.height)/2+12);if(d<=r&&d<bd){bd=d;best=f}});
+  if(best)gdKick(best,e.clientX,e.clientY)},{passive:true});
+function gdKick(f,px,py){let k=GK.on.has(f)?f._gk:null;const q=f.getBoundingClientRect(),cx=q.left+q.width/2,cy=q.top+q.height/2;
+  if(!k){const w=f.offsetWidth,h=f.offsetHeight,m=getComputedStyle(f).transform,rt=m&&m!=="none"?Math.atan2(new DOMMatrix(m).b,new DOMMatrix(m).a)*180/Math.PI:0;
+    k=f._gk={x:cx,y:cy,w,h,r:rt,vx:0,vy:0,vr:0};f.style.animation="none";f.style.left=(cx-w/2)+"px";f.style.top=(cy-h/2)+"px";f.style.transform="rotate("+rt.toFixed(1)+"deg)"}
+  let dx=k.x-px,dy=k.y-py,d=Math.hypot(dx,dy);if(d<3){const a=Math.random()*Math.PI*2;dx=Math.cos(a);dy=Math.sin(a);d=1}
+  const sp=700+Math.random()*500;k.vx=dx/d*sp;k.vy=dy/d*sp;k.vr=(Math.random()<.5?-1:1)*(300+Math.random()*400);
+  f.animate([{filter:"brightness(2.2)"},{filter:"brightness(1)"}],{duration:500,easing:"ease-out"});
+  GK.on.add(f);if(!GK.raf){GK.last=performance.now();GK.raf=requestAnimationFrame(gdStep)}}
+function gdStep(now){const dt=Math.min(.05,(now-GK.last)/1000);GK.last=now;
+  const R=[...document.querySelectorAll(".card,.stats")].map(c=>c.getBoundingClientRect()).filter(q=>q.width>0&&q.height>0&&q.bottom>0&&q.top<innerHeight);
+  const W=innerWidth,H=innerHeight;
+  GK.on.forEach(f=>{const k=f._gk;if(!f.isConnected||!gdOn()){GK.on.delete(f);return}const hw=k.w/2,hh=k.h/2;
+    let nx=k.x+k.vx*dt,ny=k.y+k.vy*dt;
+    if(nx-hw<0){nx=hw;k.vx=Math.abs(k.vx)*.85}else if(nx+hw>W){nx=W-hw;k.vx=-Math.abs(k.vx)*.85}
+    if(ny-hh<0){ny=hh;k.vy=Math.abs(k.vy)*.85}else if(ny+hh>H){ny=H-hh;k.vy=-Math.abs(k.vy)*.85}
+    for(const q of R){if(nx+hw>q.left&&nx-hw<q.right&&ny+hh>q.top&&ny-hh<q.bottom){ /* 창에 닿았어요: 들어오던 쪽으로 튕겨요 */
+        const inX=k.x+hw>q.left&&k.x-hw<q.right,inY=k.y+hh>q.top&&k.y-hh<q.bottom;
+        if(!inX||inX&&inY&&Math.min(nx+hw-q.left,q.right-(nx-hw))<Math.min(ny+hh-q.top,q.bottom-(ny-hh))){k.vx=(k.x<(q.left+q.right)/2?-1:1)*Math.abs(k.vx)*.85;nx=k.x<(q.left+q.right)/2?Math.min(nx,q.left-hw):Math.max(nx,q.right+hw)}
+        else{k.vy=(k.y<(q.top+q.bottom)/2?-1:1)*Math.abs(k.vy)*.85;ny=k.y<(q.top+q.bottom)/2?Math.min(ny,q.top-hh):Math.max(ny,q.bottom+hh)}
+        f.animate([{filter:"brightness(1.9)"},{filter:"brightness(1)"}],{duration:300})}}
+    const fr=Math.pow(.25,dt);k.vx*=fr;k.vy*=fr;k.vr*=fr;k.x=nx;k.y=ny;k.r+=k.vr*dt;
+    f.style.left=(k.x-hw).toFixed(1)+"px";f.style.top=(k.y-hh).toFixed(1)+"px";f.style.transform="rotate("+k.r.toFixed(1)+"deg)";
+    if(Math.hypot(k.vx,k.vy)<12){GK.on.delete(f);k.vx=k.vy=k.vr=0;f.style.animation=""}}); /* 멈추면 그 자리에서 다시 떠다녀요 */
+  GK.raf=GK.on.size?requestAnimationFrame(gdStep):0}
 // 3.5.33: 떠다니는 금 조각이 0.5~1.4초마다 하나씩(가끔 둘) 반짝여요. 조각이 환해지고 그 자리에 작은 십자 빛이 돌며 피었다 져요
 function gdGlint(){if(!GD.el||!gdOn())return;GD.t=setTimeout(gdGlint,500+Math.random()*900);if(document.hidden||cbRed())return;const A=[...GD.el.querySelectorAll("i")];if(!A.length||!A[0].animate)return;const F0=A.filter(f=>{const q=f.getBoundingClientRect(),e=document.elementFromPoint(q.left+q.width/2,q.top+q.height/2);return !e||e===document.body||e===document.documentElement||!e.closest(".card,.stats,button,.btn,input,textarea,select")&&getComputedStyle(e).backgroundColor==="rgba(0, 0, 0, 0)"}),F=F0.length?F0:A; /* 창·버튼 뒤에 가린 조각은 빼고 골라요 */
   for(let m=Math.random()<.25?2:1;m>0;m--){const f=F[Math.floor(Math.random()*F.length)],q=f.getBoundingClientRect();if(q.bottom<0||q.top>innerHeight)continue;
