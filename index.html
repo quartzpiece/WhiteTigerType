@@ -283,7 +283,7 @@ header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-be
 #topbar .tb-menu .btn[aria-expanded="true"]{color:var(--accent);font-weight:700}
 #topbar .tb-menu .btn[aria-expanded="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:2px;height:2px;background:var(--accent)}
 #topbar .tb-menu .btn.egg{color:var(--accent);font-weight:700}
-#topbar .tb-menu #edit{color:var(--accent);font-weight:700}
+#topbar .tb-menu #edit{display:none} /* 지문 바꾸기는 "지문" 메뉴가 대신해요 */
 .topbar .pts{flex:none}
 .tb-burger{display:none;flex:none;width:42px;height:42px;border:1px solid var(--line);background:none;cursor:pointer;padding:0;align-content:center;justify-items:center;gap:5px}
 .tb-burger span{display:block;width:20px;height:2px;background:var(--fg);transition:transform .2s,opacity .2s}
@@ -603,8 +603,10 @@ input.typing:focus{outline:none;border-color:var(--accent)}
 <div class="holo" aria-hidden="true"></div>
 <div class="glitchfx" aria-hidden="true"><svg width="0" height="0" style="position:absolute"><filter id="glsplit0" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit1" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter><filter id="glsplit2" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="r"/><feOffset in="r" dx="-6" result="r2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="g"/><feOffset in="g" dx="0" result="g2"/><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="b"/><feOffset in="b" dx="6" result="b2"/><feBlend in="r2" in2="g2" mode="screen" result="rg"/><feBlend in="rg" in2="b2" mode="screen"/></filter></svg><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b></div>
 <header class="topbar" id="topbar"><div class="tb-in">
-  <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.34</span></h1>
+  <h1><a class="home" id="home" href="#" title="메인 화면">백호 타자</a><span class="ver">ver 3.7.35</span></h1>
   <nav class="tb-menu" id="tb-menu" aria-label="메뉴">
+      <button class="btn acct" id="psgbtn" type="button">지문</button>
+      <button class="btn acct" id="vsbtn" type="button" hidden>대전</button>
       <button class="btn acct" id="frbtn" type="button" hidden>친구</button>
       <button class="btn acct" id="rankbtn" type="button" hidden>랭킹</button>
       <button class="btn acct" id="shopbtn" type="button">상점</button>
@@ -826,7 +828,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <p class="hint" id="pstate" aria-live="polite"></p>
     <textarea id="passage" aria-label="연습할 지문" placeholder="이곳에 텍스트 붙여넣기"></textarea>
     <div class="row">
-      <button class="btn primary" id="start" type="button">연습 시작</button><button class="btn" id="rand" type="button">랜덤 문단</button><button class="btn" id="dailybtn" type="button" hidden>오늘의 문장</button><button class="btn" id="vsbtn" type="button" hidden>대전</button><button class="btn" id="bookbtn" type="button">필사</button>
+      <button class="btn primary" id="start" type="button">연습 시작</button><button class="btn" id="rand" type="button">랜덤 문단</button><button class="btn" id="dailybtn" type="button" hidden>오늘의 문장</button><button class="btn" id="bookbtn" type="button">필사</button>
       <span class="hint" id="count"></span>
     </div>
   </section>
@@ -2307,6 +2309,7 @@ $("start").onclick=()=>{if(vsHooks.picking&&vsHooks.pick){vsHooks.pick();return}
 $("rand").onclick=$("randnext").onclick=()=>begin(randomPara());
 if(NO_PRESETS){$("rand").hidden=true;$("rtab-ps").hidden=!PRESETS.length}
 $("edit").onclick=$("edit2").onclick=()=>{show("setup");ta.focus()};
+$("psgbtn").onclick=()=>{closePanels(null);show("setup");$("setup").scrollIntoView({block:"start"});window.scrollTo(0,0)}; // 위쪽 바 "지문": 지문 고르는 화면으로
 // 제목을 누르면 언제든 메인 화면(지문 고르는 칸)으로 돌아가요
 $("home").onclick=e=>{e.preventDefault();closePanels(null);S.start=0;$("typing").value="";inpPrev="";show("setup");window.scrollTo(0,0)};
 
