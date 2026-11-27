@@ -376,7 +376,21 @@ h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-hei
 @media (prefers-reduced-motion:no-preference){.nx-glow{animation:nxGlow 2.4s ease-in-out infinite}.nx-gold:not(button){animation:flow 4s linear infinite}}
 @keyframes nxGlow{50%{text-shadow:0 0 2px currentColor,0 0 6px currentColor,0 0 11px currentColor}}
 .nfx-pv{margin-left:6px;font-weight:700}
-.sk-slots{display:grid;gap:8px;margin-top:8px}.sk-slot{border:1px solid var(--line);background:var(--bg);padding:8px 10px;display:grid;gap:6px}.sk-slot.on{border-color:var(--accent)}.sk-slot .sk-h{display:flex;align-items:center;gap:10px;font-weight:700}.sk-slot .sk-h .btn{margin-left:auto}.sk-cells{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.sk-cell{border:1px dashed var(--line);padding:6px;display:grid;gap:4px;align-content:start;min-width:0}.sk-cell.full{border-style:solid;border-color:var(--accent)}.sk-cell b{font-size:.85rem}.sk-cell select{min-width:0;width:100%}.sk-cell .sk-v{font-weight:700}@media (max-width:520px){.sk-cells{grid-template-columns:1fr}}
+.sk-slots{display:grid;gap:10px;margin-top:8px} /* 스킬 탭(2026-11-27): 슬롯은 가로로 긴 장방형, 토큰은 원형, 빈 칸은 급수만 연하게 */
+.sk-slot{border:1px solid var(--line);background:var(--bg);padding:12px 16px;display:grid;gap:10px}.sk-slot.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.sk-row{display:flex;align-items:center;gap:14px;min-height:72px}
+.sk-h{display:grid;gap:6px;justify-items:start;font-weight:700;min-width:5.5em}.sk-h .btn{padding:4px 10px;font-size:.8rem}
+.sk-cells{display:flex;gap:14px;margin-left:auto}
+.sk-o{--d:64px;width:var(--d);height:var(--d);border-radius:50%!important;flex:none;display:grid;place-content:center;justify-items:center;line-height:1.1;position:relative;font:inherit;padding:0;color:var(--fg);background:none;border:2px dashed var(--line)}
+.sk-o.e{cursor:default}.sk-o.e .sk-g{opacity:.4;font-size:.85rem}
+button.sk-o.e.can{cursor:pointer}button.sk-o.e.can:hover,button.sk-o.e.pick{border-color:var(--accent)}button.sk-o.e.pick .sk-g{opacity:1;color:var(--accent)}
+.sk-o.t{border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--bg))}.sk-o.t .sk-g{font-size:.7rem;opacity:.75}.sk-o.t .sk-n{font-family:var(--display);font-size:1.2rem;color:var(--accent)}
+.sk-o.t.g3{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}.sk-o.t.g1{box-shadow:0 0 0 3px var(--accent-soft),0 0 14px var(--accent)}
+.sk-o .sk-c{position:absolute;right:-7px;top:-5px;min-width:22px;padding:1px 5px;background:var(--accent);color:var(--bg);font-size:.72rem;font-weight:700;text-align:center;border-radius:11px!important}
+.sk-toks{display:flex;flex-wrap:wrap;gap:14px 16px;padding:4px 2px}
+.sk-pick{display:flex;flex-wrap:wrap;align-items:center;gap:12px;border-top:1px dashed var(--line);padding-top:10px}.sk-pick .hint{flex-basis:100%}
+button.sk-o.t{cursor:pointer}button.sk-o.t.arm{outline:2px solid var(--accent);outline-offset:3px}
+@media (max-width:480px){.sk-o{--d:54px}.sk-cells{gap:8px}.sk-row{gap:10px}.sk-slot{padding:10px 12px}.sk-h{min-width:4.6em}}
 .shop-list li.tok{font-weight:700}.shop-list li.tok.lk{color:#E8C15A;border-color:#E8C15A;background:rgba(232,193,90,.1);box-shadow:0 0 10px rgba(232,193,90,.3)}.shop-list li.tok.ul{color:#8E8E89;border-color:#6A6A66;background:rgba(142,142,137,.08)}.shop-list li.tok .pr{color:inherit}
 .shop-list .btn{padding:6px 12px;font-size:.85rem}
 .shop-list .tks{padding:6px 9px;min-width:0}.shop-list .tkn{width:52px;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);padding:5px 4px;text-align:center;border-radius:0;-moz-appearance:textfield}.shop-list .tkn::-webkit-inner-spin-button,.shop-list .tkn::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
@@ -786,7 +800,7 @@ input.typing:focus{outline:none;border-color:var(--accent)}
     <span class="set-l" id="inv-etc-l">기타</span>
     <ul class="shop-list" id="inv-etc"></ul>
     <span class="set-l" id="inv-sk-l" hidden>스킬 토큰</span>
-    <ul class="shop-list" id="inv-sk" hidden></ul>
+    <div class="sk-toks" id="inv-sk" hidden></div>
     <span class="set-l" id="inv-sks-l" hidden>스킬 슬롯</span>
     <div class="sk-slots" id="inv-sks" hidden></div>
     <p class="shop-empty" id="inv-empty" hidden>비어 있음</p>
@@ -2221,15 +2235,23 @@ let skQty=1;
 function drawSkInv(li){const u=$("inv-sk"),box=$("inv-sks");u.innerHTML="";box.innerHTML="";const on=skOn()&&srvHooks.on&&srvHooks.on();$("inv-sk-l").hidden=$("inv-sks-l").hidden=u.hidden=box.hidden=!on;if(!on)return;
   const t=srvHooks.skt(),T=srvHooks.skk(),L=srvHooks.sks(),A=srvHooks.ska();
   {const c=document.createElement("span");c.className="pr";c.textContent=t+"장";const l=li(SKTICKET.name,c,"열기",t>0?openSkill:null);l.querySelector("button").id="sk-open";l.classList.add("tkrow");const b10=document.createElement("button");b10.type="button";b10.className="btn acct";b10.id="sk-open10";b10.textContent="10장 사용";if(t>=10)b10.onclick=openSkill10;else b10.disabled=true;l.appendChild(b10);$("inv-list").appendChild(l)} /* 스킬 티켓은 아이템 페이지의 티켓 칸에 */
-  Object.keys(T).sort((a,b)=>b[0]-a[0]||a[2]-b[2]).forEach(k=>{const l=document.createElement("li");l.className="sk-tok g"+k[0];l.dataset.k=k;const n=document.createElement("span");n.className="nm";n.textContent=skName(k);const c=document.createElement("span");c.className="pr";c.textContent=T[k]+"개";l.append(n,c);u.appendChild(l)});
-  L.forEach((S,i)=>{const d=document.createElement("div");d.className="sk-slot"+(i===A?" on":"");d.dataset.s=i;const h=document.createElement("div");h.className="sk-h";const nm=document.createElement("span");nm.textContent="스킬 슬롯 "+(i+1);const ub=document.createElement("button");ub.type="button";ub.className="btn acct sk-use";
-    if(i===A){ub.textContent="사용 중";ub.disabled=true}else{ub.textContent="사용";ub.onclick=()=>skDo({act:"use",s:i},ub)}h.append(nm,ub);d.appendChild(h);
-    const cs=document.createElement("div");cs.className="sk-cells";[3,2,1].forEach(g=>{const c=document.createElement("div");c.className="sk-cell";c.dataset.g=g;const b=document.createElement("b");b.textContent=g+"급";c.appendChild(b);const v=S["g"+g];
-      if(v){c.classList.add("full");const x=document.createElement("span");x.className="sk-v";x.textContent=v+"번 스킬";c.appendChild(x)}
-      else{const ks=Object.keys(T).filter(k=>k[0]===String(g)).sort();if(!ks.length){const x=document.createElement("span");x.className="hint";x.textContent="비어 있음";c.appendChild(x)}
-        else{const sel=document.createElement("select");sel.className="ptitle";sel.setAttribute("aria-label","슬롯 "+(i+1)+" "+g+"급에 장착할 토큰");ks.forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=k[2]+"번 스킬 ("+T[k]+"개)";sel.appendChild(o)});
-          const eb=document.createElement("button");eb.type="button";eb.className="btn acct sk-eq";eb.textContent="장착";eb.onclick=()=>{if(eb.dataset.ok!=="1"){eb.dataset.ok="1";eb.textContent="못 빼요 · 장착?";setTimeout(()=>{if(eb.isConnected){eb.dataset.ok="";eb.textContent="장착"}},3000);return}skDo({act:"equip",s:i,tok:sel.value},eb)};c.append(sel,eb)}}
-      cs.appendChild(c)});d.appendChild(cs);box.appendChild(d)})}
+  const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+  const orb=(k,tag)=>{const o=el(tag||"div","sk-o t g"+k[0]);o.append(el("span","sk-g",k[0]+"급"),el("span","sk-n",k[2]+"번"));o.setAttribute("aria-label",skName(k));o.title=skName(k);if(tag==="button")o.type="button";return o};
+  Object.keys(T).sort((a,b)=>b[0]-a[0]||a[2]-b[2]).forEach(k=>{const o=orb(k);o.classList.add("sk-tok");o.dataset.k=k;o.append(el("span","sk-c",String(T[k])));o.setAttribute("aria-label",skName(k)+" "+T[k]+"개");u.appendChild(o)});
+  if(skPick&&(skPick.s>=L.length||L[skPick.s]["g"+skPick.g]||!Object.keys(T).some(k=>k[0]===String(skPick.g))))skPick=null;
+  L.forEach((S,i)=>{const d=el("div","sk-slot"+(i===A?" on":""));d.dataset.s=i;const row=el("div","sk-row"),h=el("div","sk-h");h.append(el("span",null,"스킬 슬롯 "+(i+1)));const ub=el("button","btn acct sk-use");ub.type="button";
+    if(i===A){ub.textContent="사용 중";ub.disabled=true}else{ub.textContent="사용";ub.onclick=()=>skDo({act:"use",s:i},ub)}h.append(ub);row.append(h);
+    const cs=el("div","sk-cells");[3,2,1].forEach(g=>{const v=S["g"+g];
+      if(v){const o=orb(g+"-"+v);o.classList.add("sk-cell","full");o.dataset.g=g;cs.appendChild(o);return}
+      const can=Object.keys(T).some(k=>k[0]===String(g)),o=el(can?"button":"div","sk-o e sk-cell"+(can?" can":"")+(skPick&&skPick.s===i&&skPick.g===g?" pick":""));o.dataset.g=g;o.append(el("span","sk-g",g+"급"));o.setAttribute("aria-label","슬롯 "+(i+1)+" "+g+"급 빈 칸");
+      if(can){o.type="button";o.onclick=()=>{skPick=skPick&&skPick.s===i&&skPick.g===g?null:{s:i,g};drawInv()}}cs.appendChild(o)});
+    row.append(cs);d.appendChild(row);
+    if(skPick&&skPick.s===i){const g=skPick.g,pk=el("div","sk-pick");pk.append(el("span","hint",g+"급 칸에 끼울 토큰 · 두 번 누르면 장착, 한 번 끼우면 못 빼요"));
+      Object.keys(T).filter(k=>k[0]===String(g)).sort().forEach(k=>{const o=orb(k,"button");o.classList.add("sk-eq");o.append(el("span","sk-c",String(T[k])));
+        o.onclick=()=>{if(o.dataset.ok!=="1"){pk.querySelectorAll(".arm").forEach(x=>{x.classList.remove("arm");x.dataset.ok=""});o.dataset.ok="1";o.classList.add("arm");pk.firstChild.textContent=skName(k)+"을 장착할까요? 한 번 더 누르면 끼워져요(못 빼요)";return}skPick=null;skDo({act:"equip",s:i,tok:k},o)};pk.appendChild(o)});
+      const cx=el("button","btn acct","취소");cx.type="button";cx.onclick=()=>{skPick=null;drawInv()};pk.appendChild(cx);d.appendChild(pk)}
+    box.appendChild(d)})}
+let skPick=null; // 스킬 탭: 토큰을 끼우려고 고른 빈 칸 {s 슬롯, g 급}
 async function skDo(o,b){if(!srvHooks.skill)return;if(b)b.disabled=true;const j=await srvHooks.skill(o);if(!j||j.err)$("gc-res").textContent=(j&&j.err)||"서버 연결 실패";else $("gc-res").textContent="";drawInv()}
 async function openSkill10(){if(!srvHooks.skill){$("gc-res").textContent="로그인해야 쓸 수 있어요";return}const r=$("gc-res");r.textContent="";const b=$("sk-open10");if(b)b.disabled=true;
   const blk=tkBlock();let j;try{j=await srvHooks.skill({act:"open",n:10})}finally{blk.remove()}
